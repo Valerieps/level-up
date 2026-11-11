@@ -11,6 +11,8 @@ const PATHS = {
   check: 'M20 6 9 17l-5-5',
   chevron: 'M6 9l6 6 6-6',
   coin: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-13v8m-3-4h6',
+  pause: 'M9 5v14M15 5v14',
+  play: 'M7 5v14l12-7L7 5Z',
 } as const;
 
 export type IconName = keyof typeof PATHS;

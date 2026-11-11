@@ -881,3 +881,75 @@ button.list-link:disabled {
     transform: none;
   }
 }
+
+/* Versão mínima: the marker takes a long press without the browser's text menu. */
+
+.marker {
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+/* Hoje labels: "opcional" for a paused habit, "Faz tempo" for a free one stopped for long. */
+
+.tag.inline {
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+.tag.faz {
+  background: var(--color-faz-soft);
+  color: var(--color-faz);
+}
+
+.habit-item.optional .habit-name {
+  color: var(--color-text-muted);
+}
+
+/* Modo Pausa: the button on the plum top and the discreet banner under it. */
+
+.top-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--size-touch);
+  padding: 0 var(--space-3);
+  border: var(--border-width) solid var(--color-top-line);
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--color-on-top);
+  font: inherit;
+  font-weight: var(--font-weight-strong);
+  cursor: pointer;
+}
+
+.top-button .icon {
+  width: var(--size-icon-small);
+  height: var(--size-icon-small);
+}
+
+.top-button:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+.pause-banner {
+  margin-bottom: var(--space-4);
+}
+
+/* Habit detail: the consistency numbers side by side. */
+
+.stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.stat-value.plain {
+  color: var(--color-text);
+}
+
+.column-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}

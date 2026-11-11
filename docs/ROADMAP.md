@@ -12,9 +12,6 @@ O que ainda não está pronto.
 | Feature | Fase | Spec | Observação |
 | --- | --- | --- | --- |
 | Arrastar para reordenar os hábitos da Hoje | 1a | `spec/telas-e-feedback.md` | Adiado pela dona: por enquanto a ordem é a de criação (`habits.position`). Toque longo no item, sem conflitar com o toque longo do marcador da versão mínima (1b) |
-| Telas da versão mínima | 1b | `spec/habitos.md`, `spec/registrar-o-dia.md` | O servidor está pronto (`minimum` no cadastro e na edição, `habit.markMinimum`). Falta o campo no cadastro e na edição, o toque longo no marcador e as mínimas identificadas em "Mostrar concluídos" (`DayEntry.minimum`). Definir a mínima ao ajustar a régua entra com o convite de ajustar (1c) |
-| Telas do streak, ritmo e "Faz tempo" | 1b | `spec/streak-e-dominio.md`, `spec/telas-e-feedback.md` | `HabitView.consistency` já vem calculado. Falta mostrar no detalhe e pôr os "Faz tempo" no topo de Hábitos livres |
-| Telas do Modo Pausa | 1b | `spec/modo-pausa.md`, `spec/telas-e-feedback.md` | O servidor está pronto (`pauses`, `pause.start`, `pause.end`, `HabitView.paused`, tópico `pauses`). Falta o botão do topo da Hoje, a folha de pausar, a faixa "Em pausa", os pausados no fim da Hoje como "opcional", "Pausar este hábito" no detalhe, a lista em Configurações e a mensagem de volta |
 | Domínio, selo Automatizado e Prêmio de Domínio | 1c | `spec/streak-e-dominio.md` | |
 | Estrelas de Coragem e convites de subir e de ajustar a régua | 1c | `spec/regua.md` | |
 | Conquistas e celebrações | 1c | `spec/conquistas.md` | |
@@ -49,6 +46,12 @@ O que ainda não está pronto.
 - [ ] Excluir um hábito também não retira conquistas (`spec/conquistas.md`).
 - [ ] Subir e baixar a régua mudam um passo por vez: uma dificuldade, uma vez a mais ou a menos na
   meta, um dia a mais ou a menos (`spec/regua.md`).
+- [ ] O botão de pausa da Hoje e o de Configurações pausam o app inteiro; um hábito só se pausa pelo
+  detalhe dele (`spec/modo-pausa.md`).
+- [ ] Um livre pausado fica em Hábitos livres, marcado como "opcional", em vez de ir para o fim da
+  Hoje (`spec/modo-pausa.md`).
+- [ ] A mensagem de volta aparece uma vez na Hoje também quando a pausa do app termina sozinha na
+  data marcada (`spec/modo-pausa.md`).
 - [ ] O nome de um hábito tem até 80 caracteres e a meta diária vai até 99 (`spec/habitos.md`).
 - [ ] Os exemplos do primeiro uso abrem o cadastro já preenchido (`spec/telas-e-feedback.md`).
 - [ ] A data de volta de uma pausa é o primeiro dia de volta e precisa ser depois de hoje; só há uma

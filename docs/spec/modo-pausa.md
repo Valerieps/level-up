@@ -14,7 +14,7 @@ Congelar o app ou alguns hábitos sem perder nada, para viagens e momentos difí
 - Eu pauso com um toque, pelo botão do topo da Hoje ou em Configurações. O app não pergunta o
   motivo. *(1b)*
 - Eu pauso o app inteiro ou só alguns hábitos (pelo detalhe do hábito ou ao ajustar a régua).
-  *(1b)*
+  O botão do topo da Hoje e o de Configurações pausam o app inteiro. *(1b)*
 - A pausa tem data de volta ou é sem prazo, sem limite de dias. *(1b)*
 - A pausa começa no dia em que eu pauso. A data de volta é o primeiro dia de volta: ela já não é
   pausa, e precisa ser depois de hoje. *(1b)*
@@ -24,7 +24,8 @@ Congelar o app ou alguns hábitos sem perder nada, para viagens e momentos difí
 
 - Streaks e a contagem para Automatizado ficam congelados. *(1b)*
 - Os hábitos pausados continuam na Hoje, no fim da lista, sem destaque e marcados como
-  "opcional". Se eu quiser, marco normalmente e ganho XP, ouro e streak. *(1b)*
+  "opcional". Se eu quiser, marco normalmente e ganho XP, ouro e streak. Um livre pausado fica em
+  Hábitos livres, também marcado como "opcional". *(1b)*
 - Com o app pausado, a Hoje mostra uma faixa discreta "Em pausa" com "Voltar", e o botão de pausa
   vira "Voltar". *(1b)*
 - O heatmap usa nos dias em pausa a mesma cor neutra de sempre. O app não mostra quantos dias fiquei
@@ -39,5 +40,6 @@ Congelar o app ou alguns hábitos sem perder nada, para viagens e momentos difí
   Por quê: voltar no meio do dia não pode virar uma cobrança pelo resto dele.
 - Arquivar um hábito encerra a pausa dele. *(1b)*
 - A mensagem de volta é acolhedora, sem resumo do que ficou sem fazer: "Que bom te ver! Tudo
-  continua de onde parou." *(1b)*
+  continua de onde parou." Ela aparece uma vez na Hoje, quando eu toco em "Voltar" e também quando
+  a pausa do app termina sozinha na data marcada. *(1b)*
 - Em Configurações eu vejo as pausas ativas (do app e de cada hábito) e encerro qualquer uma. *(1b)*

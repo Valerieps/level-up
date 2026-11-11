@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { HabitView } from '../../application/api-contract';
+import { RHYTHM_DAYS } from '../../domain/habits/consistency';
 import { describeHabit, formatDayShort } from '../../domain/habits/describe';
 import { xpFor } from '../../domain/habits/progression';
 import type { ReguaDirection } from '../../domain/habits/regua';
@@ -11,12 +12,14 @@ import { ScreenHeader } from '../components/ScreenHeader';
 import { Link, navigate } from '../router';
 import { useQuery } from '../use-query';
 import { DeleteHabitDialog, ReguaSheet } from './habit-sheets';
+import { PauseSheet, pauseWhen } from './pause';
 
 const t = strings.habit;
 const r = strings.regua;
+const p = strings.pause;
 
-// Detalhe do hábito (docs/spec/telas-e-feedback.md "Detalhe"): header, then the actions. The
-// consistency block (1b), invitations (1c) and heatmap (1d) join with their features. An archived
+// Detalhe do hábito (docs/spec/telas-e-feedback.md "Detalhe"): header with the consistency, then
+// the actions. Invitations (1c) and heatmap (1d) join with their features. An archived
 // habit is read-only, with Reativar and Excluir (docs/spec/habitos.md).
 export function HabitDetail({ habitId }: { habitId: string }) {
   const habit = useQuery('habit', { habitId }, ['habits']);
@@ -46,22 +49,53 @@ export function HabitDetail({ habitId }: { habitId: string }) {
   );
 }
 
+/**
+ * Size, consistency and XP: the streak for scheduled habits, Ritmo and Última vez for free ones
+ * (docs/spec/streak-e-dominio.md), then the versão mínima when there is one.
+ */
 function HabitHeader({ habit }: { habit: HabitView }) {
+  const consistency = habit.consistency;
   return (
     <div className="habit-header">
       <p className="muted">{describeHabit(habit)}</p>
-      <div className="stat card">
-        <span className="muted small">{t.statXp}</span>
-        <span className="stat-value mono">{xpFor(habit.difficulty, habit.stars)}</span>
-        <span className="muted small">{t.statPerCompletion}</span>
+      <h2 className="visually-hidden">{t.consistency}</h2>
+      <div className="stat-row">
+        {consistency.kind === 'streak' ? (
+          <Stat label={t.streak} value={String(consistency.streak)} unit={t.streakUnit(consistency.streak)} />
+        ) : (
+          <>
+            <Stat label={t.rhythm} value={String(consistency.rhythm)} unit={t.rhythmUnit(RHYTHM_DAYS)} />
+            <Stat label={t.lastTime} value={t.lastTimeValue(consistency.lastDoneDaysAgo)} unit={t.lastTimeUnit(consistency.lastDoneDaysAgo)} />
+          </>
+        )}
+        <Stat label={t.statXp} value={String(xpFor(habit.difficulty, habit.stars))} unit={t.statPerCompletion} gold />
       </div>
+      {habit.minimum !== null && (
+        <div className="card column-card">
+          <span className="muted small">{t.minimum}</span>
+          <span>{habit.minimum}</span>
+          {habit.state === 'active' && <span className="muted small">{t.minimumLongPress}</span>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Stat({ label, value, unit, gold = false }: { label: string; value: string; unit: string; gold?: boolean }) {
+  return (
+    <div className="stat card">
+      <span className="muted small">{label}</span>
+      <span className={gold ? 'stat-value mono' : 'stat-value plain mono'}>{value}</span>
+      {unit && <span className="muted small">{unit}</span>}
     </div>
   );
 }
 
 function ActiveDetail({ habit, onChanged }: { habit: HabitView; onChanged: () => void }) {
   const { backend } = useServices();
+  const pauses = useQuery('pauses', {}, ['pauses', 'day']);
   const [sheet, setSheet] = useState<ReguaDirection | null>(null);
+  const [pausing, setPausing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
 
@@ -73,6 +107,17 @@ function ActiveDetail({ habit, onChanged }: { habit: HabitView; onChanged: () =>
     navigate('/', { replace: true });
   }
 
+  const ownPause = pauses.data?.habits.find((pause) => pause.habitId === habit.id) ?? null;
+  const pausedText = ownPause ? `${p.habitPaused} · ${pauseWhen(ownPause)}` : habit.paused ? p.paused : null;
+
+  async function resume(pauseId: string) {
+    setBusy(true);
+    const result = await backend.command('pause.end', { pauseId });
+    setBusy(false);
+    setError(!result.ok);
+    pauses.reload();
+    onChanged();
+  }
 
   return (
     <section>
@@ -86,6 +131,7 @@ function ActiveDetail({ habit, onChanged }: { habit: HabitView; onChanged: () =>
         }
       />
       {error && <Notice tone="error">{strings.genericError}</Notice>}
+      {pausedText && <p className="tag">{pausedText}</p>}
       <HabitHeader habit={habit} />
       <h2 className="visually-hidden">{t.actions}</h2>
       <ul className="list action-list">
@@ -100,6 +146,17 @@ function ActiveDetail({ habit, onChanged }: { habit: HabitView; onChanged: () =>
           </button>
         </li>
         <li>
+          {ownPause ? (
+            <button type="button" className="card list-link" disabled={busy} onClick={() => void resume(ownPause.id)}>
+              {p.backLabel}
+            </button>
+          ) : (
+            <button type="button" className="card list-link" disabled={!pauses.data} onClick={() => setPausing(true)}>
+              {t.pauseHabit}
+            </button>
+          )}
+        </li>
+        <li>
           <Link to={`/habito/${habit.id}/editar`} className="card list-link">
             {t.edit}
           </Link>
@@ -111,6 +168,15 @@ function ActiveDetail({ habit, onChanged }: { habit: HabitView; onChanged: () =>
         </li>
       </ul>
       <ReguaSheet habit={habit} direction={sheet} onClose={() => setSheet(null)} onChanged={onChanged} />
+      <PauseSheet
+        habit={habit}
+        open={pausing}
+        onClose={() => setPausing(false)}
+        onPaused={() => {
+          pauses.reload();
+          onChanged();
+        }}
+      />
     </section>
   );
 }

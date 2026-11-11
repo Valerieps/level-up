@@ -13,11 +13,11 @@ import { ScreenHeader } from '../components/ScreenHeader';
 import { Link, navigate } from '../router';
 import { useQuery } from '../use-query';
 import { DeleteHabitDialog } from './habit-sheets';
-import { ruleChoices } from './HabitNew';
+import { MinimumField, ruleChoices } from './HabitNew';
 
 const t = strings.habit;
 
-// Editar (docs/spec/habitos.md "Editar"): name and time rule. Difficulty, goal and days are
+// Editar (docs/spec/habitos.md "Editar"): name, versão mínima and time rule. Difficulty, goal and days are
 // read-only here, with a shortcut to the régua. Excluir sits at the end, apart.
 export function HabitEdit({ habitId }: { habitId: string }) {
   const habit = useQuery('habit', { habitId }, ['habits']);
@@ -40,6 +40,7 @@ function EditForm({ habit }: { habit: HabitView }) {
   const [name, setName] = useState(habit.name);
   const [rule, setRule] = useState<Rule>(habit.rule);
   const [weekdays, setWeekdays] = useState(habit.rule === 'weekdays' ? habit.weekdays : WORK_WEEK);
+  const [minimum, setMinimum] = useState(habit.minimum ?? '');
   const [touched, setTouched] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
@@ -54,7 +55,13 @@ function EditForm({ habit }: { habit: HabitView }) {
     setTouched(true);
     if (!normalizeHabitName(name) || (ruleChanged && rule === 'weekdays' && !isValidWeekdays(weekdays))) return;
     setBusy(true);
-    const result = await backend.command('habit.update', { habitId: habit.id, name, rule, weekdays: rule === 'weekdays' ? weekdays : undefined });
+    const result = await backend.command('habit.update', {
+      habitId: habit.id,
+      name,
+      rule,
+      weekdays: rule === 'weekdays' ? weekdays : undefined,
+      minimum: rule === 'free' ? null : minimum,
+    });
     setBusy(false);
     if (!result.ok) return setError(true);
     navigate(detail, { replace: true });
@@ -77,6 +84,7 @@ function EditForm({ habit }: { habit: HabitView }) {
         <ChoiceGroup legend={t.when} name="rule" value={rule} choices={ruleChoices} onChange={setRule} />
         {ruleChanged && rule === 'weekdays' && <WeekdayPicker value={weekdays} onChange={setWeekdays} error={daysError} />}
         {ruleChanged && <Notice>{t.ruleChangeWarning}</Notice>}
+        {rule !== 'free' && <MinimumField value={minimum} onChange={setMinimum} />}
 
         <div className="field">
           <span className="field-label">{t.regua}</span>

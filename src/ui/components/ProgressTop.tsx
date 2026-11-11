@@ -1,10 +1,11 @@
+import type { ReactNode } from 'react';
 import { levelOf } from '../../domain/habits/progression';
 import { strings } from '../../domain/strings';
 import { Icon } from './Icon';
 
 /**
  * The plum top of Hoje (docs/spec/telas-e-feedback.md "Hoje"): level, XP bar and the gold balance,
- * always in sight ("ouro vira prêmio real"). Sticks to the top while the list scrolls. A level up
+ * always in sight ("ouro vira prêmio real"), and the pause button ("pode pausar sem perder nada"). Sticks to the top while the list scrolls. A level up
  * shows as a short celebration under it that goes away by itself.
  */
 export function ProgressTop({
@@ -12,11 +13,14 @@ export function ProgressTop({
   gold,
   celebration,
   onCelebrationEnd,
+  action,
 }: {
   xpTotal: number;
   gold: number;
   celebration: number | null;
   onCelebrationEnd: () => void;
+  /** A button at the end of the first row: the pause button of Hoje. */
+  action?: ReactNode;
 }) {
   const { level, xpInLevel, xpForNext } = levelOf(xpTotal);
   return (
@@ -31,6 +35,7 @@ export function ProgressTop({
           </span>
           <span className="visually-hidden">{strings.progress.gold(gold)}</span>
         </span>
+        {action}
       </div>
       <XpBar inLevel={xpInLevel} forNext={xpForNext} onTop />
       <div className="progress-top-row small">

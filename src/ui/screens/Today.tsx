@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { HabitView, ReviewResult } from '../../application/api-contract';
-import { formatDayLong } from '../../domain/day';
-import { NOT_STARTED, planToday, tap, type DayEntry, type TodayHabit } from '../../domain/habits/day-log';
+import { formatDayLong, type Day } from '../../domain/day';
+import { markMinimum, NOT_STARTED, planToday, tap, type DayEntry, type TodayHabit } from '../../domain/habits/day-log';
 import { describeRule } from '../../domain/habits/describe';
 import { strings } from '../../domain/strings';
 import { useServices } from '../backend-context';
@@ -9,12 +9,20 @@ import { Button, ButtonLink } from '../components/Button';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { ProgressTop } from '../components/ProgressTop';
+import { Sheet } from '../components/Sheet';
+import { useLongPress } from '../long-press';
 import { Link, navigate } from '../router';
 import { useQuery } from '../use-query';
+import { PauseSheet, pauseWhen } from './pause';
 import { YesterdaySheet } from './YesterdaySheet';
 
 const t = strings.today;
+const p = strings.pause;
 const FREE_COLLAPSED_KEY = 'levelup.freeCollapsed';
+/** The app pause this device last saw running: when it is gone, the member is back. */
+const APP_PAUSE_KEY = 'levelup.appPause';
+
+type Mark = 'full' | 'minimum';
 
 /** A tap the server has not confirmed yet: the screen shows it at once (spec: "responde na hora"). */
 interface Overlay {
@@ -45,11 +53,27 @@ function writeCollapsed(collapsed: boolean): void {
   }
 }
 
+/**
+ * Whether the app pause this device saw is over (by "Voltar" here, elsewhere or on its return
+ * date): then Hoje says welcome back once (docs/spec/modo-pausa.md "Voltar").
+ */
+function cameBack(appPauseId: string | null): boolean {
+  try {
+    const seen = window.localStorage.getItem(APP_PAUSE_KEY);
+    if (appPauseId !== null) window.localStorage.setItem(APP_PAUSE_KEY, appPauseId);
+    else if (seen !== null) window.localStorage.removeItem(APP_PAUSE_KEY);
+    return appPauseId === null && seen !== null;
+  } catch {
+    return false;
+  }
+}
+
 // The Hoje tab (docs/spec/telas-e-feedback.md "Hoje", registrar-o-dia.md): mark and leave.
 export function Today() {
   const { backend } = useServices();
   const today = useQuery('today', {}, ['habits', 'day']);
   const progress = useQuery('progress', {}, ['progress']);
+  const pauses = useQuery('pauses', {}, ['pauses', 'day']);
   const yesterday = useQuery('yesterday', {}, ['habits', 'day']);
   const [overlays, setOverlays] = useState<ReadonlyMap<string, Overlay>>(new Map());
   const [gains, setGains] = useState<readonly PendingGain[]>([]);
@@ -59,6 +83,10 @@ export function Today() {
   const [showDone, setShowDone] = useState(false);
   const [freeCollapsed, setFreeCollapsed] = useState(readCollapsed);
   const [undoing, setUndoing] = useState<string | null>(null);
+  const [minimumFor, setMinimumFor] = useState<HabitView | null>(null);
+  const [pausing, setPausing] = useState(false);
+  const [resuming, setResuming] = useState(false);
+  const [welcome, setWelcome] = useState(false);
   const gainIds = useRef(0);
 
   // Fresh data from the server replaces what it confirmed.
@@ -68,6 +96,9 @@ export function Today() {
   useEffect(() => {
     setGains((current) => current.filter((g) => !g.settled));
   }, [progress.data]);
+  useEffect(() => {
+    if (pauses.data && cameBack(pauses.data.app?.id ?? null)) setWelcome(true);
+  }, [pauses.data]);
 
   if (!today.data) {
     if (today.error) {
@@ -93,9 +124,9 @@ export function Today() {
   const gold = (progress.data?.gold ?? 0) + gains.reduce((sum, g) => sum + g.gold, 0);
   const entryOf = (habitId: string) => items.find((i) => i.habit.id === habitId)?.entry ?? NOT_STARTED;
 
-  async function mark(habit: HabitView) {
+  async function mark(habit: HabitView, how: Mark = 'full') {
     const before = entryOf(habit.id);
-    const next = tap(habit, day, before);
+    const next = how === 'full' ? tap(habit, day, before) : markMinimum(habit, day, before);
     if (!next) return;
     setError(null);
     setOverlays((current) => new Map(current).set(habit.id, { entry: next, inFlight: (current.get(habit.id)?.inFlight ?? 0) + 1 }));
@@ -105,7 +136,7 @@ export function Today() {
       setGains((current) => [...current, { id: gainId, xp: next.xp, gold: next.gold, settled: false }]);
     }
 
-    const result = await backend.command('habit.mark', { habitId: habit.id });
+    const result = await backend.command(how === 'full' ? 'habit.mark' : 'habit.markMinimum', { habitId: habit.id });
     if (!result.ok) {
       // Spec: if saving fails, say so and put the item back.
       setOverlays((current) => {
@@ -150,6 +181,15 @@ export function Today() {
     progress.reload();
   }
 
+  async function resume(pauseId: string) {
+    setResuming(true);
+    const result = await backend.command('pause.end', { pauseId });
+    setResuming(false);
+    setError(result.ok ? null : strings.genericError);
+    pauses.reload();
+    today.reload();
+  }
+
   function reviewed(result: ReviewResult | null) {
     if (result?.levelUp != null) setCelebration(result.levelUp);
     yesterday.reload();
@@ -164,15 +204,48 @@ export function Today() {
     });
   }
 
+  const appPause = pauses.data?.app ?? null;
+  const pauseButton = pauses.data && (
+    <button
+      type="button"
+      className="top-button"
+      aria-label={appPause ? p.backLabel : undefined}
+      disabled={resuming}
+      onClick={() => (appPause ? void resume(appPause.id) : setPausing(true))}
+    >
+      <Icon name={appPause ? 'play' : 'pause'} />
+      {appPause ? p.back : p.pause}
+    </button>
+  );
   const review = yesterday.data && yesterday.data.habits.length > 0 && (
     <YesterdaySheet key={yesterday.data.day} review={yesterday.data} onDone={reviewed} />
   );
   const top = (
     <>
-      <ProgressTop xpTotal={xpTotal} gold={gold} celebration={celebration} onCelebrationEnd={() => setCelebration(null)} />
+      <ProgressTop xpTotal={xpTotal} gold={gold} celebration={celebration} onCelebrationEnd={() => setCelebration(null)} action={pauseButton} />
       {review}
+      {welcome && <Notice>{p.welcomeBack}</Notice>}
+      {appPause && (
+        <div className="card row pause-banner">
+          <span className="tag inline">{p.paused}</span>
+          <span className="grow muted small">{pauseWhen(appPause)}</span>
+          <Button variant="secondary" aria-label={p.backLabel} disabled={resuming} onClick={() => void resume(appPause.id)}>
+            {p.back}
+          </Button>
+        </div>
+      )}
+      <PauseSheet
+        open={pausing}
+        onClose={() => setPausing(false)}
+        onPaused={() => {
+          pauses.reload();
+          today.reload();
+        }}
+      />
     </>
   );
+  const onMark = (habit: HabitView) => void mark(habit);
+  const onMinimum = (habit: HabitView) => setMinimumFor(habit);
   const fab = (
     <Link to="/habito/novo" className="fab" aria-label={t.create}>
       <Icon name="plus" />
@@ -189,8 +262,8 @@ export function Today() {
     );
   }
 
-  const nothingScheduled = plan.scheduledCount === 0;
-  const allDone = !nothingScheduled && plan.scheduled.length === 0;
+  const nothingScheduled = plan.scheduledCount === 0 && plan.paused.length === 0;
+  const allDone = plan.scheduledCount > 0 && plan.scheduled.length === 0;
   const freeOpen = nothingScheduled || !freeCollapsed;
   const doneXp = done.reduce((sum, i) => sum + i.entry.xp, 0);
   const doneGold = done.reduce((sum, i) => sum + i.entry.gold, 0);
@@ -211,7 +284,9 @@ export function Today() {
           <p className="muted">{t.allDoneSummary(done.length, doneXp, doneGold)}</p>
         </div>
       )}
-      <HabitList items={plan.scheduled} leaving={leaving} onMark={(h) => void mark(h)} onLeft={finishLeaving} />
+      <HabitList items={plan.scheduled} leaving={leaving} onMark={onMark} onMinimum={onMinimum} onLeft={finishLeaving} />
+      {plan.paused.length > 0 && appPause && <p className="muted small">{t.pausedHint}</p>}
+      <HabitList items={plan.paused} leaving={leaving} onMark={onMark} onMinimum={onMinimum} onLeft={finishLeaving} />
 
       {plan.free.length > 0 && (
         <>
@@ -225,7 +300,7 @@ export function Today() {
             )}
           </div>
           <div id="free-list" hidden={!freeOpen}>
-            <HabitList items={plan.free} leaving={leaving} onMark={(h) => void mark(h)} onLeft={finishLeaving} labelledBy="free-title" />
+            <HabitList items={plan.free} leaving={leaving} onMark={onMark} onMinimum={onMinimum} onLeft={finishLeaving} labelledBy="free-title" />
           </div>
         </>
       )}
@@ -244,6 +319,7 @@ export function Today() {
                   </span>
                   <Link to={`/habito/${habit.id}`} className="habit-name grow">
                     {habit.name}
+                    {entry.minimum && <span className="muted small">{t.minimumDone}</span>}
                   </Link>
                   <span className="gain mono">{strings.progress.gain(entry.xp, entry.gold)}</span>
                   <Button
@@ -261,8 +337,52 @@ export function Today() {
           </div>
         </div>
       )}
+      <MinimumSheet
+        habit={minimumFor}
+        entry={minimumFor ? entryOf(minimumFor.id) : NOT_STARTED}
+        day={day}
+        onClose={() => setMinimumFor(null)}
+        onConfirm={(habit) => {
+          setMinimumFor(null);
+          void mark(habit, 'minimum');
+        }}
+      />
       {fab}
     </section>
+  );
+}
+
+/** The long press on the marker: "Fiz a versão mínima: <texto>" (docs/spec/registrar-o-dia.md). */
+function MinimumSheet({
+  habit,
+  entry,
+  day,
+  onClose,
+  onConfirm,
+}: {
+  habit: HabitView | null;
+  entry: DayEntry;
+  day: Day;
+  onClose: () => void;
+  onConfirm: (habit: HabitView) => void;
+}) {
+  const next = habit ? markMinimum(habit, day, entry) : null;
+  return (
+    <Sheet open={habit !== null && next !== null} title={habit?.name ?? ''} onClose={onClose}>
+      {habit && next && (
+        <>
+          <p className="muted">{t.minimumGain(next.xp, next.gold)}</p>
+          <div className="stack">
+            <Button className="wide" onClick={() => onConfirm(habit)}>
+              {t.minimumConfirm(habit.minimum ?? '')}
+            </Button>
+            <Button variant="secondary" className="wide" onClick={onClose}>
+              {t.notNow}
+            </Button>
+          </div>
+        </>
+      )}
+    </Sheet>
   );
 }
 
@@ -270,44 +390,80 @@ function HabitList({
   items,
   leaving,
   onMark,
+  onMinimum,
   onLeft,
   labelledBy,
 }: {
   items: readonly TodayHabit<HabitView>[];
   leaving: ReadonlySet<string>;
   onMark: (habit: HabitView) => void;
+  onMinimum: (habit: HabitView) => void;
   onLeft: (habitId: string) => void;
   labelledBy?: string;
 }) {
   if (items.length === 0) return null;
   return (
     <ul className="list" aria-labelledby={labelledBy}>
-      {items.map(({ habit, entry }) => {
-        const isLeaving = leaving.has(habit.id);
-        const counter = habit.dailyGoal > 1;
-        return (
-          <li key={habit.id} className={isLeaving ? 'habit-item leaving' : 'habit-item'} onAnimationEnd={(e) => e.target === e.currentTarget && onLeft(habit.id)}>
-            <button type="button" className={isLeaving ? 'marker checked' : 'marker'} aria-label={strings.today.markOf(habit.name)} disabled={isLeaving} onClick={() => onMark(habit)}>
-              {isLeaving ? <Icon name="check" /> : counter && <span className="mono marker-count">{entry.count}</span>}
-            </button>
-            <Link to={`/habito/${habit.id}`} className="habit-name grow">
-              <span className="strong-name">{habit.name}</span>
-              {habit.rule === 'weekdays' && <span className="muted small">{describeRule(habit)}</span>}
-            </Link>
-            {counter && !isLeaving && (
-              <span className="counter mono" aria-label={strings.today.counterOf(entry.count, habit.dailyGoal)}>
-                {entry.count}/{habit.dailyGoal}
-              </span>
-            )}
-            {isLeaving && (
-              <span className="gain mono" role="status">
-                {strings.progress.gain(entry.xp, entry.gold)}
-              </span>
-            )}
-          </li>
-        );
-      })}
+      {items.map(({ habit, entry }) => (
+        <HabitRow key={habit.id} habit={habit} entry={entry} leaving={leaving.has(habit.id)} onMark={onMark} onMinimum={onMinimum} onLeft={onLeft} />
+      ))}
     </ul>
+  );
+}
+
+/**
+ * One habit to mark. A tap marks it whole; a long press offers the versão mínima, when the habit
+ * has one. A paused habit sits without emphasis, as "opcional"; a free one stopped for long shows
+ * "Faz tempo".
+ */
+function HabitRow({
+  habit,
+  entry,
+  leaving,
+  onMark,
+  onMinimum,
+  onLeft,
+}: {
+  habit: HabitView;
+  entry: DayEntry;
+  leaving: boolean;
+  onMark: (habit: HabitView) => void;
+  onMinimum: (habit: HabitView) => void;
+  onLeft: (habitId: string) => void;
+}) {
+  const longPress = useLongPress(habit.minimum !== null && !leaving ? () => onMinimum(habit) : null);
+  const counter = habit.dailyGoal > 1;
+  const longAgo = habit.consistency.kind === 'rhythm' && habit.consistency.longAgo;
+  const classes = ['habit-item', leaving && 'leaving', habit.paused && 'optional'].filter(Boolean).join(' ');
+  return (
+    <li className={classes} onAnimationEnd={(e) => e.target === e.currentTarget && onLeft(habit.id)}>
+      <button
+        type="button"
+        className={leaving ? 'marker checked' : 'marker'}
+        aria-label={t.markOf(habit.name)}
+        disabled={leaving}
+        onClick={() => onMark(habit)}
+        {...longPress}
+      >
+        {leaving ? <Icon name="check" /> : counter && <span className="mono marker-count">{entry.count}</span>}
+      </button>
+      <Link to={`/habito/${habit.id}`} className="habit-name grow">
+        <span className="strong-name">{habit.name}</span>
+        {habit.rule === 'weekdays' && <span className="muted small">{describeRule(habit)}</span>}
+      </Link>
+      {habit.paused && !leaving && <span className="tag inline">{t.optional}</span>}
+      {longAgo && !leaving && <span className="tag inline faz">{t.longAgo}</span>}
+      {counter && !leaving && (
+        <span className="counter mono" aria-label={t.counterOf(entry.count, habit.dailyGoal)}>
+          {entry.count}/{habit.dailyGoal}
+        </span>
+      )}
+      {leaving && (
+        <span className="gain mono" role="status">
+          {strings.progress.gain(entry.xp, entry.gold)}
+        </span>
+      )}
+    </li>
   );
 }
 
