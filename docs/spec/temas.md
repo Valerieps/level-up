@@ -7,7 +7,7 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 
 ## Em aberto
 
-- [ ] Quais jogos viram tema depois do Ocarina, e em que ordem. Cada tema novo é um trabalho à parte: nome, paleta, fontes, ícones e logo.
+- [ ] Quais jogos viram tema depois do Stardew Valley e do Ocarina, e em que ordem. Cada tema novo é um trabalho à parte: nome, paleta, fontes, ícones e logo.
 
 ## O que é um tema
 
@@ -19,6 +19,7 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 ## Os temas que existem
 
 - **Ameixa**, o padrão: o visual próprio do LevelUp. *(1e)*
+- **Stardew Valley**: rústico e aconchegante: pergaminho, madeira, folha verde e pixel art. *(1e)*
 - **Ocarina**, de *The Legend of Zelda: Ocarina of Time*: as caixas de diálogo do jogo (painéis
   azul-marinho com texto claro) sobre a noite da floresta, ações no azul do botão A, o nível no verde
   da barra de magia e títulos na letra do jogo. *(1e)*

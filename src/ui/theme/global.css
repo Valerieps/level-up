@@ -1465,6 +1465,11 @@ button.reward-open {
   stroke: var(--color-on-brand);
 }
 
+/* A pixel-art logo's lit pixels, on the plate. */
+.logo-pixels {
+  fill: var(--color-on-top);
+}
+
 /* A coin with a color of its own (IconStyle.tone): the Ocarina's green Rupee. */
 .icon-currency {
   color: var(--color-currency);

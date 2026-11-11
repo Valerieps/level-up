@@ -304,6 +304,7 @@ export const strings = {
   /** The name of each visual theme in the Tema picker (ADR-012). */
   themes: {
     ameixa: 'Ameixa',
+    stardew: 'Stardew Valley',
     ocarina: 'Ocarina',
   },
 

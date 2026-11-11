@@ -88,6 +88,22 @@ A identidade do LevelUp (ADR-010) e o tema padrão (ADR-012). Um modo só, claro
   o item sai em `--duration-base`; celebrações entram em `--duration-celebration`, sem confete
   contínuo.
 
+## Identidade Stardew Valley
+
+Um tema de jogo (ADR-012): inspirado no jogo de fazenda, nunca cópia. Os valores estão no bloco
+`[data-theme='stardew']` do `tokens.css`; os ícones e o logo, em `src/ui/theme/stardew.tsx`.
+
+- **Pergaminho, madeira e folha.** Fundo pergaminho, texto e topo de madeira escura, o verde-folha
+  nas ações (`--color-brand`), o dourado só no prêmio.
+- **Nada de toldo vermelho.** O vermelho continua só de excluir e de erro.
+- **Fontes:** Pixelify Sans nos títulos e nos números de progresso, Nunito no texto.
+- **Formas:** cantos quadrados, bordas de 2px, sombras duras sem desfoque, marcador e dia do
+  heatmap quadrados.
+- **Ícones em pixel art de uma cor**, na cor do texto: grade de 10x10 nos de 20px e de 8x8 nos de
+  16px (o "feito" e a moeda), para cada pixel cair em 2 pixels da tela. Sem relevo nem degradê.
+  Abas: sol nascendo atrás da cerca (Hoje), barraca de feira (Loja), chapéu de palha (Perfil);
+  placa de madeira com "+", estrela, roseta de prêmio (Automatizado).
+
 ## Mudar a identidade visual
 
 Mude só os valores do bloco do tema no `tokens.css`, sem renomear os tokens. No tema padrão,
