@@ -137,3 +137,67 @@ describe('the API surface', () => {
     expect(service.command(admin, 'constructor', {})).toEqual({ ok: false, error: 'not_found' });
   });
 });
+
+describe("the member's day (ADR-009)", () => {
+  it('starts at midnight in São Paulo, and follows the zone sent with each command', () => {
+    const admin = signInAdmin();
+    expect(service.query(admin, 'settings', {})).toEqual({ ok: true, value: { dayTurnover: 0, timeZone: 'America/Sao_Paulo' } });
+    service.command(admin, 'settings.update', { timeZone: 'Europe/Lisbon' });
+    expect(service.query(admin, 'settings', {})).toMatchObject({ value: { timeZone: 'Europe/Lisbon' } });
+    service.command(admin, 'settings.update', { timeZone: 'Not/AZone' });
+    expect(service.query(admin, 'settings', {})).toMatchObject({ value: { timeZone: 'Europe/Lisbon' } });
+  });
+
+  it('changes the turnover within the day only', () => {
+    const admin = signInAdmin();
+    expect(service.command(admin, 'settings.update', { dayTurnover: 240 })).toMatchObject({ ok: true, value: { dayTurnover: 240 } });
+    expect(service.command(admin, 'settings.update', { dayTurnover: 1440 })).toEqual({ ok: false, error: 'invalid' });
+    expect(service.command(admin, 'settings.update', { dayTurnover: '60' })).toEqual({ ok: false, error: 'invalid' });
+  });
+
+  it('turns each member over once per day, at their own turnover', () => {
+    const admin = signInAdmin();
+    service.command(admin, 'settings.update', { dayTurnover: 240 });
+    // 12:00 UTC on 2026-10-21 is 9:00 in São Paulo: nothing to close on the first tick.
+    expect(service.tick()).toEqual([]);
+    clock.set('2026-10-22T06:00:00Z'); // 3:00 local, before the 4h turnover: still the 21st.
+    expect(service.tick()).toEqual([]);
+    clock.set('2026-10-22T07:05:00Z'); // 4:05 local: the 22nd began.
+    const anaId = (service.query(admin, 'me', {}) as { value: { id: string } }).value.id;
+    expect(service.tick()).toEqual([{ to: { memberId: anaId }, topics: ['day'] }]);
+    expect(service.tick()).toEqual([]);
+  });
+});
+
+describe('live updates (ADR-008)', () => {
+  it("send a member's own changes only to that member, and group changes to everyone", () => {
+    const admin = signInAdmin();
+    const anaId = (service.query(admin, 'me', {}) as { value: { id: string } }).value.id;
+    expect(service.command(admin, 'settings.update', {})).toMatchObject({ notify: [{ to: { memberId: anaId }, topics: ['settings', 'day'] }] });
+    expect(invite(admin, 'carla@example.com')).toMatchObject({ notify: [{ to: 'all', topics: ['invites'] }] });
+  });
+
+  it("tell the member whose roles changed, not only the admin who changed them", () => {
+    const admin = signInAdmin();
+    invite(admin, 'carla@example.com');
+    service.signIn(profile('carla@example.com'), 'h-carla', []);
+    const carlaId = (service.query('h-carla', 'me', {}) as { value: { id: string } }).value.id;
+    expect(service.command(admin, 'member.setRoles', { memberId: carlaId, roles: ['admin'] })).toMatchObject({
+      notify: [
+        { to: 'all', topics: ['members'] },
+        { to: { memberId: carlaId }, topics: ['me'] },
+      ],
+    });
+  });
+
+  it('tell the member when the device reports a new zone with any command', () => {
+    const admin = signInAdmin();
+    expect(service.command(admin, 'member.rename', { name: 'Ana', timeZone: 'Asia/Tokyo' })).toMatchObject({
+      notify: [{ to: 'all', topics: ['members'] }, { topics: ['me', 'settings', 'day'] }],
+    });
+    // Same zone again: only what the command itself changed.
+    expect(service.command(admin, 'member.rename', { name: 'Ana', timeZone: 'Asia/Tokyo' })).toMatchObject({
+      notify: [{ to: 'all', topics: ['members'] }, { topics: ['me'] }],
+    });
+  });
+});

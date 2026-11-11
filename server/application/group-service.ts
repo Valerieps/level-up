@@ -1,7 +1,8 @@
 // The single entry to the group's data. The Durable Object calls it; every method is synchronous,
 // so a command runs alone and inside one transaction (ADR-004).
 import type { ApiResult, CommandName, Commands, QueryName, Queries, Topic } from '../../src/application/api-contract';
-import { failure, QueryError, type CommandResult, type Context } from './context';
+import { isGroupTopic } from '../../src/application/topics';
+import { failure, QueryError, type CommandResult, type Context, type Notification } from './context';
 import { createInvite, listInvites, revokeInvite } from './invites';
 import {
   listMembers,
@@ -18,6 +19,7 @@ import {
 } from './members';
 import type { Clock, IdGenerator, Sql } from './ports';
 import { migrate } from './schema';
+import { closeDays, getSettings, recordTimeZone, updateSettings } from './settings';
 
 type Input = Record<string, unknown>;
 
@@ -28,6 +30,7 @@ const QUERIES: { [N in QueryName]: Handler<Queries[N]['output'] | QueryError | n
   me: (_ctx, actor) => me(actor),
   members: (ctx, actor) => listMembers(ctx, actor),
   invites: (ctx, actor) => listInvites(ctx, actor),
+  settings: (ctx, actor) => getSettings(ctx, actor),
 };
 
 /** Every command the API runs; each checks the actor's role itself. */
@@ -37,7 +40,24 @@ const COMMANDS: { [N in CommandName]: Handler<CommandResult<Commands[N]['output'
   'member.setRoles': setRoles,
   'member.remove': removeMember,
   'member.rename': rename,
+  'settings.update': updateSettings,
 };
+
+/** A command's result plus whom to tell what changed. */
+export type CommandOutcome = CommandResult<unknown> & { readonly notify?: readonly Notification[] };
+
+/** Group topics reach every app; a member's own topics reach only that member's apps (ADR-008). */
+export function notificationsFor(actorId: string, result: CommandResult<unknown>, extra: readonly Topic[] = []): Notification[] {
+  if (!result.ok) return [];
+  const changed = [...new Set([...result.changed, ...extra])];
+  const group = changed.filter(isGroupTopic);
+  const own = changed.filter((t) => !isGroupTopic(t));
+  const notifications: Notification[] = [];
+  if (group.length > 0) notifications.push({ to: 'all', topics: group });
+  if (own.length > 0) notifications.push({ to: { memberId: actorId }, topics: own });
+  for (const other of result.changedFor ?? []) notifications.push({ to: { memberId: other.memberId }, topics: other.topics });
+  return notifications;
+}
 
 export class GroupService {
   private readonly ctx: Context;
@@ -72,21 +92,31 @@ export class GroupService {
     return value === null ? failure('forbidden') : { ok: true, value };
   }
 
-  command(sessionHash: string, name: string, input: unknown): CommandResult<unknown> {
+  /**
+   * Runs a command for the session's member. The device's zone travels in every command's body
+   * (`timeZone`, ADR-009) and is stored first, in the same transaction.
+   */
+  command(sessionHash: string, name: string, input: unknown): CommandOutcome {
     const actor = this.memberForSession(sessionHash);
     if (!actor) return failure('unauthenticated');
     const handler = Object.hasOwn(COMMANDS, name) ? COMMANDS[name as CommandName] : undefined;
     if (!handler) return failure('not_found');
-    return this.ctx.sql.transaction(() => handler(this.ctx, actor, asInput(input)));
+    const body = asInput(input);
+    return this.ctx.sql.transaction((): CommandOutcome => {
+      const zoneChanged = recordTimeZone(this.ctx, actor.id, body.timeZone);
+      const result = handler(this.ctx, actor, body);
+      if (!result.ok) return result;
+      return { ...result, notify: notificationsFor(actor.id, result, zoneChanged ? ['settings', 'day'] : []) };
+    });
   }
 
   /**
    * Runs the time-based jobs that are due (ADR-004: one cron, every few minutes; each job decides
-   * whether it is due). Returns the topics that changed, for the open apps.
+   * whether it is due). Returns whom to tell what changed.
    */
-  tick(): Topic[] {
+  tick(): Notification[] {
     this.ctx.sql.run('DELETE FROM sessions WHERE expires_at <= ?', this.ctx.clock.now().toISOString());
-    return [];
+    return closeDays(this.ctx).map((memberId): Notification => ({ to: { memberId }, topics: ['day'] }));
   }
 }
 

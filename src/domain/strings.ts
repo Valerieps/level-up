@@ -22,16 +22,31 @@ export const strings = {
 
   nav: {
     main: 'Navegação principal',
-    home: 'Início',
-    members: 'Membros',
-    invites: 'Convites',
-    signOut: 'Sair',
+    today: 'Hoje',
+    shop: 'Loja',
+    profile: 'Perfil',
+    settings: 'Configurações',
+    back: 'Voltar',
   },
 
-  home: {
-    greeting: (greeting: string, name: string) => `${greeting}, ${name}!`,
-    nameLabel: 'Meu nome',
-    save: 'Salvar',
+  today: {
+    title: 'Hoje',
+    empty: 'Seus hábitos de hoje vão aparecer aqui.',
+  },
+
+  profile: {
+    title: 'Perfil',
+  },
+
+  settings: {
+    title: 'Configurações',
+    day: 'Virada do dia',
+    dayTurnoverLabel: 'Meu dia termina às',
+    dayTurnoverHint: 'O que eu fizer antes desse horário ainda conta para o dia anterior.',
+    hour: (hour: number) => (hour === 0 ? 'Meia-noite' : `${hour}h`),
+    account: 'Conta',
+    signOut: 'Sair',
+    group: 'Grupo',
   },
 
   invites: {

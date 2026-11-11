@@ -152,21 +152,90 @@ a {
 
 /* Navigation */
 
-.tabs {
-  gap: var(--space-4);
+.icon {
+  width: var(--size-icon);
+  height: var(--size-icon);
+  flex-shrink: 0;
 }
 
-.tabs a {
+/* Room under the content for the fixed tab bar. */
+.app.with-tab-bar {
+  padding-bottom: calc(var(--size-tab-bar) + var(--space-6) + env(safe-area-inset-bottom));
+}
+
+.tab-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: space-around;
+  min-height: var(--size-tab-bar);
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: var(--border-width) solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: var(--size-touch);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
+  text-decoration: none;
+}
+
+.tab-icon {
+  display: inline-flex;
+  padding: var(--space-1) var(--space-4);
+  border-radius: var(--radius-full);
+}
+
+.tab[aria-current='page'] {
+  color: var(--color-brand-ink);
+  font-weight: var(--font-weight-strong);
+}
+
+.tab[aria-current='page'] .tab-icon {
+  background: var(--color-brand-soft);
+}
+
+.screen-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.screen-header h1 {
+  margin: 0;
+}
+
+.icon-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: var(--size-touch);
   min-height: var(--size-touch);
-  text-decoration: none;
-  border-bottom: var(--border-width-strong) solid transparent;
+  border-radius: var(--radius-full);
+  color: var(--color-text);
 }
 
-.tabs a[aria-current='page'] {
-  font-weight: var(--font-weight-strong);
-  border-bottom-color: var(--color-brand);
+.section-title {
+  margin-top: var(--space-8);
+}
+
+.list-link {
+  display: flex;
+  align-items: center;
+  min-height: var(--size-touch);
+  color: var(--color-text);
+  text-decoration: none;
 }
 
 /* Controls: every one is at least --size-touch tall. */

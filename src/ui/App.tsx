@@ -5,16 +5,28 @@ import { strings } from '../domain/strings';
 import { useLiveStatus, useServices } from './backend-context';
 import { Button } from './components/Button';
 import { Notice } from './components/Notice';
-import { Link, navigate, usePath } from './router';
-import { Home } from './screens/Home';
+import { TabBar, type Tab } from './components/TabBar';
+import { navigate, usePath } from './router';
 import { Invites } from './screens/Invites';
 import { Members } from './screens/Members';
+import { Profile } from './screens/Profile';
+import { Settings } from './screens/Settings';
 import { SignIn } from './screens/SignIn';
+import { Today } from './screens/Today';
 import { useQuery } from './use-query';
+import { useTimeZoneSync } from './use-today';
 
-/** The app's screens. Home is the template example; the Hoje tab replaces it (docs/ROADMAP.md). */
+/**
+ * The bottom tabs (docs/spec/telas-e-feedback.md "Navegação"). The Loja tab joins in phase 1d,
+ * between Hoje and Perfil.
+ */
+const TABS: readonly Tab[] = [
+  { path: '/', label: strings.nav.today, icon: 'today' },
+  { path: '/perfil', label: strings.nav.profile, icon: 'profile' },
+];
+
 export function App() {
-  const { backend, live } = useServices();
+  const { live } = useServices();
   const me = useQuery('me', {}, ['me']);
   const signedIn = me.data !== undefined && me.error !== 'unauthenticated';
 
@@ -34,45 +46,28 @@ export function App() {
     );
   }
   if (!signedIn) return <SignIn />;
+  return <SignedIn me={me.data} onSignedOut={me.reload} />;
+}
+
+function SignedIn({ me, onSignedOut }: { me: MeView; onSignedOut: () => void }) {
+  const { backend } = useServices();
+  const path = usePath();
+  useTimeZoneSync();
 
   async function signOut() {
     await backend.signOut();
     navigate('/', { replace: true });
-    me.reload();
+    onSignedOut();
   }
 
   return (
-    <div className="app">
-      <Navigation me={me.data} onSignOut={() => void signOut()} />
+    <div className="app with-tab-bar">
       <OfflineNotice />
-      <Screen me={me.data} />
+      <main>
+        <Screen me={me} path={path} onSignOut={() => void signOut()} />
+      </main>
+      <TabBar tabs={TABS} path={path} />
     </div>
-  );
-}
-
-function Navigation({ me, onSignOut }: { me: MeView; onSignOut: () => void }) {
-  const path = usePath();
-  const tabs = [
-    { path: '/', label: strings.nav.home },
-    ...(canManageGroup(me)
-      ? [
-          { path: '/membros', label: strings.nav.members },
-          { path: '/convites', label: strings.nav.invites },
-        ]
-      : []),
-  ];
-  return (
-    <nav className="row tabs" aria-label={strings.nav.main}>
-      {tabs.map((tab) => (
-        <Link key={tab.path} to={tab.path} aria-current={path === tab.path ? 'page' : undefined}>
-          {tab.label}
-        </Link>
-      ))}
-      <span className="grow" />
-      <Button variant="secondary" onClick={onSignOut}>
-        {strings.nav.signOut}
-      </Button>
-    </nav>
   );
 }
 
@@ -82,9 +77,11 @@ function OfflineNotice() {
   return <Notice>{strings.offline}</Notice>;
 }
 
-function Screen({ me }: { me: MeView }) {
-  const path = usePath();
-  if (path === '/membros' && canManageGroup(me)) return <Members me={me} />;
-  if (path === '/convites' && canManageGroup(me)) return <Invites />;
-  return <Home me={me} />;
+/** Tab → screen → sheet at most (two levels from a tab). Unknown paths fall back to Hoje. */
+function Screen({ me, path, onSignOut }: { me: MeView; path: string; onSignOut: () => void }) {
+  if (path === '/perfil') return <Profile me={me} />;
+  if (path === '/perfil/configuracoes') return <Settings me={me} onSignOut={onSignOut} />;
+  if (path === '/perfil/configuracoes/membros' && canManageGroup(me)) return <Members me={me} />;
+  if (path === '/perfil/configuracoes/convites' && canManageGroup(me)) return <Invites />;
+  return <Today />;
 }

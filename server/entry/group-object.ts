@@ -2,7 +2,8 @@
 // WebSocket connections of every open app. Calls are processed one at a time, so each command
 // runs alone; its writes commit in one transaction.
 import { DurableObject } from 'cloudflare:workers';
-import type { LiveMessage, Topic } from '../../src/application/api-contract';
+import type { LiveMessage } from '../../src/application/api-contract';
+import type { Notification } from '../application/context';
 import { GroupService } from '../application/group-service';
 import type { GoogleProfile, SignInResult } from '../application/members';
 import { durableObjectSql } from '../infrastructure/durable-object-sql';
@@ -32,16 +33,15 @@ export class Group extends DurableObject<Env> {
   }
 
   command(sessionHash: string, name: string, input: unknown) {
-    const result = this.service.command(sessionHash, name, input);
-    if (result.ok && result.changed.length > 0) this.broadcast(result.changed);
+    const { notify, ...result } = this.service.command(sessionHash, name, input);
+    this.send(notify ?? []);
     // A removed member's open apps lose the live connection now; their sessions are already gone.
     if (result.ok) for (const memberId of result.disconnect ?? []) this.disconnect(memberId);
     return result;
   }
 
   tick(): void {
-    const changed = this.service.tick();
-    if (changed.length > 0) this.broadcast(changed);
+    this.send(this.service.tick());
   }
 
   /** Live connection: the Worker already checked the origin and passes the session hash. */
@@ -72,14 +72,19 @@ export class Group extends DurableObject<Env> {
     }
   }
 
-  private broadcast(topics: readonly Topic[]): void {
-    const message: LiveMessage = { type: 'changed', topics };
-    const text = JSON.stringify(message);
-    for (const ws of this.ctx.getWebSockets()) {
-      try {
-        ws.send(text);
-      } catch {
-        // A closing socket; the app reconnects and refetches on its own.
+  /** A member's own changes go only to that member's sockets (ADR-008); group ones to all. */
+  private send(notifications: readonly Notification[]): void {
+    for (const { to, topics } of notifications) {
+      if (topics.length === 0) continue;
+      const message: LiveMessage = { type: 'changed', topics };
+      const text = JSON.stringify(message);
+      const sockets = to === 'all' ? this.ctx.getWebSockets() : this.ctx.getWebSockets(to.memberId);
+      for (const ws of sockets) {
+        try {
+          ws.send(text);
+        } catch {
+          // A closing socket; the app reconnects and refetches on its own.
+        }
       }
     }
   }

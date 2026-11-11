@@ -4,6 +4,7 @@ import { normalizeEmail } from '../../src/domain/group/email';
 import { normalizeName } from '../../src/domain/group/profile';
 import { isAdmin, keepsAnAdmin, normalizeRoles, type Role } from '../../src/domain/group/roles';
 import { failure, nowIso, type CommandResult, type Context } from './context';
+import { ensureSettings } from './settings';
 
 export const SESSION_DAYS = 180;
 
@@ -115,6 +116,7 @@ export function signIn(ctx: Context, profile: GoogleProfile, sessionHash: string
       if (invite) ctx.sql.run("UPDATE invites SET state = 'accepted', accepted_at = ? WHERE email = ?", at, email);
     }
 
+    ensureSettings(ctx, memberId);
     const expires = new Date(ctx.clock.now().getTime() + SESSION_DAYS * 24 * 60 * 60 * 1000).toISOString();
     ctx.sql.run('INSERT INTO sessions (token_hash, member_id, created_at, expires_at) VALUES (?, ?, ?, ?)', sessionHash, memberId, at, expires);
     return { ok: true, memberId } as const;
@@ -169,7 +171,12 @@ export function setRoles(ctx: Context, actor: Member, input: { memberId?: unknow
     return failure('last_admin');
   }
   ctx.sql.run('UPDATE members SET roles = ? WHERE id = ?', JSON.stringify(roles), target.id);
-  return { ok: true, value: memberView({ ...target, roles }), changed: ['members', 'me'] };
+  return {
+    ok: true,
+    value: memberView({ ...target, roles }),
+    changed: ['members'],
+    changedFor: [{ memberId: target.id, topics: ['me'] }],
+  };
 }
 
 /**
