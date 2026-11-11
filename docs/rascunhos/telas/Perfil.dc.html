@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Perfil</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ameixa/tokens.css">
+<link rel="stylesheet" href="ds/ameixa/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 1000px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: var(--canvas); color: var(--ink); font-family: var(--font-body);">
+  <header class="am-top" style="padding-top: 20px; gap: 10px;">
+    <div class="am-top-row">
+      <span style="font-family: var(--font-display); font-size: 28px; line-height: 34px; font-weight: 600;">Nível 7</span>
+      <a class="am-iconbtn" href="Configuracoes.dc.html" aria-label="Configurações" style="margin-left: auto;"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 4.3c.4-1.8 3-1.8 3.4 0a1.7 1.7 0 0 0 2.6 1.1c1.5-.9 3.3.8 2.4 2.4a1.7 1.7 0 0 0 1 2.5c1.8.5 1.8 3 0 3.5a1.7 1.7 0 0 0-1 2.6c.9 1.5-.9 3.3-2.4 2.4a1.7 1.7 0 0 0-2.6 1c-.4 1.8-3 1.8-3.4 0a1.7 1.7 0 0 0-2.6-1c-1.5.9-3.3-.9-2.4-2.4a1.7 1.7 0 0 0-1-2.6c-1.8-.5-1.8-3 0-3.5a1.7 1.7 0 0 0 1-2.5c-.9-1.6.9-3.3 2.4-2.4a1.7 1.7 0 0 0 2.6-1.1z"></path><circle cx="12" cy="12" r="3"></circle></svg></a>
+    </div>
+    <div class="am-xpbar"><i style="width: 68%;"></i></div>
+    <div class="am-xpmeta"><span>340 / 500 XP</span><span>faltam 160 para o nível 8</span></div>
+  </header>
+
+  <main style="flex: 1; padding: 20px 16px 0; display: flex; flex-direction: column; gap: 24px;">
+    <section style="display: flex; flex-direction: column; gap: 10px;">
+      <h2 style="margin: 0; font-family: var(--font-display); font-size: 18px; line-height: 24px; font-weight: 600;">Conquistas</h2>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+        <article style="display: flex; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius-md);">
+          <span style="width: 36px; height: 36px; border-radius: var(--radius-full); display: grid; place-items: center; background: var(--primary-soft); color: var(--primary-ink);"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></span>
+          <span style="font-size: 13px; font-weight: 600; color: var(--ink-muted);">Automatizados</span>
+          <span class="am-num" style="font-size: 26px; line-height: 30px; font-weight: 700;">2</span>
+          <div style="height: 6px; border-radius: var(--radius-full); background: var(--track); overflow: hidden;"><i style="display: block; height: 100%; width: 66%; background: var(--primary);"></i></div>
+          <span style="font-size: 12px; line-height: 16px; color: var(--ink-muted);">Próximo: 3 hábitos · <span class="am-num" style="color: var(--gold-ink);">+100 ouro</span></span>
+        </article>
+        <article style="display: flex; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius-md);">
+          <span style="width: 36px; height: 36px; border-radius: var(--radius-full); display: grid; place-items: center; background: var(--gold-soft); color: var(--gold-ink); font-size: 18px;" aria-hidden="true">★</span>
+          <span style="font-size: 13px; font-weight: 600; color: var(--ink-muted);">Coragem</span>
+          <span class="am-num" style="font-size: 26px; line-height: 30px; font-weight: 700;">3 <span style="font-size: 13px; font-weight: 600; color: var(--ink-muted);">estrelas</span></span>
+          <div style="height: 6px; border-radius: var(--radius-full); background: var(--track); overflow: hidden;"><i style="display: block; height: 100%; width: 60%; background: var(--star);"></i></div>
+          <span style="font-size: 12px; line-height: 16px; color: var(--ink-muted);">Próximo: 5 estrelas · <span class="am-num" style="color: var(--gold-ink);">+100 ouro</span></span>
+        </article>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between;">
+        <h2 style="margin: 0; font-family: var(--font-display); font-size: 18px; line-height: 24px; font-weight: 600;">Todos os hábitos</h2>
+        <span style="font-size: 13px; color: var(--ink-muted);">últimas 20 semanas</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-muted); padding-right: 40px;"><span>jul</span><span>ago</span><span>set</span><span>out</span><span>nov</span></div>
+      <a class="am-heat" href="Folha-dia.dc.html" role="img" aria-label="Heatmap geral das últimas 20 semanas. Toque num dia para ver o que foi feito.">
+        <sc-for list="{{cells}}" as="c" hint-placeholder-count="140"><i data-l="{{c.l}}"></i></sc-for>
+      </a>
+      <div class="am-heat-legend">Menos <i style="background: var(--heat-0);"></i><i style="background: var(--heat-1);"></i><i style="background: var(--heat-2);"></i><i style="background: var(--heat-3);"></i><i style="background: var(--heat-4);"></i> Mais</div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; border-top: 1px solid var(--line);">
+      <a href="Detalhe-arquivado.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-bottom: 1px solid var(--line);">
+        <svg class="am-ic" style="color: var(--ink-muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v4H3zM5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M10 12h4"></path></svg>
+        <span style="flex: 1; font-size: 15px; font-weight: 600;">Hábitos arquivados</span>
+        <span class="am-num" style="font-size: 13px; color: var(--ink-muted);">1</span>
+        <svg class="am-ic" style="color: var(--ink-muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+      </a>
+    </section>
+  </main>
+
+  <nav class="am-tabs" aria-label="Principal">
+    <a class="am-tab" href="Main.dc.html"><span class="pill"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12H3l9-9 9 9h-2M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path><path d="M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"></path></svg></span>Hoje</a>
+    <a class="am-tab" href="Loja.dc.html"><span class="pill"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h18v4H3zM12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"></path></svg></span>Loja</a>
+    <a class="am-tab" href="Perfil.dc.html" aria-current="page"><span class="pill"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"></circle><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path></svg></span>Perfil</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var cells = [];
+    var seed = 23;
+    for (var i = 0; i < 140; i++) {
+      seed = (seed * 9301 + 49297) % 233280;
+      var r = seed / 233280;
+      var l = r < 0.1 ? 0 : (r < 0.25 ? 1 : (r < 0.5 ? 2 : (r < 0.8 ? 3 : 4)));
+      cells.push({ l: l });
+    }
+    return { cells: cells };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,7 +1,12 @@
-# <Nome do app> - Claude Code Context & Instructions
+# LevelUp - Claude Code Context & Instructions
 
-<!-- BOOTSTRAP.md fills this paragraph: what the app is, for whom, and its core loop. -->
-<One paragraph: what the app does, who uses it, the loop a member repeats every day.>
+LevelUp is a gamified habit app with no punishment, used on the phone by the owner and the few
+people she invites, each with private habits nobody else sees (ADR-008). Several times a day a
+member opens the Hoje tab, taps the habits done and leaves: each completion earns XP and gold, a
+habit done consistently earns the Automatizado badge and an invitation to raise the bar (Estrelas de
+Coragem), and gold buys real-life rewards in the Loja. Missing a day never takes anything away;
+pausing costs nothing. The day turns at an hour each member picks, in the device's time zone
+(ADR-009). The visual identity is Ameixa (ADR-010; drafts in `docs/rascunhos/`).
 
 ## Docs
 

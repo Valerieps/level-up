@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Subir a régua</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ameixa/tokens.css">
+<link rel="stylesheet" href="ds/ameixa/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: var(--canvas); color: var(--ink); font-family: var(--font-body);">
+  <div aria-hidden="true" style="padding: 64px 16px; display: flex; flex-direction: column; gap: 12px;">
+    <div style="font-family: var(--font-display); font-size: 26px; line-height: 32px; font-weight: 600;">Ler 30 minutos</div>
+    <div style="font-size: 15px; color: var(--ink-muted);">Fácil · segunda a sexta</div>
+    <div style="height: 120px; margin-top: 12px; border-radius: var(--radius-md); background: var(--gold-soft);"></div>
+  </div>
+  <div style="position: absolute; inset: 0; background: rgba(16, 10, 18, 0.45);"></div>
+  <section class="am-sheet" role="dialog" aria-labelledby="t" style="position: absolute; left: 0; right: 0; bottom: 0; max-width: none; padding-bottom: 32px;">
+    <div class="am-sheet-grab"></div>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <span class="am-badge am-badge-gold" style="align-self: flex-start;">★ +1 Estrela de Coragem</span>
+      <h2 id="t">Subir a régua</h2>
+      <p style="font-size: 15px; line-height: 22px; color: var(--ink-muted);">"Ler 30 minutos" virou automático. Escolha como evoluir: a estrela dá +10% de XP para sempre neste hábito.</p>
+    </div>
+    <div class="am-choices" role="radiogroup" aria-label="Formas de subir a régua">
+      <button class="am-choice" role="radio" aria-checked="true"><span>Fácil → Média<small>Aumentar a dificuldade</small></span><span class="am-xpdelta">12 → 20 XP</span></button>
+      <button class="am-choice" role="radio" aria-checked="false"><span>Adicionar sábado<small>De 5 para 6 dias por semana</small></span><span class="am-xpdelta">12 → 13 XP</span></button>
+    </div>
+    <p style="font-size: 13px; line-height: 18px; color: var(--ink-muted);">A contagem para Automatizado recomeça no patamar novo. Streak, selo e estrelas ficam.</p>
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <button class="am-btn am-btn-primary am-btn-block" style="min-height: 52px;">Subir a régua</button>
+      <a class="am-btn am-btn-ghost am-btn-block" href="Detalhe.dc.html">Agora não</a>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Entrada</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ameixa/tokens.css">
+<link rel="stylesheet" href="ds/ameixa/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: var(--canvas); color: var(--ink); font-family: var(--font-body);">
+  <section style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 20px; padding: 32px 24px 36px; background: var(--top); color: var(--top-ink);">
+    <div aria-hidden="true" style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px;">
+      <div style="height: 10px; border-radius: var(--radius-full); background: var(--top-track); overflow: hidden;"><i style="display: block; height: 100%; width: 78%; background: var(--gold);"></i></div>
+      <div style="height: 10px; border-radius: var(--radius-full); background: var(--top-track); overflow: hidden;"><i style="display: block; height: 100%; width: 46%; background: var(--level);"></i></div>
+      <div style="height: 10px; border-radius: var(--radius-full); background: var(--top-track); overflow: hidden;"><i style="display: block; height: 100%; width: 92%; background: var(--gold);"></i></div>
+      <div style="height: 10px; border-radius: var(--radius-full); background: var(--top-track); overflow: hidden;"><i style="display: block; height: 100%; width: 30%; background: var(--level);"></i></div>
+    </div>
+    <span style="font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--level);">[Nome do app]</span>
+    <h1 style="margin: 0; font-family: var(--font-display); font-size: 34px; line-height: 40px; font-weight: 600; letter-spacing: -0.02em;">O app de hábitos que premia a coragem de evoluir.</h1>
+    <p style="margin: 0; font-size: 16px; line-height: 24px; color: var(--top-muted);">Sem punição. Só o que você faz conta.</p>
+  </section>
+  <section style="display: flex; flex-direction: column; gap: 10px; padding: 24px 24px 32px;">
+    <a class="am-btn am-btn-block" href="Hoje-primeiro-uso.dc.html" style="min-height: 52px; font-size: 16px;">Continuar com Google</a>
+    <a class="am-btn am-btn-block" href="Hoje-primeiro-uso.dc.html" style="min-height: 52px; font-size: 16px; background: var(--ink); border-color: var(--ink); color: var(--canvas);">Continuar com Apple</a>
+    <a class="am-btn am-btn-ghost am-btn-block" href="Hoje-primeiro-uso.dc.html" style="min-height: 52px; font-size: 16px;">Continuar com e-mail</a>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

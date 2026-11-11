@@ -1,14 +1,14 @@
 // Every user-facing text, in Brazilian Portuguese, in the app's voice (docs/GLOSSARIO.md has the
 // terms). The UI imports from here; it never writes its own text.
 export const strings = {
-  appName: 'Nome do app',
+  appName: 'LevelUp',
   genericError: 'Algo deu errado. Tenta de novo?',
   retry: 'Tentar de novo',
   forbidden: 'Você não tem permissão para isso.',
   offline: 'Sem conexão. Mostrando o último estado carregado.',
 
   signIn: {
-    tagline: 'Uma frase sobre o que o app faz.',
+    tagline: 'Um app de hábitos que só registra o que você fez, reconhece quando um hábito virou automático e premia a coragem de subir a régua.',
     button: 'Entrar com Google',
     noInvite: 'Não há convite para esse e-mail. Peça a um admin para te convidar.',
     failed: 'O login não deu certo. Tenta de novo?',
