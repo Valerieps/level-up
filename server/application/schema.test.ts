@@ -84,4 +84,19 @@ describe('migrations', () => {
       { habit_id: 'h3', tier: 'medium:1:0', first_on: '2026-11-02', mastered_on: null },
     ]);
   });
+
+  it('give members from before migration 8 the default theme', () => {
+    const sql = memorySql();
+    sql.run('CREATE TABLE schema_migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL)');
+    for (let v = 0; v < 7; v++) {
+      for (const statement of MIGRATIONS[v]) sql.run(statement);
+      sql.run('INSERT INTO schema_migrations VALUES (?, ?)', v + 1, '2026-11-01');
+    }
+    sql.run("INSERT INTO members (id, email, name, joined_at) VALUES ('m1', 'ana@example.com', 'Ana', '2026-11-01')");
+    sql.run("INSERT INTO member_settings (member_id, day_turnover, time_zone) VALUES ('m1', 0, 'America/Sao_Paulo')");
+
+    migrate(sql);
+
+    expect(sql.all('SELECT member_id, theme FROM member_settings')).toEqual([{ member_id: 'm1', theme: 'ameixa' }]);
+  });
 });

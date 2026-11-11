@@ -11,6 +11,10 @@ O que ainda não está pronto.
 
 Nada do MVP (fases 1a a 1d) falta construir.
 
+- Criar os temas de jogos, um por vez, sobre a estrutura da fase 1e (ADR-012; como fazer em
+  `docs/UI.md` "Adicionar um tema"). Até haver um segundo tema, a seção Tema do Perfil fica
+  escondida (`spec/telas-e-feedback.md`).
+
 ## O código ainda não segue o spec
 
 Nada.

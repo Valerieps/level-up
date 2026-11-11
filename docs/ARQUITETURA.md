@@ -62,7 +62,7 @@ app (celular) ──POST /api/query|command──► Worker ──RPC──► G
 | `members` | `id`, `google_sub`, `email`, `name`, `photo_url`, `roles` (JSON), `active` | Removido fica com `active = 0`; um convite novo traz o mesmo membro de volta |
 | `sessions` | `token_hash`, `member_id`, `expires_at` | Só o SHA-256 do token; o cron apaga as vencidas |
 | `invites` | `email`, `invited_by`, `state` (`pending`, `accepted`, `revoked`) | Um por e-mail |
-| `member_settings` | `member_id`, `day_turnover` (minutos), `time_zone` (IANA), `last_closed_day`, `yesterday_reviewed_on` | O dia de cada membro (ADR-009). O app manda o fuso do aparelho em todo comando; o cron fecha o dia de quem passou da virada. `yesterday_reviewed_on` é o "hoje" em que o membro fechou a revisão de ontem |
+| `member_settings` | `member_id`, `day_turnover` (minutos), `time_zone` (IANA), `last_closed_day`, `yesterday_reviewed_on`, `theme` | O dia de cada membro (ADR-009). O app manda o fuso do aparelho em todo comando; o cron fecha o dia de quem passou da virada. `yesterday_reviewed_on` é o "hoje" em que o membro fechou a revisão de ontem. `theme` é o tema visual que o membro escolheu (ADR-012) |
 
 As tabelas abaixo são o desenho do LevelUp; cada uma entra numa migração junto com a feature que a
 usa. Todas têm `member_id` e toda consulta filtra por ele (ADR-008).

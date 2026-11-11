@@ -1,16 +1,25 @@
 /*
  * Design tokens: every color, font, size, spacing and duration the UI uses lives here, and only here.
  * src/ui/theme/tokens.test.ts refuses a literal anywhere else, a var() of a token that does not
- * exist, a type scale out of rhythm and a color pair below WCAG AA (docs/UI.md).
+ * exist, a type scale out of rhythm, a theme missing a token and a color pair below WCAG AA
+ * (docs/UI.md).
  *
- * Changing the look of the app means changing the VALUES below. Keep the names: the components,
- * the tests and docs/UI.md use them. A new token is fine when no existing one fits; add it to
- * both themes if it is a color.
+ * Two kinds of block (ADR-012):
+ * - `:root` holds what is FIXED in every theme: the type scale, the spacing grid, the sizes that
+ *   keep touch targets and layout, the focus ring. A theme never redefines these.
+ * - One block per theme, keyed by `[data-theme='<id>']`, holds what a theme may vary: colors,
+ *   shadows, font families, weights, line heights, radii, border widths, motion and opacity. Every
+ *   theme defines exactly the same set. The default theme (Ameixa) also answers `:root`, so the app
+ *   is never unstyled, and comes first: later theme blocks win over it by source order. The app sets
+ *   `data-theme` on <html>; any element with `data-theme` (the picker's swatches) shows that theme.
  *
- * Identity: Ameixa (ADR-010; docs/rascunhos/design-system/README.md). Calm by default, color on
- * the reward: plum on the progress top, orange on actions, gold only on XP, gold and stars.
+ * Changing a look means changing the VALUES in its block. Keep the names: the components, the tests
+ * and docs/UI.md use them. A new token is fine when no existing one fits; a themed one goes into
+ * every theme block.
  */
-/* Fonts bundled in public/fonts (variable, latin subset; SIL OFL licenses beside them). */
+
+/* Fonts bundled in public/fonts (variable, latin subset; SIL OFL licenses beside them). The
+ * browser downloads a face only when an element uses it, so a theme nobody picked costs nothing. */
 @font-face {
   font-family: 'Sora';
   font-style: normal;
@@ -33,10 +42,73 @@
   src: url('/fonts/jetbrains-mono-latin-wght-normal.woff2') format('woff2-variations');
 }
 
+/* Fixed in every theme. */
 :root {
+  /* Type scale. It steps by 1.125 to 1.5 from one size to the next; nothing below 12px. */
+  --font-size-caption: 12px;
+  /* Metadata ("Fácil · seg, qua, sex"). */
+  --font-size-small: 14px;
+  /* 16px also keeps iOS from zooming into inputs. Habit names use it too. */
+  --font-size-body: 16px;
+  /* Section headers: Hoje, Hábitos livres, Conquistas. */
+  --font-size-title: 18px;
+  /* Full-screen and sheet titles. */
+  --font-size-heading: 22px;
+  /* Celebration titles. */
+  --font-size-display: 28px;
+
+  /* Spacing: a 4px grid. Gaps between related items are smaller than between groups. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* Sizes */
+  /* The smallest box a finger can hit reliably (WCAG 2.5.5, Apple HIG). */
+  --size-touch: 44px;
+  --size-avatar: 40px;
+  --size-icon: 20px;
+  --size-icon-small: 16px;
+  --size-content: 720px;
+  /* The bottom tab bar, without the phone's home-indicator area. */
+  --size-tab-bar: 64px;
+  /* The habit marker's shape; its button still fills --size-touch. */
+  --size-marker: 28px;
+  /* The floating "+". */
+  --size-fab: 56px;
+  /* XP bar height. */
+  --size-bar: 8px;
+  /* The grip at the top of a sheet. */
+  --size-handle: 36px;
+  /* The level-up celebration's number. */
+  --size-level-number: 36px;
+  /* The badge of a celebration: the selo or the milestone's number. */
+  --size-celebration-badge: 88px;
+  /* The narrowest a choice card gets before the grid wraps. */
+  --size-choice: 128px;
+  /* One day of a heatmap; the legend swatches too. */
+  --size-heat-cell: 14px;
+  /* The in-app logo on the sign-in screen. */
+  --size-logo: 64px;
+  /* One color of a theme's swatch in the Tema picker. */
+  --size-swatch: 16px;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+}
+
+/*
+ * Theme: Ameixa, the default (ADR-010). Calm by default, color on the reward: plum on the progress
+ * top, orange on actions, gold only on XP, gold and stars. One light mode.
+ */
+:root,
+[data-theme='ameixa'] {
   color-scheme: light;
 
-  /* Colors. Every one is redefined in the dark theme below. */
+  /* Colors */
   --color-bg: #ffffff;
   --color-surface: #ffffff;
   /* Sheets and dialogs, which also carry --shadow-sheet. */
@@ -54,7 +126,7 @@
   --color-brand-ink: #a63a12;
   --color-brand-soft: #fde2d6;
   --color-on-brand: #ffffff;
-  /* Plum: the progress top and the celebrations, the same in both themes. */
+  /* Plum: the progress top and the celebrations. */
   --color-top: #2a1a2d;
   --color-on-top: #ffffff;
   --color-top-muted: #cdb9cf;
@@ -71,7 +143,10 @@
   /* "Faz tempo": a reminder, not an alert. */
   --color-faz: #4b3596;
   --color-faz-soft: #ece6ff;
-  /* Danger is only for deleting and for action errors; never for a habit not done. */
+  /*
+   * Danger is only for deleting and for action errors; never for a habit not done. Every theme
+   * keeps it a recognizable red, only re-tuned for contrast.
+   */
   --color-danger: #b42318;
   --color-danger-soft: #fbe0e0;
   --color-on-danger: #ffffff;
@@ -90,6 +165,8 @@
   --color-heat-2: #f5a27f;
   --color-heat-3: #e06a3a;
   --color-heat-4: #a63a12;
+  /* The phone's browser bar (the theme-color meta), set at runtime from this token. */
+  --color-browser-bar: #c84a1c;
 
   /* Shadows: only on the "+", sheets and toasts. Elsewhere, thin borders. */
   --shadow-fab: 0 10px 20px -8px rgba(200, 74, 28, 0.55);
@@ -97,24 +174,12 @@
   --shadow-toast: 0 8px 24px -8px rgba(42, 26, 45, 0.4);
 
   /*
-   * Type. The scale steps by 1.125 to 1.5 from one size to the next; nothing below 12px.
-   * Sora for titles, Inter for text, JetBrains Mono for every progress number. They are bundled in
-   * public/fonts (@font-face at the top); the system fonts are the fallback while they load.
+   * Type. Sora for titles, Inter for text, JetBrains Mono for every progress number. They are
+   * bundled in public/fonts (@font-face at the top); the system fonts are the fallback while they load.
    */
   --font-sans: Inter, 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
   --font-display: Sora, 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  --font-size-caption: 12px;
-  /* Metadata ("Fácil · seg, qua, sex"). */
-  --font-size-small: 14px;
-  /* 16px also keeps iOS from zooming into inputs. Habit names use it too. */
-  --font-size-body: 16px;
-  /* Section headers: Hoje, Hábitos livres, Conquistas. */
-  --font-size-title: 18px;
-  /* Full-screen and sheet titles. */
-  --font-size-heading: 22px;
-  /* Celebration titles. */
-  --font-size-display: 28px;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-strong: 600;
@@ -122,17 +187,7 @@
   --line-height-body: 1.5;
   --letter-spacing-display: -0.01em;
 
-  /* Spacing: a 4px grid. Gaps between related items are smaller than between groups. */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-12: 48px;
-
-  /* Shapes and sizes */
+  /* Shapes */
   /* Pills, tags, gain chips. */
   --radius-sm: 6px;
   /* Habit items, cards, fields, buttons. */
@@ -141,36 +196,14 @@
   --radius-lg: 16px;
   /* Top corners of sheets. */
   --radius-xl: 24px;
-  /* Markers, bars, switches. */
+  /* Bars, switches, pills. */
   --radius-full: 999px;
+  /* The habit marker: a circle here; a square theme sets a small radius. */
+  --radius-marker: 999px;
+  /* One heatmap day and the legend swatches. */
+  --radius-heat-cell: 6px;
   --border-width: 1px;
   --border-width-strong: 2px;
-  /* The smallest box a finger can hit reliably (WCAG 2.5.5, Apple HIG). */
-  --size-touch: 44px;
-  --size-avatar: 40px;
-  --size-icon: 20px;
-  --size-icon-small: 16px;
-  --size-content: 720px;
-  /* The bottom tab bar, without the phone's home-indicator area. */
-  --size-tab-bar: 64px;
-  /* The habit marker's circle; its button still fills --size-touch. */
-  --size-marker: 28px;
-  /* The floating "+". */
-  --size-fab: 56px;
-  /* XP bar height. */
-  --size-bar: 8px;
-  /* The grip at the top of a sheet. */
-  --size-handle: 36px;
-  /* The level-up celebration's number. */
-  --size-level-number: 36px;
-  /* The badge of a celebration: the selo or the milestone's number. */
-  --size-celebration-badge: 88px;
-  /* The narrowest a choice card gets before the grid wraps. */
-  --size-choice: 128px;
-  /* One day of a heatmap; the legend swatches too. */
-  --size-heat-cell: 14px;
-  --focus-ring-width: 2px;
-  --focus-ring-offset: 2px;
 
   /* Motion. global.css turns it off under prefers-reduced-motion. */
   --duration-fast: 150ms;
@@ -183,58 +216,4 @@
   --easing: cubic-bezier(0.2, 0, 0, 1);
   --opacity-disabled: 0.55;
   --opacity-backdrop: 0.5;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-
-    --color-bg: #100a12;
-    --color-surface: #1a121d;
-    --color-surface-raised: #221827;
-    --color-text: #f4e9f1;
-    --color-text-muted: #b8a6b9;
-    --color-border: #2c2131;
-    --color-border-strong: #7a6882;
-    --color-track: #33263a;
-    --color-brand: #ff8a5c;
-    --color-brand-ink: #ffa27e;
-    --color-brand-soft: #46251a;
-    --color-on-brand: #2b1208;
-    --color-top: #2a1a2d;
-    --color-on-top: #ffffff;
-    --color-top-muted: #cdb9cf;
-    --color-top-track: #4a3650;
-    --color-top-line: #6d5874;
-    --color-level: #ff8a5c;
-    --color-on-level: #2b1208;
-    --color-coin: #3e2f12;
-    --color-gold: #ffcf5c;
-    --color-gold-ink: #ffcf5c;
-    --color-gold-soft: #3b2d12;
-    --color-star: #ffcf5c;
-    --color-faz: #d7ccff;
-    --color-faz-soft: #30285a;
-    --color-danger: #ff9b8f;
-    --color-danger-soft: #3f1716;
-    --color-on-danger: #2a0a06;
-    --color-success: #6fd49a;
-    --color-success-soft: #173a26;
-    --color-warning: #f0c060;
-    --color-warning-soft: #3a2e12;
-    --color-neutral: #c9c0cc;
-    --color-neutral-soft: #2a2230;
-    --color-toast: #f4e9f1;
-    --color-on-toast: #2a1a2d;
-    --color-focus: #ff8a5c;
-    --color-heat-0: #2a1f2f;
-    --color-heat-1: #4f2a1c;
-    --color-heat-2: #8a3f22;
-    --color-heat-3: #d2643a;
-    --color-heat-4: #ffa27e;
-
-    --shadow-fab: 0 10px 22px -8px rgba(0, 0, 0, 0.7);
-    --shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.6);
-    --shadow-toast: 0 8px 24px -8px rgba(0, 0, 0, 0.7);
-  }
 }

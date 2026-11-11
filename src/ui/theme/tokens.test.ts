@@ -1,12 +1,13 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { DEFAULT_THEME, THEME_IDS } from '../../domain/themes';
 
 /**
  * The visual rules of docs/UI.md that a machine can check. Every color, size, weight, line height
  * and duration lives in tokens.css; a literal anywhere else is how screens drift apart, so the
- * build refuses it. The type scale keeps its rhythm and every text color pair passes WCAG AA,
- * in both themes.
+ * build refuses it. The type scale keeps its rhythm, every theme defines the same tokens and every
+ * text color pair passes WCAG AA, in every theme (ADR-012).
  *
  * A failure here lists "file:line: text". Fix it with a token (add one to tokens.css if none
  * fits), never by loosening the test.
@@ -45,16 +46,72 @@ const COLOR = /#[0-9a-fA-F]{3,8}\b|\b(rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(|:\s
 const LENGTH = /(?<![\w-])\d*\.?\d+(px|rem|em|pt)\b/;
 const DURATION = /(?<![\w-])(\d*\.?\d+)(ms|s)\b/g;
 
-/** "--name: value;" pairs of the first `:root {` block after `from`. */
-function declarations(css: string, from = 0): Map<string, string> {
-  const start = css.indexOf(':root {', from);
-  const body = css.slice(start, css.indexOf('}', start));
-  return new Map([...withoutComments(body).matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)].map((m) => [m[1], m[2].trim()]));
+/** One rule of tokens.css: its selector, its raw body and its "--name: value;" pairs. */
+interface TokenRule {
+  readonly selector: string;
+  readonly body: string;
+  readonly tokens: Map<string, string>;
+}
+
+function rules(css: string): TokenRule[] {
+  return [...withoutComments(css).matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({
+    selector: m[1].trim().replace(/\s+/g, ' '),
+    body: m[2],
+    tokens: new Map([...m[2].matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)].map((d) => [d[1], d[2].trim()])),
+  }));
+}
+
+const THEME_SELECTOR = /\[data-theme='([\w-]+)'\]/;
+
+/** The `:root` block: what no theme may change. */
+function fixedOf(css: string): Map<string, string> {
+  return rules(css).find((rule) => rule.selector === ':root')?.tokens ?? new Map();
+}
+
+/** The theme blocks, in source order, by id. */
+function themesOf(css: string): Map<string, TokenRule> {
+  return new Map(
+    rules(css).flatMap((rule) => {
+      const id = THEME_SELECTOR.exec(rule.selector)?.[1];
+      return id ? [[id, rule] as const] : [];
+    }),
+  );
+}
+
+/** What a page in `theme` gets: the default's tokens, overridden by the theme's (the cascade). */
+function resolve(css: string, theme: string): Map<string, string> {
+  const themes = themesOf(css);
+  return new Map([...fixedOf(css), ...themes.get(DEFAULT_THEME)!.tokens, ...(themes.get(theme)?.tokens ?? [])]);
+}
+
+/** Fixed tokens: the type scale, the spacing grid, the sizes and the focus ring. */
+const FIXED = /^--(font-size|space|size|focus-ring)-/;
+
+/** Everything wrong with how tokens.css lays out its themes (ADR-012), as readable lines. */
+function themeProblems(css: string): string[] {
+  const problems: string[] = [];
+  const themes = [...themesOf(css)];
+  for (const name of fixedOf(css).keys()) if (!FIXED.test(name)) problems.push(`:root holds ${name}, which belongs in a theme block`);
+  const [first] = themes;
+  if (!first || first[0] !== DEFAULT_THEME || first[1].selector !== `:root, [data-theme='${DEFAULT_THEME}']`) {
+    problems.push(`the first theme block must be ":root, [data-theme='${DEFAULT_THEME}']"`);
+  }
+  const expected = first ? [...first[1].tokens.keys()] : [];
+  for (const [id, rule] of themes) {
+    if (id !== DEFAULT_THEME && rule.selector.includes(':root')) problems.push(`${id}: only the default theme answers :root`);
+    if (!/(^|;)\s*color-scheme\s*:\s*(light|dark)\s*;/.test(rule.body)) problems.push(`${id}: sets no color-scheme`);
+    for (const name of rule.tokens.keys()) {
+      if (FIXED.test(name)) problems.push(`${id}: redefines ${name}, which is fixed in every theme`);
+      else if (!expected.includes(name)) problems.push(`${id}: defines ${name}, which the default theme lacks`);
+    }
+    for (const name of expected) if (!rule.tokens.has(name)) problems.push(`${id}: misses ${name}`);
+  }
+  return problems;
 }
 
 const tokensCss = read(TOKENS);
-const light = declarations(tokensCss);
-const dark = declarations(tokensCss, tokensCss.indexOf('@media (prefers-color-scheme: dark)'));
+const fixed = fixedOf(tokensCss);
+const themes = themesOf(tokensCss);
 
 describe('no literals outside tokens.css', () => {
   it('keeps colors out of the stylesheets and components', () => {
@@ -105,7 +162,7 @@ function px(value: string): number {
 }
 
 describe('the scales in tokens.css', () => {
-  const fontSizes = [...light].filter(([name]) => name.startsWith('--font-size-')).map(([name, value]) => [name, px(value)] as const);
+  const fontSizes = [...fixed].filter(([name]) => name.startsWith('--font-size-')).map(([name, value]) => [name, px(value)] as const);
 
   // Display sizes (a hero number, a splash title) may leap: they stand alone, not in running text.
   it('lists the font sizes from small to large, each 1.125 to 1.5 times the one before (display sizes may leap more)', () => {
@@ -119,17 +176,17 @@ describe('the scales in tokens.css', () => {
 
   it('never goes below 12px, and the body text is at least 16px', () => {
     for (const [name, size] of fontSizes) expect(size, name).toBeGreaterThanOrEqual(12);
-    expect(px(light.get('--font-size-body')!)).toBeGreaterThanOrEqual(16);
+    expect(px(fixed.get('--font-size-body')!)).toBeGreaterThanOrEqual(16);
   });
 
   it('keeps spacing on the 4px grid', () => {
-    for (const [name, value] of light) {
+    for (const [name, value] of fixed) {
       if (name.startsWith('--space-')) expect(px(value) % 4, `${name}: ${value}`).toBe(0);
     }
   });
 
   it('keeps touch targets at least 44px', () => {
-    expect(px(light.get('--size-touch')!)).toBeGreaterThanOrEqual(44);
+    expect(px(fixed.get('--size-touch')!)).toBeGreaterThanOrEqual(44);
   });
 });
 
@@ -203,13 +260,38 @@ const NON_TEXT_PAIRS = [
   ['--color-star', '--color-bg'],
 ] as const;
 
-describe.each([
-  ['light', light],
-  ['dark', dark],
-])('the %s theme', (_, theme) => {
+const HEX = /^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/;
+
+/** The pairs of a theme below WCAG AA, as "fg on bg: ratio". Throws on a color it cannot read. */
+function contrastFailures(theme: Map<string, string>): string[] {
   const color = (name: string) => {
     const value = theme.get(name);
-    if (!value || !/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(value)) throw new Error(`${name} must be a hex color, got ${value}`);
+    if (!value || !HEX.test(value)) throw new Error(`${name} must be a hex color, got ${value}`);
+    return value;
+  };
+  const below = (pairs: readonly (readonly [string, string])[], min: number) =>
+    pairs.flatMap(([fg, bg]) => {
+      const ratio = contrast(color(fg), color(bg));
+      return ratio < min ? [`${fg} on ${bg}: ${ratio.toFixed(2)}`] : [];
+    });
+  return [...below(TEXT_PAIRS, 4.5), ...below(NON_TEXT_PAIRS, 3)];
+}
+
+describe('the themes in tokens.css (ADR-012)', () => {
+  it('are exactly the themes of src/domain/themes.ts, the default first', () => {
+    expect([...themes.keys()]).toEqual([...THEME_IDS]);
+  });
+
+  it('keep the fixed tokens in :root, the default theme first and answering :root, and the same tokens in every theme', () => {
+    expect(themeProblems(tokensCss)).toEqual([]);
+  });
+});
+
+describe.each([...themes.keys()])('the %s theme', (id) => {
+  const theme = resolve(tokensCss, id);
+  const color = (name: string) => {
+    const value = theme.get(name);
+    if (!value || !HEX.test(value)) throw new Error(`${name} must be a hex color, got ${value}`);
     return value;
   };
 
@@ -222,9 +304,51 @@ describe.each([
   });
 });
 
-describe('the dark theme', () => {
-  it('redefines every color of the light theme', () => {
-    const colors = [...light.keys()].filter((name) => name.startsWith('--color-'));
-    expect(colors.filter((name) => !dark.has(name))).toEqual([]);
+/**
+ * A second theme that exists only here proves the checks above see a new theme, and that a theme
+ * switches what the page gets. The real game themes come later, one by one.
+ */
+describe('a fixture theme', () => {
+  const ameixa = themes.get(DEFAULT_THEME)!.tokens;
+  const block = (tokens: Map<string, string>, extra = '') =>
+    `\n[data-theme='fixture'] {\n  color-scheme: light;\n${[...tokens].map(([name, value]) => `  ${name}: ${value};`).join('\n')}\n${extra}}\n`;
+  const fixtureTokens = new Map([
+    ...ameixa,
+    ['--color-brand', '#1d4ed8'],
+    ['--color-brand-ink', '#1e40af'],
+    ['--color-focus', '#1d4ed8'],
+    ['--font-display', "'Fixture Display', system-ui, sans-serif"],
+    ['--radius-marker', '4px'],
+  ]);
+  const css = tokensCss + block(fixtureTokens);
+
+  it('passes every layout check when it defines the same tokens', () => {
+    expect(themeProblems(css)).toEqual([]);
+    expect([...themesOf(css).keys()]).toEqual([...THEME_IDS, 'fixture']);
+  });
+
+  it('switches colors, fonts and shapes, and leaves the fixed tokens alone', () => {
+    const before = resolve(css, DEFAULT_THEME);
+    const after = resolve(css, 'fixture');
+    for (const name of ['--color-brand', '--font-display', '--radius-marker']) expect(after.get(name)).not.toBe(before.get(name));
+    for (const name of fixed.keys()) expect(after.get(name)).toBe(before.get(name));
+    expect(contrastFailures(after)).toEqual([]);
+  });
+
+  it('fails when it misses a token, adds one the default lacks or redefines a fixed one', () => {
+    const missing = new Map(fixtureTokens);
+    missing.delete('--color-gold');
+    expect(themeProblems(tokensCss + block(missing))).toEqual(['fixture: misses --color-gold']);
+    expect(themeProblems(tokensCss + block(fixtureTokens, '  --color-extra: #000000;\n'))).toEqual([
+      'fixture: defines --color-extra, which the default theme lacks',
+    ]);
+    expect(themeProblems(tokensCss + block(fixtureTokens, '  --space-1: 5px;\n'))).toEqual([
+      'fixture: redefines --space-1, which is fixed in every theme',
+    ]);
+  });
+
+  it('fails the contrast check when a pair drops below AA', () => {
+    const faint = new Map([...fixtureTokens, ['--color-text-muted', '#d0c8d4']]);
+    expect(contrastFailures(resolve(tokensCss + block(faint), 'fixture')).some((line) => line.startsWith('--color-text-muted on --color-bg'))).toBe(true);
   });
 });

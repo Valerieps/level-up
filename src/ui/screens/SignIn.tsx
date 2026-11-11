@@ -4,6 +4,7 @@ import { strings } from '../../domain/strings';
 import { useServices } from '../backend-context';
 import { Button, ButtonLink } from '../components/Button';
 import { Field } from '../components/Field';
+import { Logo } from '../components/Logo';
 import { Notice } from '../components/Notice';
 import { navigate } from '../router';
 
@@ -68,6 +69,7 @@ export function SignIn() {
 
   return (
     <main className="app stack">
+      <Logo />
       <h1>{strings.appName}</h1>
       <p>{strings.signIn.tagline}</p>
       {error && <Notice tone="error">{error}</Notice>}

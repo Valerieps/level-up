@@ -36,6 +36,7 @@ Cada fase precisa ser usável sozinha. Cada regra em `spec/` diz de que fase val
 | 1b | Versão mínima, streak, ritmo e "Faz tempo", Modo Pausa |
 | 1c | Domínio e selo Automatizado, Prêmio de Domínio, Estrelas de Coragem, convites de subir e de ajustar a régua, conquistas, celebrações |
 | 1d | Heatmaps (por hábito e geral), Loja de recompensas |
+| 1e | Temas visuais por membro: a escolha no Perfil, com o Ameixa como único tema por enquanto |
 | 2 | Interação entre as pessoas do grupo |
 
 ## Arquivos

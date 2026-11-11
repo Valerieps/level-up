@@ -4,9 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="referrer" content="no-referrer" />
-    <!-- The browser bar: the brand in the light theme, the background in the dark one (src/app-identity.test.ts) -->
-    <meta name="theme-color" content="#c84a1c" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#100a12" media="(prefers-color-scheme: dark)" />
+    <!-- The browser bar: the default theme's --color-browser-bar; the app sets the member's theme's at runtime (ADR-012, src/app-identity.test.ts) -->
+    <meta name="theme-color" content="#c84a1c" />
     <title>LevelUp</title>
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />

@@ -1,42 +1,61 @@
-// The app's line icons, drawn on a 24-unit grid in the current text color. The size comes from the
-// `.icon` class (--size-icon); they are decorative, so the text next to them names the action.
-const PATHS = {
-  today: 'M20 6 9 17l-5-5',
-  shop: 'M6 7h12l-1 13H7L6 7Zm3 0a3 3 0 0 1 6 0',
-  profile: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0',
+import { DEFAULT_VISUALS, themedIcon, useThemeVisuals } from '../theme/themes';
+import type { IconStyle, ThemedIconName } from '../theme/types';
+
+// The app's icons, in the current text color. The size comes from the `.icon` class (--size-icon);
+// they are decorative, so the text next to them names the action. Two kinds (ADR-012):
+// - functional icons (below) are the same in every theme, drawn in the default theme's style;
+// - themed icons (src/ui/theme/types.ts) come from the active theme, falling back to the default.
+
+/** Functional icons: navigation and actions, recognizable in every theme. */
+const FUNCTIONAL = {
   settings:
     'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm7.4-3a7.4 7.4 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7.5 7.5 0 0 0-2-1.2L14.5 3h-5l-.4 2.6a7.5 7.5 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7.4 7.4 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7.5 7.5 0 0 0 2 1.2l.4 2.6h5l.4-2.6a7.5 7.5 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2Z',
   back: 'M15 18l-6-6 6-6',
-  plus: 'M12 5v14M5 12h14',
-  check: 'M20 6 9 17l-5-5',
   chevron: 'M6 9l6 6 6-6',
   pause: 'M9 5v14M15 5v14',
   play: 'M7 5v14l12-7L7 5Z',
-  star: 'M12 17.75l-6.17 3.25 1.18-6.88-5-4.87 6.9-1L12 2l3.09 6.25 6.9 1-5 4.87 1.18 6.88Z',
   arrowUp: 'M12 19V5m-6 6 6-6 6 6',
   arrowDown: 'M12 5v14m6-6-6 6-6-6',
   edit: 'M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16v4M13.5 6.5l4 4',
   archive: 'M3 4h18v4H3zM5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8M10 12h4',
-  automated: 'M12 3l2.4 1.8 3-.1.9 2.9 2.4 1.8-1 2.8 1 2.8-2.4 1.8-.9 2.9-3-.1L12 21l-2.4-1.8-3 .1-.9-2.9-2.4-1.8 1-2.8-1-2.8 2.4-1.8.9-2.9 3 .1L12 3Zm-3 9 2 2 4-4',
 } as const;
 
-export type IconName = keyof typeof PATHS;
+export type FunctionalIconName = keyof typeof FUNCTIONAL;
 
-// The gold coin, 8-bit: an 8x8 grid of square pixels in the current text color.
-const COIN_PIXELS = 'M2 0h4v1H2zM1 1h1v1H1zM6 1h1v1H6zM0 2h1v4H0zM7 2h1v4H7zM3 2h2v4H3zM1 6h1v1H1zM6 6h1v1H6zM2 7h4v1H2z';
+/** Every name `Icon` takes; a typo is a compile error. The coin has its own `CoinIcon`. */
+export type IconName = FunctionalIconName | Exclude<ThemedIconName, 'coin'>;
 
-export function CoinIcon() {
+function isFunctional(name: IconName): name is FunctionalIconName {
+  return Object.hasOwn(FUNCTIONAL, name);
+}
+
+function Svg({ d, style }: { d: string; style: IconStyle }) {
   return (
-    <svg className="icon" viewBox="0 0 8 8" fill="currentColor" shapeRendering="crispEdges" aria-hidden="true" focusable="false">
-      <path d={COIN_PIXELS} />
+    <svg
+      className="icon"
+      viewBox={style.viewBox}
+      fill={style.fill}
+      stroke={style.stroke}
+      strokeWidth={style.strokeWidth}
+      strokeLinecap={style.strokeLinecap}
+      strokeLinejoin={style.strokeLinejoin}
+      shapeRendering={style.shapeRendering}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d={d} />
     </svg>
   );
 }
 
+/** The gold coin of the active theme (8-bit in Ameixa). */
+export function CoinIcon() {
+  const theme = useThemeVisuals();
+  return <Svg {...themedIcon(theme, 'coin')} />;
+}
+
 export function Icon({ name }: { name: IconName }) {
-  return (
-    <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-      <path d={PATHS[name]} />
-    </svg>
-  );
+  const theme = useThemeVisuals();
+  if (isFunctional(name)) return <Svg d={FUNCTIONAL[name]} style={DEFAULT_VISUALS.iconStyle} />;
+  return <Svg {...themedIcon(theme, name)} />;
 }

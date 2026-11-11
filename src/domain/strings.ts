@@ -297,6 +297,13 @@ export const strings = {
     title: 'Perfil',
     archived: 'Hábitos arquivados',
     archivedEmpty: 'Nenhum hábito arquivado. Arquivar tira um hábito das listas e guarda o histórico.',
+    theme: 'Tema',
+    themeHint: 'Muda as cores, as fontes e os ícones do app. Só você vê o seu tema.',
+  },
+
+  /** The name of each visual theme in the Tema picker (ADR-012). */
+  themes: {
+    ameixa: 'Ameixa',
   },
 
   settings: {

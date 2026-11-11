@@ -11,13 +11,15 @@ import { Link } from '../router';
 import { useQuery } from '../use-query';
 import { OverallHeatmapSection } from './heatmap';
 import { PauseSheet } from './pause';
+import { ThemeSection } from './theme-picker';
 
 const p = strings.profile;
 const pause = strings.pause;
 const a = strings.achievements;
 
 // The Perfil tab (docs/spec/telas-e-feedback.md "Perfil"): level and the XP to the next one, the
-// conquista tracks side by side, the overall heatmap and the archived habits.
+// conquista tracks side by side, the overall heatmap, the Tema (only when the app ships more than
+// one theme) and the archived habits.
 export function Profile({ me }: { me: MeView }) {
   const progress = useQuery('progress', {}, ['progress']);
   const archived = useQuery('archivedHabits', {}, ['habits']);
@@ -90,6 +92,8 @@ export function Profile({ me }: { me: MeView }) {
       </section>
 
       <OverallHeatmapSection />
+
+      <ThemeSection />
 
       <div className="section-title">
         <button

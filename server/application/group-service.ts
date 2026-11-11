@@ -43,6 +43,7 @@ import { getProgress } from './progress';
 import { migrate } from './schema';
 import { createReward, deleteReward, listRedemptions, redeemReward, shopView, updateReward } from './shop';
 import { closeDays, getSettings, recordTimeZone, updateSettings } from './settings';
+import { getTheme, setTheme } from './theme';
 
 type Input = Record<string, unknown>;
 
@@ -54,6 +55,7 @@ const QUERIES: { [N in QueryName]: Handler<Queries[N]['output'] | QueryError | n
   members: (ctx, actor) => listMembers(ctx, actor),
   invites: (ctx, actor) => listInvites(ctx, actor),
   settings: (ctx, actor) => getSettings(ctx, actor),
+  theme: (ctx, actor) => getTheme(ctx, actor),
   today: (ctx, actor) => todayView(ctx, actor),
   progress: (ctx, actor) => getProgress(ctx, actor),
   yesterday: (ctx, actor) => yesterdayView(ctx, actor),
@@ -76,6 +78,7 @@ const COMMANDS: { [N in CommandName]: Handler<CommandResult<Commands[N]['output'
   'member.remove': removeMember,
   'member.rename': rename,
   'settings.update': updateSettings,
+  'theme.set': setTheme,
   'habit.create': createHabit,
   'habit.update': updateHabit,
   'habit.resize': resizeHabit,
