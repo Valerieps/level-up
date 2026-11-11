@@ -104,6 +104,25 @@ Um tema de jogo (ADR-012): inspirado no jogo de fazenda, nunca cópia. Os valore
   Abas: sol nascendo atrás da cerca (Hoje), barraca de feira (Loja), chapéu de palha (Perfil);
   placa de madeira com "+", estrela, roseta de prêmio (Automatizado).
 
+## Identidade Uppertale
+
+Um tema de jogo (ADR-012): uma paródia do RPG indie, nunca cópia. Os valores estão no bloco
+`[data-theme='uppertale']` do `tokens.css`; os ícones e o logo, em `src/ui/theme/uppertale.tsx`.
+
+- **Tela preta, caixa de diálogo branca.** Fundo preto, texto e ações em branco (botão invertido,
+  preto sobre branco), o amarelo puro do jogo só no prêmio.
+- **O coração é branco, nunca vermelho.** O vermelho continua só de excluir e de erro.
+- **Fontes:** Press Start 2P só nos títulos (larga demais para listas), Space Mono no texto e nos
+  números de progresso.
+- **Formas:** cantos retos, bordas de 2px, sem sombras (a folha ganha só uma borda branca no topo),
+  animações em passos, como quadros de sprite.
+- **O marcador é uma alma:** um coração de pixel vazio que se preenche quando feito
+  (`--clip-marker` e `--clip-marker-checked`); por isso o "feito" não desenha nada por cima.
+- **Abas como botões de batalha:** cada ícone numa caixa com borda (`--border-width-tab`).
+- **Ícones em pixel art de uma cor**, grade de 10x10 (a moeda, 8x8). Abas: caixa de diálogo com
+  "* ..." (Hoje), saco de itens (Loja), silhueta (Perfil); "+" grosso, o brilho de um ponto de
+  salvar (estrela), coração com brilho (Automatizado), moeda com "G".
+
 ## Mudar a identidade visual
 
 Mude só os valores do bloco do tema no `tokens.css`, sem renomear os tokens. No tema padrão,
@@ -121,7 +140,9 @@ Quão perto do jogo um tema chega, e o que pode e o que não pode, está em `doc
    **todos** os tokens de tema do bloco Ameixa: cada `--color-*` (com `--color-browser-bar`), as
    três `--shadow-*`, as três famílias de fonte, pesos, alturas de linha, `--letter-spacing-display`,
    cada `--radius-*` (`--radius-marker` e `--radius-heat-cell` dizem se o marcador e o dia do heatmap
-   são redondos ou quadrados), `--border-width*`, `--easing`, `--duration-*` e `--opacity-*`.
+   são redondos ou quadrados), `--clip-marker*` (`none`, ou a forma do marcador recortada por
+   `path()`), `--color-marker-fill` (o miolo do marcador vazio), `--border-width*` (com
+   `--border-width-tab`, a caixa em volta do ícone da aba), `--easing`, `--duration-*` e `--opacity-*`.
    `--color-danger*` continua um vermelho reconhecível.
 3. Fontes em `public/fonts`, num `@font-face` no `tokens.css`, com a licença ao lado (ou, numa
    fonte de fã sem licença, um `-NOTICE.txt` dizendo de onde veio e o que mudou). Confira os acentos

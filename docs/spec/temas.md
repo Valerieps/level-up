@@ -7,7 +7,7 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 
 ## Em aberto
 
-- [ ] Quais jogos viram tema depois do Stardew Valley e do Ocarina, e em que ordem. Cada tema novo é um trabalho à parte: nome, paleta, fontes, ícones e logo.
+- [ ] Quais jogos viram tema depois do Stardew Valley, do Ocarina e do Uppertale, e em que ordem. Cada tema novo é um trabalho à parte: nome, paleta, fontes, ícones e logo.
 
 ## O que é um tema
 
@@ -32,6 +32,14 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
   - A moeda de ouro é uma Rupee verde, sempre verde, qualquer que seja o valor. O número do ouro
     continua dourado.
   - O selo Automatizado é a paródia da Triforce: três losangos onde o jogo tem três triângulos.
+- **Uppertale**, paródia de *Undertale*: a tela preta do jogo com caixas de diálogo de borda
+  branca, ações em branco, o amarelo puro do jogo só no prêmio, títulos em letra de pixel e as abas
+  como os botões do menu de batalha. *(1e)*
+  - O feito é uma alma: um coração de pixel vazio que se preenche quando eu marco o hábito. Ele é
+    branco, nunca vermelho, porque o vermelho é só de excluir e de erro.
+  - Hoje é uma caixa de diálogo com "* ...", a Loja um saco de itens, o Perfil uma silhueta, a
+    estrela o brilho de um ponto de salvar, o Automatizado um coração cheio de determinação, a
+    moeda uma moeda dourada com "G" e o logo um coração.
 
 ## Quão perto do jogo um tema chega
 
