@@ -16,6 +16,7 @@ import { ScreenHeader } from '../components/ScreenHeader';
 import { Link, navigate } from '../router';
 import { useQuery } from '../use-query';
 import { AdjustSheet } from './adjust-sheet';
+import { HabitHeatmapSection } from './heatmap';
 import { DeleteHabitDialog, ReguaSheet, Stars } from './habit-sheets';
 import { PauseSheet, pauseWhen } from './pause';
 
@@ -26,9 +27,8 @@ const m = strings.mastery;
 const inv = strings.invitation;
 
 // Detalhe do hábito (docs/spec/telas-e-feedback.md "Detalhe"): header with the selo, the stars and
-// the consistency, the régua invitation when there is one, then the actions. The heatmap (1d) joins
-// with its feature. An archived
-// habit is read-only, with Reativar and Excluir (docs/spec/habitos.md).
+// the consistency, the régua invitation when there is one, the heatmap, then the actions. An
+// archived habit is read-only, with its heatmap, Reativar and Excluir (docs/spec/habitos.md).
 export function HabitDetail({ habitId }: { habitId: string }) {
   const habit = useQuery('habit', { habitId }, ['habits']);
 
@@ -206,6 +206,7 @@ function ActiveDetail({ habit, onChanged }: { habit: HabitView; onChanged: () =>
           onDismiss={() => void dismiss(habit.invitation ?? 'raise')}
         />
       )}
+      <HabitHeatmapSection habitId={habit.id} />
       <h2 className="visually-hidden">{t.actions}</h2>
       <ul className="list action-list">
         <li>
@@ -349,6 +350,7 @@ function ArchivedDetail({ habit, onChanged }: { habit: HabitView; onChanged: () 
       {error && <Notice tone="error">{strings.genericError}</Notice>}
       {habit.archivedOn && <p className="tag">{t.archivedOn(formatDayShort(habit.archivedOn))}</p>}
       <HabitHeader habit={habit} />
+      <HabitHeatmapSection habitId={habit.id} />
       <p className="muted small">{t.archivedHint}</p>
       <div className="stack">
         <Button className="wide" disabled={busy} onClick={() => void reactivate()}>

@@ -9,10 +9,7 @@ O que ainda não está pronto.
 
 ## Falta construir
 
-| Feature | Fase | Spec | Observação |
-| --- | --- | --- | --- |
-| Heatmap por hábito, geral e folha do dia | 1d | `spec/heatmap.md` | Servidor pronto (`habitHeatmap`, `heatmap`, `daySheet`); falta a tela |
-| Loja de recompensas | 1d | `spec/loja.md` | Servidor pronto (`shop`, `redemptions`, `reward.*`); falta a tela |
+Nada do MVP (fases 1a a 1d) falta construir.
 
 ## O código ainda não segue o spec
 
@@ -76,3 +73,10 @@ O que ainda não está pronto.
 - [ ] A folha do dia mostra também as metas feitas só em parte ("1 de 3") e, como marcos, os
   domínios, as estrelas e as conquistas do dia; o marcador de régua no heatmap é só o da subida
   que rendeu estrela (`spec/heatmap.md`).
+- [ ] No heatmap de um hábito, o dia cheio é o tom mais forte, a versão mínima o tom logo abaixo e
+  uma meta feita em parte o tom mais fraco (menos da metade) ou o seguinte (metade ou mais); o dia
+  de domínio ou de estrela ganha um contorno dourado. Tocar num dia do heatmap de um hábito também
+  abre a folha do dia inteiro, com todos os hábitos. O heatmap rola para o lado dentro da tela,
+  abrindo nas semanas mais recentes (`spec/heatmap.md`).
+- [ ] Na Loja vazia, "Adicionar à Loja" cria a sugestão na hora, sem abrir a folha; "Resgatar" não
+  pede confirmação; o "+" fica no cabeçalho da Loja (`spec/loja.md`).

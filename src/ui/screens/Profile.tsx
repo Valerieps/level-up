@@ -9,6 +9,7 @@ import { GoldPill, XpBar } from '../components/ProgressTop';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { Link } from '../router';
 import { useQuery } from '../use-query';
+import { OverallHeatmapSection } from './heatmap';
 import { PauseSheet } from './pause';
 
 const p = strings.profile;
@@ -16,8 +17,7 @@ const pause = strings.pause;
 const a = strings.achievements;
 
 // The Perfil tab (docs/spec/telas-e-feedback.md "Perfil"): level and the XP to the next one, the
-// conquista tracks side by side, and the archived habits. The overall heatmap (1d) joins with its
-// feature.
+// conquista tracks side by side, the overall heatmap and the archived habits.
 export function Profile({ me }: { me: MeView }) {
   const progress = useQuery('progress', {}, ['progress']);
   const archived = useQuery('archivedHabits', {}, ['habits']);
@@ -88,6 +88,8 @@ export function Profile({ me }: { me: MeView }) {
           <p className="muted">{strings.loading}</p>
         )}
       </section>
+
+      <OverallHeatmapSection />
 
       <div className="section-title">
         <button

@@ -1240,3 +1240,173 @@ button.list-link:disabled {
 .track-gold {
   color: var(--color-gold-ink);
 }
+
+/* Heatmap (docs/spec/heatmap.md): only what was done has color; the rest is heat-0, never red. */
+
+.heatmap-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.heatmap-scroll {
+  overflow-x: auto;
+  padding: var(--space-1);
+}
+
+.heatmap {
+  display: grid;
+  grid-auto-columns: var(--size-heat-cell);
+  grid-template-rows: auto repeat(7, var(--size-heat-cell));
+  gap: var(--space-1);
+  width: max-content;
+}
+
+.heatmap-month {
+  grid-row: 1;
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-tight);
+  white-space: nowrap;
+}
+
+.heat-cell,
+.heat-swatch {
+  display: block;
+  width: var(--size-heat-cell);
+  height: var(--size-heat-cell);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-heat-0);
+}
+
+.heat-cell {
+  cursor: pointer;
+}
+
+[data-level='1'] {
+  background: var(--color-heat-1);
+}
+
+[data-level='2'] {
+  background: var(--color-heat-2);
+}
+
+[data-level='3'] {
+  background: var(--color-heat-3);
+}
+
+[data-level='4'] {
+  background: var(--color-heat-4);
+}
+
+/* A domínio or estrela day: a gold outline, shape as well as color. */
+.heat-cell.marked,
+.heat-swatch.marked {
+  border: var(--border-width-strong) solid var(--color-star);
+}
+
+.heatmap-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-caption);
+}
+
+.heatmap-wrap p {
+  margin: 0;
+}
+
+/* Folha do dia and the redemption history: one line per item. */
+
+.day-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--size-touch);
+  padding: var(--space-2) 0;
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.day-item-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.milestone {
+  margin-bottom: 0;
+  background: var(--color-gold-soft);
+}
+
+.milestone-icon {
+  display: inline-flex;
+  color: var(--color-gold-ink);
+}
+
+/* Loja */
+
+.balance-card {
+  align-items: center;
+}
+
+.balance {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-gold-ink);
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-strong);
+}
+
+.reward {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.reward-open {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 0;
+  min-height: var(--size-touch);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+}
+
+button.reward-open {
+  cursor: pointer;
+}
+
+.reward-name {
+  overflow-wrap: anywhere;
+}
+
+.reward-cost {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-gold-ink);
+  font-size: var(--font-size-small);
+}
+
+.reward-cost .icon {
+  width: var(--size-icon-small);
+  height: var(--size-icon-small);
+}
+
+.reward-missing {
+  flex-shrink: 0;
+  text-align: right;
+}
