@@ -193,6 +193,7 @@ a {
 .tab-icon {
   display: inline-flex;
   padding: var(--space-1) var(--space-4);
+  border: var(--border-width-tab) solid currentColor;
   border-radius: var(--radius-full);
 }
 
@@ -619,7 +620,8 @@ button.list-link:disabled {
   height: var(--size-marker);
   border: var(--border-width-strong) solid var(--color-brand);
   border-radius: var(--radius-marker);
-  background: var(--color-surface);
+  background: var(--color-marker-fill);
+  clip-path: var(--clip-marker);
   transition: background-color var(--duration-fast) var(--easing);
 }
 
@@ -629,6 +631,7 @@ button.list-link:disabled {
 
 .marker.checked::before {
   background: var(--color-brand);
+  clip-path: var(--clip-marker-checked);
 }
 
 .marker:disabled {

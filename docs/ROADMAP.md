@@ -11,7 +11,7 @@ O que ainda não está pronto.
 
 Nada do MVP (fases 1a a 1d) falta construir.
 
-- Os próximos temas com nome de jogo, um por vez, depois do Stardew Valley (`spec/temas.md`; quais
+- Os próximos temas com nome de jogo, um por vez, depois do Uppertale (`spec/temas.md`; quais
   e em que ordem está em "Em aberto" lá). A base técnica está pronta (ADR-012); como criar um tema está em `docs/UI.md` "Adicionar
   um tema".
 

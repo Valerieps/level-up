@@ -3,6 +3,7 @@ import { DEFAULT_THEME, THEME_IDS, type ThemeId } from '../../domain/themes';
 import { AMEIXA } from './ameixa';
 import { applyTheme, rememberTheme } from './apply-theme';
 import { STARDEW } from './stardew';
+import { UPPERTALE } from './uppertale';
 import type { IconDrawing, IconStyle, ThemedIconName, ThemeVisuals } from './types';
 
 /**
@@ -12,6 +13,7 @@ import type { IconDrawing, IconStyle, ThemedIconName, ThemeVisuals } from './typ
 export const THEMES: Readonly<Record<ThemeId, ThemeVisuals>> = {
   ameixa: AMEIXA,
   stardew: STARDEW,
+  uppertale: UPPERTALE,
 };
 
 /** The registered themes, in the order of THEME_IDS (the default first): the Tema picker's list. */
