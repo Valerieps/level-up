@@ -140,6 +140,8 @@
   --size-handle: 36px;
   /* The level-up celebration's number. */
   --size-level-number: 36px;
+  /* The badge of a celebration: the selo or the milestone's number. */
+  --size-celebration-badge: 88px;
   /* The narrowest a choice card gets before the grid wraps. */
   --size-choice: 128px;
   --focus-ring-width: 2px;

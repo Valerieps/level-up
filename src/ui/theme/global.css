@@ -970,3 +970,295 @@ button.list-link:disabled {
   flex-direction: column;
   gap: var(--space-1);
 }
+
+/* Domínio and régua (1c): the selo Automatizado, the stars and the invitations. */
+
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.badge-auto {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--color-success-soft);
+  color: var(--color-success);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-strong);
+}
+
+.badge-auto .icon,
+.star-tag .icon,
+.stars .icon,
+.invite-icon .icon {
+  width: var(--size-icon-small);
+  height: var(--size-icon-small);
+}
+
+.stars {
+  display: inline-flex;
+}
+
+.star {
+  display: inline-flex;
+  color: var(--color-border-strong);
+}
+
+.star.filled {
+  color: var(--color-star);
+}
+
+.star.filled .icon {
+  fill: currentColor;
+}
+
+.star-tag {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  width: fit-content;
+  margin-top: var(--space-1);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-gold-soft);
+  color: var(--color-gold-ink);
+  font-weight: var(--font-weight-medium);
+}
+
+.invite-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--color-star);
+}
+
+.invitation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  border-left-width: var(--border-width-strong);
+  border-left-color: var(--color-brand);
+}
+
+.invitation.raise {
+  border-color: var(--color-star);
+  background: var(--color-gold-soft);
+}
+
+.invitation p {
+  margin: 0;
+}
+
+.adjust-option.useful {
+  border-color: var(--color-brand);
+  background: var(--color-brand-soft);
+}
+
+/* Celebrations (1c): mastery and conquistas, stacked in one plum dialog. */
+
+.dialog.celebration {
+  width: calc(100% - 2 * var(--space-4));
+  border-radius: var(--radius-lg);
+  background: var(--color-top);
+  color: var(--color-on-top);
+  animation: celebration-in var(--duration-celebration) var(--easing);
+}
+
+.dialog.celebration .dialog-body {
+  gap: var(--space-4);
+  padding: var(--space-8) var(--space-6) var(--space-6);
+}
+
+.dialog.celebration h2 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-display);
+  letter-spacing: var(--letter-spacing-display);
+  text-align: center;
+}
+
+.celebration-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.celebration-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-celebration-badge);
+  height: var(--size-celebration-badge);
+  border-radius: var(--radius-full);
+  background: var(--color-gold);
+  color: var(--color-top);
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-strong);
+}
+
+.celebration-badge .icon {
+  width: 50%;
+  height: 50%;
+}
+
+.celebration-badge.milestone {
+  border-radius: var(--radius-lg);
+  transform: rotate(45deg);
+}
+
+.celebration-badge.milestone > * {
+  transform: rotate(-45deg);
+}
+
+.celebration-kicker {
+  color: var(--color-level);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-strong);
+  text-transform: uppercase;
+}
+
+.dialog-body .celebration-text {
+  color: var(--color-top-muted);
+  text-align: center;
+}
+
+.celebration-lines {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-radius: var(--radius);
+  background: var(--color-coin);
+}
+
+.celebration-lines li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-touch);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: var(--border-width) solid var(--color-top-track);
+}
+
+.celebration-lines li:last-child {
+  border-bottom: 0;
+}
+
+.celebration-lines li.strong {
+  font-weight: var(--font-weight-strong);
+}
+
+.celebration-gold {
+  color: var(--color-gold);
+  font-weight: var(--font-weight-strong);
+}
+
+.celebration-gold.big {
+  font-size: var(--font-size-heading);
+}
+
+.dialog-body .celebration-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  color: var(--color-top-muted);
+}
+
+.button.secondary.on-top {
+  border-color: var(--color-top-line);
+  background: none;
+  color: var(--color-on-top);
+}
+
+@keyframes celebration-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Perfil (1c): the conquista tracks side by side. */
+
+.track-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--size-choice), 1fr));
+  gap: var(--space-2);
+}
+
+.track {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.track h3,
+.track p {
+  margin: 0;
+}
+
+.track-name {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-strong);
+}
+
+.track-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-avatar);
+  height: var(--size-avatar);
+  border-radius: var(--radius-full);
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.track.courage .track-icon {
+  background: var(--color-gold-soft);
+  color: var(--color-gold-ink);
+}
+
+.track.courage .track-icon .icon {
+  fill: currentColor;
+}
+
+.track-count {
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-strong);
+  line-height: var(--line-height-tight);
+}
+
+.track-count .small {
+  font-weight: var(--font-weight-regular);
+}
+
+.track-bar {
+  height: var(--size-bar);
+  border-radius: var(--radius-full);
+  background: var(--color-track);
+  overflow: hidden;
+}
+
+.track-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--color-brand);
+}
+
+.track.courage .track-bar-fill {
+  background: var(--color-star);
+}
+
+.track-gold {
+  color: var(--color-gold-ink);
+}

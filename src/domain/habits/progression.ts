@@ -19,6 +19,11 @@ function round(value: number): number {
 }
 
 /** XP for one completion: round(10 × difficulty × Bônus de Coragem), at least 1. */
+/** The XP bonus the habit's Estrelas de Coragem give, in percent: 10 per star, up to 50. */
+export function starBonusPercent(stars: number): number {
+  return Math.round(STAR_BONUS * 100 * Math.min(Math.max(stars, 0), MAX_STARS));
+}
+
 export function xpFor(difficulty: Difficulty, stars = 0): number {
   const bonus = 1 + STAR_BONUS * Math.min(Math.max(stars, 0), MAX_STARS);
   return Math.max(1, round(BASE_XP * DIFFICULTY_MULTIPLIER[difficulty] * bonus));

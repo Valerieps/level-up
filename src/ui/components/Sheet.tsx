@@ -3,7 +3,8 @@ import { useEffect, useId, useRef, type ReactNode } from 'react';
 /**
  * A sheet that rises from the bottom, for short actions (régua, later pausar and recompensa), or a
  * centered blocking dialog for confirming a deletion (`variant="confirm"`), the only modal the app
- * has (docs/spec/telas-e-feedback.md "Navegação"). Built on <dialog>: focus is trapped, Esc and
+ * has (docs/spec/telas-e-feedback.md "Navegação"), or a celebration on the plum
+ * background (`variant="celebration"`), which interrupts once and closes with one tap. Built on <dialog>: focus is trapped, Esc and
  * a tap outside close it.
  */
 export function Sheet({
@@ -11,12 +12,15 @@ export function Sheet({
   title,
   onClose,
   variant = 'sheet',
+  before,
   children,
 }: {
   open: boolean;
   title: string;
   onClose: () => void;
-  variant?: 'sheet' | 'confirm';
+  variant?: 'sheet' | 'confirm' | 'celebration';
+  /** Shown above the title: the badge of a celebration. */
+  before?: ReactNode;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -32,7 +36,7 @@ export function Sheet({
   return (
     <dialog
       ref={ref}
-      className={variant === 'confirm' ? 'dialog confirm' : 'dialog sheet'}
+      className={`dialog ${variant}`}
       aria-labelledby={titleId}
       onClose={onClose}
       onClick={(event) => {
@@ -43,6 +47,7 @@ export function Sheet({
       {open && (
         <div className="dialog-body">
           {variant === 'sheet' && <span className="sheet-handle" aria-hidden="true" />}
+          {before}
           <h2 id={titleId}>{title}</h2>
           {children}
         </div>

@@ -4,9 +4,11 @@ import { formatDayLong, type Day } from '../../domain/day';
 import { markMinimum, NOT_STARTED, planToday, tap, type DayEntry, type TodayHabit } from '../../domain/habits/day-log';
 import { describeRule } from '../../domain/habits/describe';
 import { sortByIds } from '../../domain/habits/order';
+import { reguaOptions } from '../../domain/habits/regua';
 import { strings } from '../../domain/strings';
 import { useServices } from '../backend-context';
 import { Button, ButtonLink } from '../components/Button';
+import { useCelebration } from '../components/Celebration';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { ProgressTop } from '../components/ProgressTop';
@@ -93,6 +95,14 @@ export function Today() {
   const [order, setOrder] = useState<readonly string[] | null>(null);
   const reordering = useRef(0);
   const gainIds = useRef(0);
+  // Mastery and conquistas stack into one celebration; a level alone keeps the short toast.
+  const celebrate = useCelebration({
+    onLevelOnly: setCelebration,
+    canRaise: (habitId) => {
+      const habit = today.data?.habits.find((item) => item.habit.id === habitId)?.habit;
+      return habit ? reguaOptions(habit, 'raise').length > 0 : true;
+    },
+  });
 
   // Fresh data from the server replaces what it confirmed.
   useEffect(() => {
@@ -166,7 +176,7 @@ export function Today() {
       return overlay ? new Map(current).set(habit.id, { ...overlay, inFlight: overlay.inFlight - 1 }) : current;
     });
     setGains((current) => current.map((g) => (g.id === gainId ? { ...g, settled: true } : g)));
-    if (result.value.levelUp !== null) setCelebration(result.value.levelUp);
+    celebrate.show({ levelUp: result.value.levelUp, celebrations: result.value.celebrations });
     today.reload();
     progress.reload();
   }
@@ -212,7 +222,7 @@ export function Today() {
   }
 
   function reviewed(result: ReviewResult | null) {
-    if (result?.levelUp != null) setCelebration(result.levelUp);
+    if (result) celebrate.show({ levelUp: result.levelUp, celebrations: result.celebrations });
     yesterday.reload();
     today.reload();
     progress.reload();
@@ -245,6 +255,7 @@ export function Today() {
     <>
       <ProgressTop xpTotal={xpTotal} gold={gold} celebration={celebration} onCelebrationEnd={() => setCelebration(null)} action={pauseButton} />
       {review}
+      {celebrate.element}
       {welcome && <Notice>{p.welcomeBack}</Notice>}
       {appPause && (
         <div className="card row pause-banner">
@@ -531,6 +542,11 @@ function HabitRow({
       </Link>
       {habit.paused && !leaving && <span className="tag inline">{t.optional}</span>}
       {longAgo && !leaving && <span className="tag inline faz">{t.longAgo}</span>}
+      {habit.invitation === 'raise' && !leaving && (
+        <span className="invite-icon" role="img" aria-label={strings.mastery.inviteIcon}>
+          <Icon name="arrowUp" />
+        </span>
+      )}
       {counter && !leaving && (
         <span className="counter mono" aria-label={t.counterOf(entry.count, habit.dailyGoal)}>
           {entry.count}/{habit.dailyGoal}

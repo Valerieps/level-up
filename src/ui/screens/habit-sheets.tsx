@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import type { HabitView } from '../../application/api-contract';
+import type { Celebration, HabitView, ResizeResult } from '../../application/api-contract';
 import { countWeekdays } from '../../domain/habits/habit';
-import { xpFor } from '../../domain/habits/progression';
-import { reguaOptions, type ReguaDirection, type ReguaOption } from '../../domain/habits/regua';
+import { MAX_STARS, starBonusPercent, xpFor } from '../../domain/habits/progression';
+import { earnsStar, reguaOptions, type ReguaDirection, type ReguaOption } from '../../domain/habits/regua';
 import { strings } from '../../domain/strings';
 import { useServices } from '../backend-context';
 import { Button } from '../components/Button';
 import { ChoiceGroup } from '../components/Choices';
+import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { Sheet } from '../components/Sheet';
 import { navigate } from '../router';
@@ -30,32 +31,41 @@ function optionText(habit: HabitView, option: ReguaOption, raise: boolean): { la
 
 /**
  * Subir or baixar a régua (docs/spec/regua.md): only the options that apply to the habit, each
- * with the XP now and after. In phase 1a there are no stars yet.
+ * with the XP now and after. A raise from a mastered patamar says which options earn an Estrela de
+ * Coragem and confirms the star in the sheet itself; the conquistas it reached go to `onCelebrate`
+ * once the member closes the sheet.
  */
 export function ReguaSheet({
   habit,
   direction,
   onClose,
   onChanged,
+  onCelebrate,
 }: {
   habit: HabitView;
   direction: ReguaDirection | null;
   onClose: () => void;
-  onChanged: () => void;
+  onChanged: (result: ResizeResult) => void;
+  onCelebrate?: (celebrations: readonly Celebration[]) => void;
 }) {
   const { backend } = useServices();
   const options = direction ? reguaOptions(habit, direction) : [];
   const [chosen, setChosen] = useState<string>('0');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
+  const [starred, setStarred] = useState<ResizeResult | null>(null);
   const raise = direction === 'raise';
   const option = options[Number(chosen)] ?? options[0];
   const xpNow = xpFor(habit.difficulty, habit.stars);
+  const stars = options.map((o) => raise && earnsStar(habit, o.size));
 
   function close() {
+    const celebrations = starred?.celebrations ?? [];
     setChosen('0');
     setError(false);
+    setStarred(null);
     onClose();
+    if (celebrations.length > 0) onCelebrate?.(celebrations);
   }
 
   async function confirm() {
@@ -64,8 +74,22 @@ export function ReguaSheet({
     const result = await backend.command('habit.resize', { habitId: habit.id, ...option.size });
     setBusy(false);
     if (!result.ok) return setError(true);
-    onChanged();
-    close();
+    onChanged(result.value);
+    if (result.value.star) setStarred(result.value);
+    else close();
+  }
+
+  if (starred) {
+    const count = starred.habit.stars;
+    return (
+      <Sheet open={direction !== null} title={r.starTitle} onClose={close}>
+        <Stars count={count} />
+        <p role="status">{r.starText(habit.name, count, starBonusPercent(count))}</p>
+        <Button className="wide" onClick={close}>
+          {r.starContinue}
+        </Button>
+      </Sheet>
+    );
   }
 
   return (
@@ -76,18 +100,29 @@ export function ReguaSheet({
         <p>{raise ? r.raiseNone : r.lowerNone}</p>
       ) : (
         <>
-          <p>{raise ? r.raiseIntro : r.lowerIntro}</p>
+          <p>{stars.some(Boolean) ? r.raiseIntroMastered(habit.name) : raise ? r.raiseIntro : r.lowerIntro}</p>
           <ChoiceGroup
             legend={raise ? r.raise : r.lower}
             name="regua"
             value={String(options.indexOf(option))}
             choices={options.map((o, i) => {
               const text = optionText(habit, o, raise);
+              const xpNext = xpFor(o.size.difficulty, habit.stars + (stars[i] ? 1 : 0));
               return {
                 value: String(i),
                 label: text.label,
-                hint: text.hint,
-                aside: <span className="xp-tag mono">{r.xpChange(xpNow, xpFor(o.size.difficulty, habit.stars))}</span>,
+                hint: stars[i] ? (
+                  <>
+                    {text.hint}
+                    <span className="star-tag">
+                      <Icon name="star" />
+                      {r.earnsStar}
+                    </span>
+                  </>
+                ) : (
+                  text.hint
+                ),
+                aside: <span className="xp-tag mono">{r.xpChange(xpNow, xpNext)}</span>,
               };
             })}
             onChange={setChosen}
@@ -106,6 +141,19 @@ export function ReguaSheet({
         </Button>
       </div>
     </Sheet>
+  );
+}
+
+/** The habit's Estrelas de Coragem out of 5, filled ones first; the text next to them names them. */
+export function Stars({ count }: { count: number }) {
+  return (
+    <span className="stars" aria-hidden="true">
+      {Array.from({ length: MAX_STARS }, (_, i) => (
+        <span key={i} className={i < count ? 'star filled' : 'star'}>
+          <Icon name="star" />
+        </span>
+      ))}
+    </span>
   );
 }
 
