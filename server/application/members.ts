@@ -3,6 +3,7 @@ import type { MemberListItem, MemberView, MeView } from '../../src/application/a
 import { normalizeEmail } from '../../src/domain/group/email';
 import { normalizeName } from '../../src/domain/group/profile';
 import { isAdmin, keepsAnAdmin, normalizeRoles, type Role } from '../../src/domain/group/roles';
+import { isThemeId } from '../../src/domain/themes';
 import { failure, nowIso, type CommandResult, type Context } from './context';
 import { ensureSettings } from './settings';
 
@@ -85,7 +86,7 @@ export function signIn(ctx: Context, profile: GoogleProfile, sessionHash: string
       memberId = row.id;
       ctx.sql.run('UPDATE members SET google_sub = ?, photo_url = ? WHERE id = ?', profile.sub, profile.picture, memberId);
     } else {
-      const [invite] = ctx.sql.all<{ email: string }>("SELECT email FROM invites WHERE email = ? AND state = 'pending'", email);
+      const [invite] = ctx.sql.all<{ email: string; theme: string }>("SELECT email, theme FROM invites WHERE email = ? AND state = 'pending'", email);
       const bootstrap = activeAdminIds(ctx).length === 0 && bootstrapAdminEmails.map(normalizeEmail).includes(email);
       if (!invite && !bootstrap) return { ok: false, error: 'no_invite' } as const;
       const roles: Role[] = bootstrap ? ['admin'] : [];
@@ -114,6 +115,11 @@ export function signIn(ctx: Context, profile: GoogleProfile, sessionHash: string
         );
       }
       if (invite) ctx.sql.run("UPDATE invites SET state = 'accepted', accepted_at = ? WHERE email = ?", at, email);
+      ensureSettings(ctx, memberId);
+      // A newcomer starts in the theme the admin picked; someone coming back keeps their own.
+      if (invite && !row && isThemeId(invite.theme)) {
+        ctx.sql.run('UPDATE member_settings SET theme = ? WHERE member_id = ?', invite.theme, memberId);
+      }
     }
 
     ensureSettings(ctx, memberId);

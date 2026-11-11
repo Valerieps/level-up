@@ -426,6 +426,8 @@ export const strings = {
     title: 'Convites',
     emailLabel: 'E-mail da conta Google',
     send: 'Convidar',
+    themeLabel: 'Tema inicial',
+    themeHint: 'A pessoa começa nesse tema e pode trocar depois, no Perfil.',
     revoke: 'Revogar',
     pending: 'Pendente',
     accepted: 'Aceito',

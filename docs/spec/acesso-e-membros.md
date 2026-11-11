@@ -57,5 +57,8 @@ Quem entra no LevelUp, como entra e o que cada papel pode fazer.
 
 - O admin convida uma pessoa pelo e-mail dela. O convite fica ligado a esse e-mail e só vale para
   quem entra com a conta Google dele. *(1a)*
+- No convite, o admin escolhe o tema em que a pessoa começa; sem escolha, é o Ameixa. A pessoa pode
+  trocar depois, como qualquer um (`spec/temas.md`). Quem volta por um convite novo fica no tema que
+  já tinha. *(1e)*
 - O convite não expira. Ele deixa de valer só quando o admin o revoga. *(1a)*
 - O admin vê a lista de convites pendentes e aceitos e pode revogar um pendente. *(1a)*
