@@ -18,6 +18,7 @@ import {
   type HabitState,
   type Rule,
 } from '../../src/domain/habits/habit';
+import { reorderWithin } from '../../src/domain/habits/order';
 import { isActive, isFrozenOn, type PausePeriod } from '../../src/domain/habits/pause';
 import { failure, nowIso, QueryError, type CommandResult, type Context } from './context';
 import type { Member } from './members';
@@ -329,6 +330,25 @@ export function reactivateHabit(ctx: Context, actor: Member, input: Input): Comm
     endArchivedStretch(ctx, habit.id, today(ctx, actor.id));
   }
   return { ok: true, value: viewOf(ctx, actor, habit.id), changed: CHANGED };
+}
+
+/**
+ * The drag in Hoje: `habitIds` are active habits of the actor, in their new order. They take the
+ * places they already had among all the member's habits; the others keep theirs.
+ */
+export function reorderHabits(ctx: Context, actor: Member, input: Input): CommandResult<null> {
+  const ids = input.habitIds;
+  if (!Array.isArray(ids) || ids.some((id) => typeof id !== 'string')) return failure('invalid');
+  const rows = ctx.sql.all<{ id: string; state: HabitState }>('SELECT id, state FROM habits WHERE member_id = ? ORDER BY position, created_at, id', actor.id);
+  const active = new Set(rows.filter((row) => row.state === 'active').map((row) => row.id));
+  if (ids.some((id) => !active.has(id as string))) return failure('not_found');
+  const order = reorderWithin(
+    rows.map((row) => row.id),
+    ids as string[],
+  );
+  if (!order) return failure('invalid');
+  order.forEach((id, index) => ctx.sql.run('UPDATE habits SET position = ? WHERE id = ?', index + 1, id));
+  return { ok: true, value: null, changed: CHANGED };
 }
 
 /** Deletes the habit and its history. XP and gold already earned stay with the member. */

@@ -565,6 +565,23 @@ button.list-link:disabled {
   animation: habit-leave var(--duration-gain) var(--easing) both;
 }
 
+/* Drag to reorder: a long press picks the item up; the others make room. */
+.reorderable .habit-item {
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+.habit-item.dragging {
+  position: relative;
+  z-index: 1;
+  border-color: var(--color-brand);
+  cursor: grabbing;
+}
+
+.habit-item.shifting {
+  transition: transform var(--duration-base) var(--easing);
+}
+
 @keyframes habit-leave {
   0%,
   80% {
