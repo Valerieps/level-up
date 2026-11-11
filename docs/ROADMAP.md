@@ -13,8 +13,7 @@ Nada do MVP (fases 1a a 1d) falta construir.
 
 ## O código ainda não segue o spec
 
-- Identidade Ameixa (ADR-010) — as fontes Sora, Inter e JetBrains Mono ainda não estão empacotadas
-  em `public/`; até lá o app usa as fontes do sistema.
+Nada.
 
 ## Adiado
 

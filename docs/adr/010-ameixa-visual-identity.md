@@ -16,8 +16,9 @@ Two Ameixa values change to keep the template's rules (`docs/UI.md`):
 - Body and habit-name text are 16px instead of 15px, and metadata 14px instead of 13px, because
   `tokens.test.ts` requires body text of at least 16px and a scale step of at least 1.125.
 - Sora, Inter and JetBrains Mono are not loaded from Google Fonts, because the app loads nothing
-  from a CDN (`docs/SEGURANCA.md`). The token stacks name them first and fall back to the system
-  fonts; bundling them in `public/` (at most two weights each) is a row of `docs/ROADMAP.md`.
+  from a CDN (`docs/SEGURANCA.md`). They are bundled in `public/fonts/` as variable latin-subset woff2 files
+  (one file per family, so no more than that), declared by `@font-face` in `tokens.css`; the
+  token stacks name them first and fall back to the system fonts.
 
 **Why:** The identity was already designed and approved; the tokens are the one place the template
 lets it live, and the tests keep contrast at AA in both themes (every Ameixa text pair passes;
