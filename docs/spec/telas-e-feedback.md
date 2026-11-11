@@ -70,11 +70,9 @@ Ordem, de cima para baixo:
 1. **Nível** e o XP até o próximo. *(1a)*
 2. **Conquistas:** as trilhas Automatizados e Coragem lado a lado. *(1c)*
 3. **Heatmap geral.** *(1d)*
-4. **Tema:** eu escolho o visual do app só para mim, numa lista com o nome e as cores de cada
-   tema. A seção só aparece quando o app tem mais de um tema. *(1e)*
-   Por quê: o tema é meu, como os meus hábitos; ninguém do grupo vê nem muda o meu.
-5. **Hábitos arquivados**, com a contagem: uma seção recolhível que abre a lista ali mesmo; cada
+4. **Hábitos arquivados**, com a contagem: uma seção recolhível que abre a lista ali mesmo; cada
    item leva ao detalhe do arquivado. *(1a)*
+5. **Tema**, a escolha do visual do app (`spec/temas.md`). *(1e)*
 
 ## Configurações
 
@@ -87,18 +85,6 @@ Ordem, de cima para baixo:
 
 - Aparece só sem sessão: o logo, a frase do app e o botão "Continuar com Google". Sem formulário
   de perfil. *(1a; logo 1e)*
-
-## Temas
-
-- Um tema muda só o visual: cores, fontes, ícones, logo, formas e movimento. Os textos e os termos
-  do glossário são os mesmos em todos. *(1e)*
-- Cada tema tem um modo só; não há modo escuro. *(1e)*
-- Começo no Ameixa. O que eu escolher vale em todos os meus aparelhos, e só para mim. *(1e)*
-- O ícone do app na tela inicial do celular é sempre o do Ameixa; dentro do app, o logo, o ícone da
-  aba e a cor da barra do navegador seguem o meu tema. *(1e)*
-  Por quê: o celular guarda o ícone na instalação e não o troca depois.
-- Os temas levam nomes de jogos, com arte e fontes originais ou inspiradas, nunca as oficiais.
-  *(1e)*
 
 ## Feedback
 

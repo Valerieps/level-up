@@ -97,7 +97,7 @@ ilegível.
 
 ### Adicionar um tema
 
-Um tema muda só o visual: cores, fontes, ícones, logo, formas e movimento. Nunca texto (ADR-012).
+Um tema muda só o visual (`docs/spec/temas.md`, ADR-012).
 Os temas de jogos são inspirados, nunca cópia: nada de arte, logo ou fonte oficial.
 
 1. O id no fim de `THEME_IDS` em `src/domain/themes.ts` e o nome em `strings.themes`.

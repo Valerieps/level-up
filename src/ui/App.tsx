@@ -16,7 +16,7 @@ import { Profile } from './screens/Profile';
 import { Settings } from './screens/Settings';
 import { Shop } from './screens/Shop';
 import { SignIn } from './screens/SignIn';
-import { useResetTheme, useThemeSync } from './screens/theme-picker';
+import { useThemeSync } from './screens/theme-picker';
 import { Today } from './screens/Today';
 import { useQuery } from './use-query';
 import { useTimeZoneSync } from './use-today';
@@ -57,11 +57,9 @@ function SignedIn({ me, onSignedOut }: { me: MeView; onSignedOut: () => void }) 
   const path = usePath();
   useTimeZoneSync();
   useThemeSync();
-  const resetTheme = useResetTheme();
 
   async function signOut() {
     await backend.signOut();
-    resetTheme();
     navigate('/', { replace: true });
     onSignedOut();
   }

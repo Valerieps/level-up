@@ -11,9 +11,9 @@ O que ainda não está pronto.
 
 Nada do MVP (fases 1a a 1d) falta construir.
 
-- Criar os temas de jogos, um por vez, sobre a estrutura da fase 1e (ADR-012; como fazer em
-  `docs/UI.md` "Adicionar um tema"). Até haver um segundo tema, a seção Tema do Perfil fica
-  escondida (`spec/telas-e-feedback.md`).
+- Os temas com nome de jogo, um por vez (`spec/temas.md`; quais e em que ordem está em "Em aberto"
+  lá). A base técnica está pronta (ADR-012); como criar um tema está em `docs/UI.md` "Adicionar
+  um tema".
 
 ## O código ainda não segue o spec
 
@@ -83,3 +83,6 @@ Nada.
   abrindo nas semanas mais recentes (`spec/heatmap.md`).
 - [ ] Na Loja vazia, "Adicionar à Loja" cria a sugestão na hora, sem abrir a folha; "Resgatar" não
   pede confirmação; o "+" fica no cabeçalho da Loja (`spec/loja.md`).
+- [ ] Temas: a fase se chama 1e; a seção "Tema" fica escondida enquanto só existe o Ameixa; a
+  troca é na hora, sem confirmação; a tela de entrada usa o último tema daquele aparelho; o ícone
+  instalado fica sempre o do Ameixa (`spec/temas.md`).

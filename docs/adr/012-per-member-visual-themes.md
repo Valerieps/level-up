@@ -7,6 +7,8 @@ Ameixa (ADR-010) is the first theme and the default. Game-inspired themes come l
 on this structure. Dark mode is dropped: each theme has one mode, and Ameixa stays the light look it
 was.
 
+The product rules are in `docs/spec/temas.md`; this ADR is how they are built.
+
 *The model.* `src/domain/themes.ts` lists the theme ids (`THEME_IDS`, the default first) with
 `DEFAULT_THEME` and `isThemeId`, free of framework imports, so the server validates against the same
 list. `src/ui/theme/themes.tsx` maps every id to its visuals (`ThemeVisuals` in
@@ -65,8 +67,8 @@ before the first paint. Instead `main.tsx` reads the device's last theme from `l
 (`levelup.theme`, every access in try/catch) and calls `applyTheme` before React's first render;
 the stylesheet is already loaded by then, so the first rendered screen is in that theme. Once
 signed in, the app loads the member's stored theme and switches to it if it differs; choosing in the
-picker switches at once and puts the old theme back if the server refuses. Sign-out goes back to the
-default, so the next person on the device does not open in someone else's theme.
+picker switches at once and puts the old theme back if the server refuses. Sign-out keeps the device's
+last theme: the sign-in screen shows it (`docs/spec/temas.md`).
 
 *The installed icon.* The manifest, `public/icon.svg` and `public/icon-maskable.svg` stay the
 default theme's: a web app manifest has one icon per install and the browser does not re-read it

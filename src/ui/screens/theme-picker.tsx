@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { DEFAULT_THEME, isThemeId } from '../../domain/themes';
+import { isThemeId } from '../../domain/themes';
 import { strings } from '../../domain/strings';
 import { useServices } from '../backend-context';
 import { ChoiceGroup } from '../components/Choices';
@@ -77,7 +77,8 @@ export function ThemeSection() {
 
 /**
  * Keeps the screen in the member's stored theme: on load, and when another of their apps changes
- * it. The device's last theme shows until then.
+ * it. The device's last theme shows until then, and stays after sign-out for the sign-in screen
+ * (docs/spec/temas.md).
  */
 export function useThemeSync(): void {
   const { show } = useThemeControl();
@@ -88,8 +89,3 @@ export function useThemeSync(): void {
   }, [theme, show]);
 }
 
-/** After sign-out the next person on this device starts in the default theme. */
-export function useResetTheme(): () => void {
-  const { show } = useThemeControl();
-  return () => show(DEFAULT_THEME);
-}
