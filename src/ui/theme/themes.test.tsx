@@ -139,6 +139,9 @@ function fakeDocument() {
   ]);
   const element = (selector: string) => ({
     setAttribute: (name: string, value: string) => attributes.get(selector)!.set(name, value),
+    // A replaced <meta> is a fresh clone that takes over the old one's attributes.
+    cloneNode: () => ({ setAttribute: (name: string, value: string) => attributes.get(selector)!.set(name, value) }),
+    replaceWith: () => {},
   });
   const documentElement = { dataset: {} as DOMStringMap };
   const doc = {
