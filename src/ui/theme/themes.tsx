@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState, type ReactNode } from 'react';
 import { DEFAULT_THEME, THEME_IDS, type ThemeId } from '../../domain/themes';
 import { AMEIXA } from './ameixa';
+import { OCARINA } from './ocarina';
 import { applyTheme, rememberTheme } from './apply-theme';
 import { STARDEW } from './stardew';
 import { UPPERTALE } from './uppertale';
@@ -13,6 +14,7 @@ import type { IconDrawing, IconStyle, ThemedIconName, ThemeVisuals } from './typ
 export const THEMES: Readonly<Record<ThemeId, ThemeVisuals>> = {
   ameixa: AMEIXA,
   stardew: STARDEW,
+  ocarina: OCARINA,
   uppertale: UPPERTALE,
 };
 

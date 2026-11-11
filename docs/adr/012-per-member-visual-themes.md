@@ -48,8 +48,9 @@ token-existence checks are unchanged. A fixture theme built inside the test prov
 new theme.
 
 *Fonts.* Each theme's `@font-face` blocks sit in `tokens.css`, declarative: the browser downloads a
-face only when an element uses it, so themes nobody picked cost nothing. Fonts come only with a free
-license (OFL), bundled in `public/fonts`. The CSP has no `font-src`, so `default-src 'self'` covers
+face only when an element uses it, so themes nobody picked cost nothing. Fonts are bundled in
+`public/fonts`, with their license beside them; since the Ocarina theme a fan font with no license
+text may be used too, with a `-NOTICE.txt` saying where it came from (`docs/spec/temas.md`). The CSP has no `font-src`, so `default-src 'self'` covers
 them; `network-policy.ts` needs no change.
 
 *Icons.* `src/ui/components/Icon.tsx` holds the functional icons, drawn in the default theme's style.
@@ -77,8 +78,8 @@ and the `theme-color` meta (the browser bar) do follow it, set by `applyTheme` a
 `src/app-identity.test.ts` checks the default theme against the manifest, `index.html` and the icons.
 
 **Why:** The owner wants game-inspired looks without touching the product: per-member like
-everything else in the app, visuals only, and assets that are original or inspired, never official
-art, logos or fonts. One set of token names with one block per theme keeps every component and test
+everything else in the app, visuals only, and as close to the game as possible without copying its
+art (how close is a product rule: `docs/spec/temas.md`). One set of token names with one block per theme keeps every component and test
 unchanged and makes a theme a matter of values. Dropping dark mode halves the contrast work per
 theme and matches the decision that each theme has one mode.
 **Alternatives:** One CSS file per theme, loaded on demand: smaller first download but a flash and a
