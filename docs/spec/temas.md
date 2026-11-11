@@ -89,7 +89,7 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
   Por quê: uma escolha com uma opção só é ruído.
 - O tema é meu. Cada pessoa do grupo escolhe o dela e ninguém vê o tema de outra. *(1e)*
 - Meu tema vale em qualquer aparelho em que eu entrar, e não só naquele em que eu escolhi. *(1e)*
-- Quem nunca escolheu fica no Ameixa. *(1e)*
+- Quem nunca escolheu fica no tema que o admin escolheu no convite; sem escolha, no Ameixa. *(1e)*
 - A tela de entrada, antes do login, usa o último tema escolhido naquele aparelho; se não há, o Ameixa. *(1e)*
 
 ## O que não muda com o tema
