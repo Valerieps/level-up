@@ -16,8 +16,6 @@
     "Cadastro.dc.html": {"x": 940, "y": 1300, "w": 390, "h": 844, "title": "Cadastro de hábito"},
     "Edicao.dc.html": {"x": 1410, "y": 1300, "w": 390, "h": 844, "title": "Edição de hábito"},
     "Excluir.dc.html": {"x": 1880, "y": 1300, "w": 390, "h": 844, "title": "Confirmar exclusão"},
-    "Folha-subir.dc.html": {"x": 0, "y": 2800, "w": 390, "h": 844, "title": "Folha · Subir a régua"},
-    "Folha-ajustar.dc.html": {"x": 470, "y": 2800, "w": 390, "h": 844, "title": "Folha · Ajustar a régua"},
     "Folha-pausar.dc.html": {"x": 940, "y": 2800, "w": 390, "h": 844, "title": "Folha · Pausar"},
     "Folha-dia.dc.html": {"x": 1410, "y": 2800, "w": 390, "h": 844, "title": "Folha · Dia do heatmap"},
     "Folha-recompensa.dc.html": {"x": 1880, "y": 2800, "w": 390, "h": 844, "title": "Folha · Recompensa"},
@@ -26,9 +24,7 @@
     "Perfil.dc.html": {"x": 940, "y": 4050, "w": 390, "h": 1000, "title": "Perfil", "is_interactive": true},
     "Configuracoes.dc.html": {"x": 1410, "y": 4050, "w": 390, "h": 844, "title": "Configurações"},
     "Entrada.dc.html": {"x": 1880, "y": 4050, "w": 390, "h": 844, "title": "Entrada"},
-    "Celebracao-nivel.dc.html": {"x": 0, "y": 5450, "w": 390, "h": 844, "title": "Subiu de nível"},
-    "Celebracao-dominio.dc.html": {"x": 470, "y": 5450, "w": 390, "h": 844, "title": "Automatizado + Prêmio de Domínio"},
-    "Celebracao-conquista.dc.html": {"x": 940, "y": 5450, "w": 390, "h": 844, "title": "Conquista (celebração empilhada)"}
+    "Celebracao-nivel.dc.html": {"x": 0, "y": 5450, "w": 390, "h": 844, "title": "Subiu de nível"}
   },
   "order": [
     "Main.dc.html", "Hoje-concluidos.dc.html", "Hoje-primeiro-uso.dc.html", "Hoje-tudo-feito.dc.html", "Hoje-pausado.dc.html", "Hoje-escuro.dc.html",

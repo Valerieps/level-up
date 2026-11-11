@@ -183,6 +183,14 @@ const TEXT_PAIRS = [
   ['--color-on-toast', '--color-toast'],
   ['--color-text', '--color-brand-soft'],
   ['--color-text-muted', '--color-brand-soft'],
+  // 1c: the celebration on plum, the raise invitation, the prize in the conquista tracks.
+  ['--color-on-top', '--color-coin'],
+  ['--color-top', '--color-gold'],
+  ['--color-level', '--color-top'],
+  ['--color-top-muted', '--color-coin'],
+  ['--color-text', '--color-gold-soft'],
+  ['--color-gold-ink', '--color-surface'],
+  ['--color-gold-ink', '--color-bg'],
 ] as const;
 
 const NON_TEXT_PAIRS = [
@@ -192,6 +200,7 @@ const NON_TEXT_PAIRS = [
   ['--color-focus', '--color-surface'],
   ['--color-brand', '--color-surface'],
   ['--color-star', '--color-surface'],
+  ['--color-star', '--color-bg'],
 ] as const;
 
 describe.each([

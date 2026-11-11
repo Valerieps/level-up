@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { completeInReview, planReview, planToday, tap, NOT_STARTED } from './day-log';
 import { countWeekdays, isScheduledOn, normalizeHabitName, shapeFor, WORK_WEEK, type HabitShape } from './habit';
-import { goldFor, levelOf, xpFor, xpToNext } from './progression';
+import { goldFor, levelOf, starBonusPercent, xpFor, xpToNext } from './progression';
 import { reguaOptions } from './regua';
 
 const daily = (dailyGoal = 1): HabitShape & { stars: number } => ({ rule: 'daily', difficulty: 'easy', dailyGoal, weekdays: 0, stars: 0 });
@@ -30,6 +30,12 @@ describe('XP and gold (spec/progressao.md)', () => {
   it('caps the stars at 5 and pays at least 1', () => {
     expect(xpFor('easy', 9)).toBe(15);
     expect(goldFor(1)).toBe(1);
+  });
+
+  it('says the star bonus in percent, capped at 50', () => {
+    expect(starBonusPercent(0)).toBe(0);
+    expect(starBonusPercent(2)).toBe(20);
+    expect(starBonusPercent(7)).toBe(50);
   });
 });
 

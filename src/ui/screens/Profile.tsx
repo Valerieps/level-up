@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { MeView } from '../../application/api-contract';
+import type { MeView, TrackView } from '../../application/api-contract';
 import { describeHabit } from '../../domain/habits/describe';
 import { strings } from '../../domain/strings';
 import { Button } from '../components/Button';
@@ -13,14 +13,17 @@ import { PauseSheet } from './pause';
 
 const p = strings.profile;
 const pause = strings.pause;
+const a = strings.achievements;
 
-// The Perfil tab (docs/spec/telas-e-feedback.md "Perfil"): level and the XP to the next one, and
-// the archived habits. Achievements (1c) and the overall heatmap (1d) join with their features.
+// The Perfil tab (docs/spec/telas-e-feedback.md "Perfil"): level and the XP to the next one, the
+// conquista tracks side by side, and the archived habits. The overall heatmap (1d) joins with its
+// feature.
 export function Profile({ me }: { me: MeView }) {
   const progress = useQuery('progress', {}, ['progress']);
   const archived = useQuery('archivedHabits', {}, ['habits']);
   const pauses = useQuery('pauses', {}, ['pauses', 'day']);
   const [pausing, setPausing] = useState(false);
+  const achievements = useQuery('achievements', {}, ['achievements']);
   const [showArchived, setShowArchived] = useState(false);
   const count = archived.data?.length ?? 0;
 
@@ -66,6 +69,26 @@ export function Profile({ me }: { me: MeView }) {
       )}
       <PauseSheet open={pausing} onClose={() => setPausing(false)} onPaused={pauses.reload} />
 
+      <section className="section-title" aria-labelledby="achievements-title">
+        <h2 id="achievements-title">{a.title}</h2>
+        {achievements.data ? (
+          <ul className="list track-grid">
+            {achievements.data.map((track) => (
+              <TrackCard key={track.track} track={track} />
+            ))}
+          </ul>
+        ) : achievements.error ? (
+          <>
+            <Notice tone="error">{strings.genericError}</Notice>
+            <Button variant="secondary" onClick={achievements.reload}>
+              {strings.retry}
+            </Button>
+          </>
+        ) : (
+          <p className="muted">{strings.loading}</p>
+        )}
+      </section>
+
       <div className="section-title">
         <button
           type="button"
@@ -96,5 +119,46 @@ export function Profile({ me }: { me: MeView }) {
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * One conquista track (docs/spec/conquistas.md): what it counts, the bar to the next milestone and
+ * that milestone's prize, or "Trilha completa".
+ */
+function TrackCard({ track }: { track: TrackView }) {
+  const automated = track.track === 'automated';
+  const unit = a.unit[track.track];
+  const next = track.next;
+  return (
+    <li className={automated ? 'card track automated' : 'card track courage'}>
+      <span className="track-icon" aria-hidden="true">
+        <Icon name={automated ? 'automated' : 'star'} />
+      </span>
+      <h3 className="muted small track-name">{a.track[track.track]}</h3>
+      <p className="track-count">
+        <span className="mono">{track.count}</span> <span className="muted small">{unit(track.count)}</span>
+      </p>
+      {next ? (
+        <>
+          <div
+            className="track-bar"
+            role="progressbar"
+            aria-label={a.track[track.track]}
+            aria-valuemin={0}
+            aria-valuemax={next.target}
+            aria-valuenow={Math.min(track.count, next.target)}
+            aria-valuetext={a.progress(track.count, next.target)}
+          >
+            <div className="track-bar-fill" style={{ width: `${Math.min(100, Math.round((track.count / next.target) * 100))}%` }} />
+          </div>
+          <p className="muted small">
+            {a.next(next.target, unit(next.target))} · <span className="track-gold mono">{a.nextGold(next.gold)}</span>
+          </p>
+        </>
+      ) : (
+        <p className="muted small">{a.complete}</p>
+      )}
+    </li>
   );
 }
