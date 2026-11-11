@@ -52,4 +52,36 @@ describe('migrations', () => {
     ]);
     expect(sql.all('SELECT streak_carry FROM habits')).toEqual([{ streak_carry: 0 }, { streak_carry: 0 }]);
   });
+
+  it('give habits from before migration 6 their current patamar', () => {
+    const sql = memorySql();
+    sql.run('CREATE TABLE schema_migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL)');
+    for (let v = 0; v < 5; v++) {
+      for (const statement of MIGRATIONS[v]) sql.run(statement);
+      sql.run('INSERT INTO schema_migrations VALUES (?, ?)', v + 1, '2026-11-01');
+    }
+    sql.run("INSERT INTO members (id, email, name, joined_at) VALUES ('m1', 'ana@example.com', 'Ana', '2026-11-01')");
+    for (const [id, rule, goal, weekdays] of [
+      ['h1', 'daily', 3, 0],
+      ['h2', 'weekdays', 1, 0b0101010],
+      ['h3', 'free', 1, 0],
+    ] as const) {
+      sql.run(
+        `INSERT INTO habits (id, member_id, name, rule, difficulty, daily_goal, weekdays, position, tier_started_on, created_at)
+         VALUES (?, 'm1', 'Ler', ?, 'medium', ?, ?, 1, '2026-11-02', '2026-11-01')`,
+        id,
+        rule,
+        goal,
+        weekdays,
+      );
+    }
+
+    migrate(sql);
+
+    expect(sql.all('SELECT habit_id, tier, first_on, mastered_on FROM habit_tiers ORDER BY habit_id')).toEqual([
+      { habit_id: 'h1', tier: 'medium:3:7', first_on: '2026-11-02', mastered_on: null },
+      { habit_id: 'h2', tier: 'medium:1:3', first_on: '2026-11-02', mastered_on: null },
+      { habit_id: 'h3', tier: 'medium:1:0', first_on: '2026-11-02', mastered_on: null },
+    ]);
+  });
 });

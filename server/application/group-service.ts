@@ -8,6 +8,7 @@ import {
   archiveHabit,
   createHabit,
   deleteHabit,
+  dismissHabitInvitation,
   getHabit,
   markHabit,
   markHabitMinimum,
@@ -34,6 +35,7 @@ import {
   type Member,
   type SignInResult,
 } from './members';
+import { listAchievements } from './mastery';
 import { endPause, listPauses, startPause } from './pauses';
 import type { Clock, IdGenerator, Sql } from './ports';
 import { getProgress } from './progress';
@@ -56,6 +58,7 @@ const QUERIES: { [N in QueryName]: Handler<Queries[N]['output'] | QueryError | n
   habit: getHabit,
   archivedHabits: (ctx, actor) => archivedHabits(ctx, actor),
   pauses: (ctx, actor) => listPauses(ctx, actor),
+  achievements: (ctx, actor) => listAchievements(ctx, actor),
 };
 
 /** Every command the API runs; each checks the actor's role itself. */
@@ -69,6 +72,7 @@ const COMMANDS: { [N in CommandName]: Handler<CommandResult<Commands[N]['output'
   'habit.create': createHabit,
   'habit.update': updateHabit,
   'habit.resize': resizeHabit,
+  'habit.dismissInvitation': dismissHabitInvitation,
   'habit.archive': archiveHabit,
   'habit.reactivate': reactivateHabit,
   'habit.delete': deleteHabit,

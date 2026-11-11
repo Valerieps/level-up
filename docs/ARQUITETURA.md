@@ -69,32 +69,36 @@ usa. Todas têm `member_id` e toda consulta filtra por ele (ADR-008).
 
 | Tabela | Campos principais | Observação |
 | --- | --- | --- |
-| `progress` | `member_id`, `xp_total`, `gold` | Nível e XP do nível saem de `xp_total` pela curva; não se guarda o nível |
-| `habits` | `id`, `member_id`, `name`, `rule` (`daily`, `weekdays`, `free`), `difficulty`, `daily_goal`, `weekdays` (máscara), `minimum`, `stars`, `position`, `state` (`active`, `archived`), `archived_on`, `tier_started_on`, `streak_carry` | O patamar atual são as colunas de tamanho; `tier_started_on` é onde a janela de domínio e a do streak começam; `streak_carry` é o streak que atravessou a última mudança de régua (ADR-011) |
-| `habit_tiers` | `habit_id`, `difficulty`, `daily_goal`, `days_per_week`, `mastered_on` | Cada patamar que o hábito já teve: decide se uma subida rende estrela e se o Prêmio de Domínio já foi pago |
+| `progress` | `member_id`, `xp_total`, `gold`, `automated_count`, `courage_total` | Nível e XP do nível saem de `xp_total` pela curva; não se guarda o nível. As duas contagens das trilhas só crescem: excluir um hábito não tira o selo nem as estrelas dele |
+| `habits` | `id`, `member_id`, `name`, `rule` (`daily`, `weekdays`, `free`), `difficulty`, `daily_goal`, `weekdays` (máscara), `minimum`, `stars`, `position`, `state` (`active`, `archived`), `archived_on`, `tier_started_on`, `streak_carry`, `automated_on`, `tier_mastered_on` | O patamar atual são as colunas de tamanho; `tier_started_on` é onde a janela de domínio e a do streak começam; `streak_carry` é o streak que atravessou a última mudança de régua (ADR-011); `automated_on` é o selo (permanente); `tier_mastered_on` diz que o patamar atual foi dominado e volta a nulo a cada mudança de régua ou de regra |
+| `habit_tiers` | `habit_id`, `tier` (`dificuldade:meta:dias por semana`, de `tierKey`), `first_on`, `mastered_on` | Cada patamar que o hábito já teve: decide se uma subida rende estrela e se o Prêmio de Domínio já foi pago |
 | `completions` | `id`, `member_id`, `habit_id`, `day`, `count`, `done`, `minimum`, `xp`, `gold` | Uma linha por hábito e dia. `xp` e `gold` guardam o que a conclusão rendeu, para desmarcar devolver o mesmo |
 | `pauses` | `id`, `member_id`, `habit_id` (nulo = app inteiro), `kind` (`pause`, `archive`), `from_day`, `until_day` (a data de volta, fora da pausa; nulo = sem prazo), `ended_on` (o dia do "Voltar", ainda dentro) | Uma pausa ou o tempo em que um hábito ficou arquivado: os dois congelam o streak (ADR-011) |
-| `invitations` | `habit_id`, `kind` (`raise`, `adjust`), `dismissed_on`, `available_from` | Estado dos convites de régua |
+| `invitations` | `habit_id`, `kind` (`raise`, `adjust`), `dismissed_on` | O último "Agora não" de cada convite; se o convite aparece é calculado |
 | `achievements` | `member_id`, `track` (`automated`, `courage`), `milestone`, `reached_on`, `gold` | Uma linha por marco atingido; nunca apagada |
 | `rewards` | `id`, `member_id`, `name`, `cost` | |
 | `redemptions` | `id`, `member_id`, `reward_id`, `name`, `cost`, `at` | Nome e custo copiados no resgate |
 | `milestones` | `member_id`, `habit_id`, `day`, `kind` (`mastered`, `raised`) | Os marcadores do heatmap |
 
-Streak, ritmo, última vez, domínio e o heatmap são calculados a partir de `completions`, `pauses` e
-`habit_tiers` por funções puras de `src/domain/`; nada disso é guardado.
+Streak, ritmo, última vez, a janela de domínio, os convites de régua e o heatmap são calculados a
+partir de `completions`, `pauses`, `habit_tiers` e `invitations` por funções puras de `src/domain/`;
+nada disso é guardado. Só o momento do domínio é gravado, porque o selo e os prêmios são permanentes.
 
 ## Fluxo de eventos
 
 - `completions` é o histórico: marcar grava ou atualiza a linha do dia; desmarcar a apaga e devolve
   `xp` e `gold` (o ouro para em 0). Desmarcar só alcança a linha do "hoje" do membro, então a trava
   dos desmarques de ontem vem da virada sem gravar nada. A única escrita em ontem é
-  `day.reviewYesterday`, uma vez por dia, que conclui de uma vez os hábitos escolhidos na revisão. Na mesma transação, o comando recalcula domínio, estrelas e
-  conquistas e grava o que mudou (`habit_tiers`, `achievements`, `milestones`, `progress`).
-- O comando devolve os eventos de feedback (ganho, nível, Automatizado, conquista) para a tela
-  mostrar; eles não são guardados.
+  `day.reviewYesterday`, uma vez por dia, que conclui de uma vez os hábitos escolhidos na revisão.
+- Uma conclusão (marcar ou revisar) confere o domínio na mesma transação: ao atingir, grava o
+  momento (`habits`, `habit_tiers`, `milestones`), paga o Prêmio de Domínio e os marcos de
+  Automatizados (`achievements`, `progress`). `habit.resize` confere a estrela e os marcos de
+  Coragem. Desmarcar não desfaz nada disso.
+- O comando devolve os eventos de feedback (nível em `levelUp`; Automatizado e conquista em
+  `celebrations`, do menor para o maior) para a tela mostrar; eles não são guardados.
 - A virada do dia (ADR-009) roda no `tick` do cron, por membro, e avisa os apps (`day`) para
-  refazerem as consultas; na 1c, reavalia os convites. Streak, "Faz tempo" e o fim de uma pausa na
-  data de volta não precisam de gravação: são calculados.
+  refazerem as consultas. Streak, "Faz tempo", os convites de régua e o fim de uma pausa na data de
+  volta não precisam de gravação: são calculados.
 
 ## Migrações
 

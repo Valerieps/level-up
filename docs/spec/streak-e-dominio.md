@@ -8,8 +8,7 @@ Como o app mede a consistência e reconhece quando um hábito virou automático.
 
 ## Em aberto
 
-- [ ] Se eu desmarco a conclusão que completou o domínio, o selo Automatizado e o Prêmio de Domínio
-  continuam, ou voltam atrás junto com o XP e o ouro da conclusão?
+(nada por enquanto)
 
 ## Streak (diários e dias específicos)
 
@@ -50,6 +49,11 @@ Como o app mede a consistência e reconhece quando um hábito virou automático.
   versão mínima foi marcada. *(1c)*
 - Dias em pausa não entram na janela. Depois de mudar a régua ou a regra de tempo, a janela só conta
   ocorrências do patamar novo. *(1c)*
+- Um dia em pausa em que eu marquei mesmo assim conta na janela, como no streak. *(1c)*
+- Hoje só entra na janela depois de feito: o domínio chega na hora da conclusão que completa a
+  contagem, e um hoje ainda por fazer não atrapalha. *(1c)*
+- Uma conclusão feita pela revisão de ontem também pode completar o domínio, com selo, prêmio e
+  celebração ao fechar a revisão. *(1c)*
 
 ## Ao atingir o domínio
 
@@ -60,6 +64,11 @@ Como o app mede a consistência e reconhece quando um hábito virou automático.
 
 - Cada patamar novo tem seu próprio domínio: depois de mudar a régua, a contagem recomeça e o
   hábito pode ser dominado de novo, com outro Prêmio de Domínio. *(1c)*
+- Se eu volto a um patamar que já dominei e domino de novo, o convite de subir volta, mas sem outro
+  Prêmio de Domínio nem celebração. *(1c)*
+- Se eu desmarco a conclusão que completou o domínio, o selo, o Prêmio de Domínio e as conquistas
+  que vieram junto ficam; desmarcar só devolve o XP e o ouro da própria conclusão. *(1c)*
+  Por quê: conquistas são permanentes e nada no app é tirado.
 
 ## Para revisar depois do uso
 

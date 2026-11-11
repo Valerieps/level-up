@@ -100,6 +100,51 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
   ],
   // 5: the day each member last closed Revisar ontem (docs/spec/registrar-o-dia.md).
   [`ALTER TABLE member_settings ADD COLUMN yesterday_reviewed_on TEXT`],
+  // 6: phase 1c. Every patamar a habit had and whether it was mastered (stars, Prêmio de Domínio);
+  // the selo and the current patamar's mastery on the habit; the régua invitations dismissed; the
+  // conquistas reached and the two track counts, which only grow; the heatmap markers. Existing
+  // habits get their current patamar, keyed like tierKey() in src/domain/habits/regua.ts.
+  [
+    `ALTER TABLE habits ADD COLUMN automated_on TEXT`,
+    `ALTER TABLE habits ADD COLUMN tier_mastered_on TEXT`,
+    `CREATE TABLE habit_tiers (
+      habit_id TEXT NOT NULL REFERENCES habits(id) ON DELETE CASCADE,
+      tier TEXT NOT NULL,
+      first_on TEXT NOT NULL,
+      mastered_on TEXT,
+      PRIMARY KEY (habit_id, tier)
+    )`,
+    `INSERT INTO habit_tiers (habit_id, tier, first_on)
+     SELECT id, difficulty || ':' || daily_goal || ':' || CASE rule
+       WHEN 'daily' THEN 7
+       WHEN 'free' THEN 0
+       ELSE (weekdays & 1) + ((weekdays >> 1) & 1) + ((weekdays >> 2) & 1) + ((weekdays >> 3) & 1)
+          + ((weekdays >> 4) & 1) + ((weekdays >> 5) & 1) + ((weekdays >> 6) & 1)
+     END, tier_started_on FROM habits`,
+    `CREATE TABLE invitations (
+      habit_id TEXT NOT NULL REFERENCES habits(id) ON DELETE CASCADE,
+      kind TEXT NOT NULL,
+      dismissed_on TEXT NOT NULL,
+      PRIMARY KEY (habit_id, kind)
+    )`,
+    `CREATE TABLE achievements (
+      member_id TEXT NOT NULL REFERENCES members(id),
+      track TEXT NOT NULL,
+      milestone INTEGER NOT NULL,
+      reached_on TEXT NOT NULL,
+      gold INTEGER NOT NULL,
+      PRIMARY KEY (member_id, track, milestone)
+    )`,
+    `CREATE TABLE milestones (
+      member_id TEXT NOT NULL REFERENCES members(id),
+      habit_id TEXT NOT NULL REFERENCES habits(id) ON DELETE CASCADE,
+      day TEXT NOT NULL,
+      kind TEXT NOT NULL
+    )`,
+    `CREATE INDEX milestones_member ON milestones(member_id, day)`,
+    `ALTER TABLE progress ADD COLUMN automated_count INTEGER NOT NULL DEFAULT 0`,
+    `ALTER TABLE progress ADD COLUMN courage_total INTEGER NOT NULL DEFAULT 0`,
+  ],
 ];
 
 export function migrate(sql: Sql): void {

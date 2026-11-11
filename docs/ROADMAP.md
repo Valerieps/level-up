@@ -11,9 +11,9 @@ O que ainda não está pronto.
 
 | Feature | Fase | Spec | Observação |
 | --- | --- | --- | --- |
-| Domínio, selo Automatizado e Prêmio de Domínio | 1c | `spec/streak-e-dominio.md` | |
-| Estrelas de Coragem e convites de subir e de ajustar a régua | 1c | `spec/regua.md` | |
-| Conquistas e celebrações | 1c | `spec/conquistas.md` | |
+| Telas do domínio: selo Automatizado, progresso até o domínio e a celebração com o Prêmio de Domínio | 1c | `spec/streak-e-dominio.md` | A base está pronta: `HabitView.automated`, `mastery`, `tierMastered` e `celebrations` em `habit.mark`, `habit.markMinimum` e `day.reviewYesterday` |
+| Telas da régua: estrela na folha "Subir a régua", convites de subir e de ajustar, folha "Ajustar a régua" | 1c | `spec/regua.md` | A base está pronta: `earnsStar`, `HabitView.invitation`, `habit.resize` devolve `star`, `habit.dismissInvitation` |
+| Telas das conquistas: trilhas no Perfil e celebração empilhada | 1c | `spec/conquistas.md`, `spec/telas-e-feedback.md` | A base está pronta: a consulta `achievements` e as `celebrations` dos comandos |
 | Heatmap por hábito, geral e folha do dia | 1d | `spec/heatmap.md` | |
 | Loja de recompensas | 1d | `spec/loja.md` | |
 
@@ -63,3 +63,8 @@ O que ainda não está pronto.
   ou a última mudança de régua (`spec/streak-e-dominio.md`).
 - [ ] A versão mínima tem até 80 caracteres, como o nome; um hábito que vira livre perde a versão
   mínima (`spec/habitos.md`).
+- [ ] O convite de ajustar olha as 8 últimas ocorrências do patamar atual e espera haver 8; um dia
+  em pausa feito mesmo assim conta como ocorrência no domínio; o convite de subir não aparece num
+  hábito que já não tem como subir (`spec/regua.md`, `spec/streak-e-dominio.md`).
+- [ ] Voltar a um patamar já dominado e dominá-lo de novo traz o convite de subir de volta, sem
+  outro Prêmio de Domínio nem celebração (`spec/streak-e-dominio.md`).
