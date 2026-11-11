@@ -71,9 +71,11 @@ signed in, the app loads the member's stored theme and switches to it if it diff
 picker switches at once and puts the old theme back if the server refuses. Sign-out keeps the device's
 last theme: the sign-in screen shows it (`docs/spec/temas.md`).
 
-*The installed icon.* `public/icon.svg` and `public/icon-maskable.svg` stay the default theme's:
-a home-screen icon is one per install, so it cannot follow the member's theme. The favicon (the
-tab) and the `theme-color` meta (the browser bar) do follow it, set by `applyTheme` at runtime.
+*The installed icon.* A home-screen icon is one per install, so it cannot follow the member's
+theme. `public/icon.svg` and `public/icon-maskable.svg` are therefore a theme-neutral logo (a pixel
+star on a blue plate) that belongs to no theme and reads on every theme's colors, from cream to
+near-black. The favicon (the tab) and the `theme-color` meta (the browser bar) do follow the theme,
+set by `applyTheme` at runtime; Ameixa's favicon is `public/themes/ameixa/favicon.svg`.
 
 *The manifest per theme.* Changing the `theme-color` meta at runtime did not recolor the Android
 status and navigation bars of the installed app: they follow the manifest's `theme_color`. So each

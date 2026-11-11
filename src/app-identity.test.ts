@@ -6,9 +6,9 @@ import { manifestPath } from './ui/theme/apply-theme';
 import { THEMES } from './ui/theme/themes';
 
 /**
- * The app identity files (installed icons, index.html's theme-color and favicon) follow the DEFAULT
- * theme's palette in tokens.css. The installed icon never follows the member's theme (ADR-012);
- * the favicon, the browser bar and the manifest (its colors) do, at runtime.
+ * index.html's theme-color and favicon follow the DEFAULT theme's palette in tokens.css. The
+ * installed icon belongs to no theme (ADR-012): every manifest points to the same icons. The
+ * favicon, the browser bar and the manifest (its colors) follow the member's theme, at runtime.
  */
 
 const ROOT = join(__dirname, '..');
@@ -54,11 +54,12 @@ describe('app identity', () => {
     for (const theme of Object.values(THEMES)) expect(read(`public${theme.favicon}`)).toContain('<svg');
   });
 
-  it('has an icon for any purpose and a maskable one, both in public/', () => {
+  it('has an icon for any purpose and a maskable one, both in public/, the same in every theme', () => {
     for (const purpose of ['any', 'maskable']) {
       const icon = manifest.icons.find((i) => i.purpose === purpose);
       expect(icon).toBeDefined();
-      expect(read(`public/${icon!.src}`)).toContain(token('color-brand'));
+      expect(read(`public/${icon!.src}`)).toContain('<svg');
     }
+    for (const id of THEME_IDS) expect(manifestOf(id).icons, id).toEqual(manifest.icons);
   });
 });
