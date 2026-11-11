@@ -21,6 +21,7 @@ import {
   updateHabit,
   yesterdayView,
 } from './habits';
+import { daySheet, habitHeatmap, overallHeatmap } from './heatmap';
 import { createInvite, listInvites, revokeInvite } from './invites';
 import {
   listMembers,
@@ -40,6 +41,7 @@ import { endPause, listPauses, startPause } from './pauses';
 import type { Clock, IdGenerator, Sql } from './ports';
 import { getProgress } from './progress';
 import { migrate } from './schema';
+import { createReward, deleteReward, listRedemptions, redeemReward, shopView, updateReward } from './shop';
 import { closeDays, getSettings, recordTimeZone, updateSettings } from './settings';
 
 type Input = Record<string, unknown>;
@@ -59,6 +61,11 @@ const QUERIES: { [N in QueryName]: Handler<Queries[N]['output'] | QueryError | n
   archivedHabits: (ctx, actor) => archivedHabits(ctx, actor),
   pauses: (ctx, actor) => listPauses(ctx, actor),
   achievements: (ctx, actor) => listAchievements(ctx, actor),
+  habitHeatmap,
+  heatmap: (ctx, actor) => overallHeatmap(ctx, actor),
+  daySheet,
+  shop: (ctx, actor) => shopView(ctx, actor),
+  redemptions: (ctx, actor) => listRedemptions(ctx, actor),
 };
 
 /** Every command the API runs; each checks the actor's role itself. */
@@ -83,6 +90,10 @@ const COMMANDS: { [N in CommandName]: Handler<CommandResult<Commands[N]['output'
   'pause.start': startPause,
   'pause.end': endPause,
   'day.reviewYesterday': reviewYesterday,
+  'reward.create': createReward,
+  'reward.update': updateReward,
+  'reward.delete': deleteReward,
+  'reward.redeem': redeemReward,
 };
 
 /** A command's result plus whom to tell what changed. */

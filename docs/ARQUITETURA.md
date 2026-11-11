@@ -77,7 +77,7 @@ usa. Todas têm `member_id` e toda consulta filtra por ele (ADR-008).
 | `invitations` | `habit_id`, `kind` (`raise`, `adjust`), `dismissed_on` | O último "Agora não" de cada convite; se o convite aparece é calculado |
 | `achievements` | `member_id`, `track` (`automated`, `courage`), `milestone`, `reached_on`, `gold` | Uma linha por marco atingido; nunca apagada |
 | `rewards` | `id`, `member_id`, `name`, `cost` | |
-| `redemptions` | `id`, `member_id`, `reward_id`, `name`, `cost`, `at` | Nome e custo copiados no resgate |
+| `redemptions` | `id`, `member_id`, `reward_id`, `name`, `cost`, `day`, `at` | Nome e custo copiados no resgate; `day` é o dia do membro no resgate. Sem chave estrangeira para `rewards`: o resgate sobrevive à exclusão da recompensa |
 | `milestones` | `member_id`, `habit_id`, `day`, `kind` (`mastered`, `raised`) | Os marcadores do heatmap |
 
 Streak, ritmo, última vez, a janela de domínio, os convites de régua e o heatmap são calculados a

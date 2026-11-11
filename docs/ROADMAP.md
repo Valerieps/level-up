@@ -11,8 +11,8 @@ O que ainda não está pronto.
 
 | Feature | Fase | Spec | Observação |
 | --- | --- | --- | --- |
-| Heatmap por hábito, geral e folha do dia | 1d | `spec/heatmap.md` | |
-| Loja de recompensas | 1d | `spec/loja.md` | |
+| Heatmap por hábito, geral e folha do dia | 1d | `spec/heatmap.md` | Servidor pronto (`habitHeatmap`, `heatmap`, `daySheet`); falta a tela |
+| Loja de recompensas | 1d | `spec/loja.md` | Servidor pronto (`shop`, `redemptions`, `reward.*`); falta a tela |
 
 ## O código ainda não segue o spec
 
@@ -71,3 +71,8 @@ O que ainda não está pronto.
 - [ ] A celebração empilhada abre com o maior momento (a conquista, senão o domínio); o botão é "Ver
   conquistas" quando há conquista ou o hábito já não tem como subir, e "Ver opções de régua" abre a
   folha "Subir a régua" no detalhe (`spec/telas-e-feedback.md`).
+- [ ] A Loja mostra os 5 últimos resgates antes do "Ver tudo" e lista as recompensas da mais barata
+  para a mais cara (`spec/loja.md`).
+- [ ] A folha do dia mostra também as metas feitas só em parte ("1 de 3") e, como marcos, os
+  domínios, as estrelas e as conquistas do dia; o marcador de régua no heatmap é só o da subida
+  que rendeu estrela (`spec/heatmap.md`).

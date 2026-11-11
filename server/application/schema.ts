@@ -145,6 +145,28 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
     `ALTER TABLE progress ADD COLUMN automated_count INTEGER NOT NULL DEFAULT 0`,
     `ALTER TABLE progress ADD COLUMN courage_total INTEGER NOT NULL DEFAULT 0`,
   ],
+  // 7: phase 1d. The Loja's rewards and every redemption, which copies the reward's name and cost
+  // and survives its edit or deletion (so no foreign key to rewards).
+  [
+    `CREATE TABLE rewards (
+      id TEXT PRIMARY KEY,
+      member_id TEXT NOT NULL REFERENCES members(id),
+      name TEXT NOT NULL,
+      cost INTEGER NOT NULL,
+      created_at TEXT NOT NULL
+    )`,
+    `CREATE INDEX rewards_member ON rewards(member_id)`,
+    `CREATE TABLE redemptions (
+      id TEXT PRIMARY KEY,
+      member_id TEXT NOT NULL REFERENCES members(id),
+      reward_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      cost INTEGER NOT NULL,
+      day TEXT NOT NULL,
+      at TEXT NOT NULL
+    )`,
+    `CREATE INDEX redemptions_member ON redemptions(member_id, at)`,
+  ],
 ];
 
 export function migrate(sql: Sql): void {
