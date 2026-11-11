@@ -15,7 +15,7 @@ list. `src/ui/theme/themes.tsx` maps every id to its visuals (`ThemeVisuals` in
 `src/ui/theme/types.ts`): the pt-BR name (from `strings.themes`), the icon style, the themed icons it
 redraws, its `Logo` component and its favicon path. The map is a `Record<ThemeId, ThemeVisuals>`, so
 an id without visuals does not compile. No color sits in the registry: the browser bar reads the
-theme's `--color-browser-bar` token at runtime, and the logo and the picker's swatch paint with the
+theme's `--color-browser-bar` token at runtime, and the logo paints with the
 theme's tokens.
 
 *The contract: what a theme may vary.*
@@ -41,7 +41,7 @@ fixed tokens. Each theme is a block keyed by `[data-theme='<id>']` holding exact
 themed tokens. The default theme's selector is `:root, [data-theme='ameixa']` and it comes first, so
 the page is never unstyled and a later theme block wins over it by source order (same
 specificity). The bare attribute selector (not `:root[data-theme]`) also lets any element carry a
-theme: the picker's swatches use it to show each theme's colors whatever theme the page is in.
+theme, whatever theme the page is in.
 `tokens.test.ts` parses every block and fails when a theme misses or adds a token, redefines a fixed
 one, sets no `color-scheme`, is not in `THEME_IDS`, or breaks a contrast pair; the literal, scale and
 token-existence checks are unchanged. A fixture theme built inside the test proves the checks see a

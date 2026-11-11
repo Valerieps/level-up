@@ -150,6 +150,52 @@ a {
   flex-shrink: 0;
 }
 
+.avatar.large {
+  width: var(--size-avatar-large);
+  height: var(--size-avatar-large);
+}
+
+.avatar-initial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  font-family: var(--font-display);
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-strong);
+}
+
+/* Perfil: who I am and my level, one block (the XP bar and the gold stay on Hoje). */
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.profile-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.profile-name {
+  overflow: hidden;
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-strong);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-level {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 /* Navigation */
 
 .icon {
@@ -498,18 +544,6 @@ button.list-link:disabled {
   border-radius: var(--radius-full);
   background: var(--color-gold);
   transition: width var(--duration-base) var(--easing);
-}
-
-.level-card {
-  margin-top: var(--space-2);
-}
-
-.level-card .xp-bar {
-  margin-bottom: var(--space-2);
-}
-
-.level-card p {
-  margin: 0;
 }
 
 .level-toast {
@@ -1478,29 +1512,42 @@ button.reward-open {
   color: var(--color-currency);
 }
 
-.theme-swatch {
-  display: inline-flex;
-  gap: var(--space-1);
-  padding: var(--space-1);
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: var(--size-touch);
+  padding: var(--space-2) var(--space-4);
   border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  cursor: pointer;
 }
 
-.theme-swatch-color {
-  width: var(--size-swatch);
-  height: var(--size-swatch);
-  border-radius: var(--radius-marker);
+.theme-option:has(input:checked) {
+  border-color: var(--color-brand);
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-brand);
+  font-weight: var(--font-weight-strong);
 }
 
-.theme-swatch-color.top {
-  background: var(--color-top);
+.theme-option:has(input:focus-visible) {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
 }
 
-.theme-swatch-color.brand {
-  background: var(--color-brand);
+.theme-option-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
-.theme-swatch-color.gold {
-  background: var(--color-gold);
+.theme-option .icon {
+  flex-shrink: 0;
+  color: var(--color-brand);
 }
