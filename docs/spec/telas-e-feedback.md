@@ -83,8 +83,8 @@ Ordem, de cima para baixo:
 
 ## Entrada
 
-- Aparece só sem sessão: a frase do app e o botão "Continuar com Google". Sem formulário de perfil.
-  *(1a)*
+- Aparece só sem sessão: o logo, a frase do app e o botão "Continuar com Google". Sem formulário
+  de perfil. *(1a; logo 1e)*
 
 ## Feedback
 

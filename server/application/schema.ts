@@ -167,6 +167,8 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
     )`,
     `CREATE INDEX redemptions_member ON redemptions(member_id, at)`,
   ],
+  // 8: each member's visual theme (ADR-012). Existing members get the default, Ameixa.
+  [`ALTER TABLE member_settings ADD COLUMN theme TEXT NOT NULL DEFAULT 'ameixa'`],
 ];
 
 export function migrate(sql: Sql): void {

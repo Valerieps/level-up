@@ -1,6 +1,6 @@
 # ADR-010: Ameixa visual identity
 
-**Status:** Accepted
+**Status:** Accepted, updated by ADR-012
 **Date:** 2026-11-11
 **Decision:** The app uses the Ameixa identity the owner designed before the bootstrap (design
 system and screen drafts in `docs/rascunhos/`). Its values go into `src/ui/theme/tokens.css` under
@@ -23,5 +23,8 @@ Two Ameixa values change to keep the template's rules (`docs/UI.md`):
 **Why:** The identity was already designed and approved; the tokens are the one place the template
 lets it live, and the tests keep contrast at AA in both themes (every Ameixa text pair passes;
 the pairs are listed in `tokens.test.ts`).
+**Update (2026-11-11):** Ameixa becomes the first and default theme of the per-member themes of
+ADR-012. Its dark mode is dropped: each theme has one mode, and Ameixa keeps only the light values
+above. The tests now keep contrast at AA in every theme.
 **Alternatives:** Keep Ameixa's own token names (`--ink`, `--canvas`): it would break the template's
 components and tests, which the visual-identity skill forbids.

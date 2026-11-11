@@ -606,7 +606,7 @@ button.list-link:disabled {
   height: var(--size-touch);
   padding: 0;
   border: 0;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-marker);
   background: none;
   color: var(--color-on-brand);
   cursor: pointer;
@@ -618,7 +618,7 @@ button.list-link:disabled {
   width: var(--size-marker);
   height: var(--size-marker);
   border: var(--border-width-strong) solid var(--color-brand);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-marker);
   background: var(--color-surface);
   transition: background-color var(--duration-fast) var(--easing);
 }
@@ -1309,7 +1309,7 @@ button.list-link:disabled {
   height: var(--size-heat-cell);
   padding: 0;
   border: 0;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-heat-cell);
   background: var(--color-heat-0);
 }
 
@@ -1441,4 +1441,51 @@ button.reward-open {
 .reward-missing {
   flex-shrink: 0;
   text-align: right;
+}
+
+/* Themes (ADR-012): the in-app logo and the Tema picker's swatches, painted by the theme's tokens. */
+
+.logo {
+  display: block;
+  width: var(--size-logo);
+  height: var(--size-logo);
+}
+
+.logo-plate {
+  fill: var(--color-top);
+}
+
+.logo-disc {
+  fill: var(--color-brand);
+}
+
+.logo-mark {
+  stroke: var(--color-on-brand);
+}
+
+.theme-swatch {
+  display: inline-flex;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+}
+
+.theme-swatch-color {
+  width: var(--size-swatch);
+  height: var(--size-swatch);
+  border-radius: var(--radius-marker);
+}
+
+.theme-swatch-color.top {
+  background: var(--color-top);
+}
+
+.theme-swatch-color.brand {
+  background: var(--color-brand);
+}
+
+.theme-swatch-color.gold {
+  background: var(--color-gold);
 }

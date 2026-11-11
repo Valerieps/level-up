@@ -11,13 +11,13 @@ O que ainda não está pronto.
 
 Nada do MVP (fases 1a a 1d) falta construir.
 
-- Temas (fase 1e, `spec/temas.md`): primeiro a base técnica (temas em tokens, ícones e logo por
-  tema, escolha guardada por membro, seção "Tema" no Perfil, fim do modo escuro); depois, um tema
-  por vez, com nome de jogo.
+- Os temas com nome de jogo, um por vez (`spec/temas.md`; quais e em que ordem está em "Em aberto"
+  lá). A base técnica está pronta (ADR-012); como criar um tema está em `docs/UI.md` "Adicionar
+  um tema".
 
 ## O código ainda não segue o spec
 
-- O app ainda segue o tema escuro do celular; o spec (`spec/temas.md`) não tem modo escuro.
+Nada.
 
 ## Adiado
 

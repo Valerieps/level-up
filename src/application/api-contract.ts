@@ -8,6 +8,7 @@ import type { DayEntry } from '../domain/habits/day-log';
 import type { OverallLevel } from '../domain/habits/heatmap';
 import type { InvitationKind } from '../domain/habits/invitations';
 import type { Difficulty, HabitState, Rule } from '../domain/habits/habit';
+import type { ThemeId } from '../domain/themes';
 
 export interface MemberView {
   readonly id: string;
@@ -41,6 +42,11 @@ export interface SettingsView {
   readonly dayTurnover: number;
   /** The IANA zone the server last heard from the member's device. */
   readonly timeZone: string;
+}
+
+/** The member's visual theme (ADR-012): private, like their habits. */
+export interface ThemeView {
+  readonly theme: ThemeId;
 }
 
 export interface HabitView {
@@ -250,6 +256,7 @@ export interface Queries {
   /** Admins only. */
   invites: { input: Record<string, never>; output: InviteView[] };
   settings: { input: Record<string, never>; output: SettingsView };
+  theme: { input: Record<string, never>; output: ThemeView };
   today: { input: Record<string, never>; output: TodayView };
   progress: { input: Record<string, never>; output: ProgressView };
   yesterday: { input: Record<string, never>; output: YesterdayView };
@@ -283,6 +290,8 @@ export interface Commands {
   'member.rename': { input: { name: string }; output: MeView };
   /** Every field is optional; an empty input only records the device's zone. */
   'settings.update': { input: { dayTurnover?: number }; output: SettingsView };
+  /** The member picks a theme; an id the app does not ship is `invalid`. */
+  'theme.set': { input: { theme: ThemeId }; output: ThemeView };
   'habit.create': { input: NewHabitInput; output: HabitView };
   /**
    * Name, versão mínima and time rule. Changing to weekdays needs the days; size changes go through
@@ -336,7 +345,7 @@ export type CommandName = keyof Commands;
  * What a live message says changed; the screens that show it refetch. A change to a member's own
  * data reaches only that member's apps (ADR-008). `day` means the member's day turned over.
  */
-export type Topic = 'me' | 'members' | 'invites' | 'settings' | 'day' | 'habits' | 'progress' | 'pauses' | 'achievements' | 'shop';
+export type Topic = 'me' | 'members' | 'invites' | 'settings' | 'theme' | 'day' | 'habits' | 'progress' | 'pauses' | 'achievements' | 'shop';
 
 export interface LiveMessage {
   readonly type: 'changed';
