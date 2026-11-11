@@ -130,6 +130,18 @@
   --size-content: 720px;
   /* The bottom tab bar, without the phone's home-indicator area. */
   --size-tab-bar: 64px;
+  /* The habit marker's circle; its button still fills --size-touch. */
+  --size-marker: 28px;
+  /* The floating "+". */
+  --size-fab: 56px;
+  /* XP bar height. */
+  --size-bar: 8px;
+  /* The grip at the top of a sheet. */
+  --size-handle: 36px;
+  /* The level-up celebration's number. */
+  --size-level-number: 36px;
+  /* The narrowest a choice card gets before the grid wraps. */
+  --size-choice: 128px;
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
 
@@ -139,8 +151,11 @@
   --duration-celebration: 300ms;
   /* How long the "+10 XP · +5 ouro" chip stays. */
   --duration-gain: 1000ms;
+  /* How long the level-up celebration stays before it goes away by itself. */
+  --duration-toast: 3500ms;
   --easing: cubic-bezier(0.2, 0, 0, 1);
   --opacity-disabled: 0.55;
+  --opacity-backdrop: 0.5;
 }
 
 @media (prefers-color-scheme: dark) {

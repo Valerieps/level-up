@@ -3,6 +3,19 @@
 import type { ApiResult, CommandName, Commands, QueryName, Queries, Topic } from '../../src/application/api-contract';
 import { isGroupTopic } from '../../src/application/topics';
 import { failure, QueryError, type CommandResult, type Context, type Notification } from './context';
+import {
+  archivedHabits,
+  archiveHabit,
+  createHabit,
+  deleteHabit,
+  getHabit,
+  markHabit,
+  reactivateHabit,
+  resizeHabit,
+  todayView,
+  unmarkHabit,
+  updateHabit,
+} from './habits';
 import { createInvite, listInvites, revokeInvite } from './invites';
 import {
   listMembers,
@@ -18,6 +31,7 @@ import {
   type SignInResult,
 } from './members';
 import type { Clock, IdGenerator, Sql } from './ports';
+import { getProgress } from './progress';
 import { migrate } from './schema';
 import { closeDays, getSettings, recordTimeZone, updateSettings } from './settings';
 
@@ -31,6 +45,10 @@ const QUERIES: { [N in QueryName]: Handler<Queries[N]['output'] | QueryError | n
   members: (ctx, actor) => listMembers(ctx, actor),
   invites: (ctx, actor) => listInvites(ctx, actor),
   settings: (ctx, actor) => getSettings(ctx, actor),
+  today: (ctx, actor) => todayView(ctx, actor),
+  progress: (ctx, actor) => getProgress(ctx, actor),
+  habit: getHabit,
+  archivedHabits: (ctx, actor) => archivedHabits(ctx, actor),
 };
 
 /** Every command the API runs; each checks the actor's role itself. */
@@ -41,6 +59,14 @@ const COMMANDS: { [N in CommandName]: Handler<CommandResult<Commands[N]['output'
   'member.remove': removeMember,
   'member.rename': rename,
   'settings.update': updateSettings,
+  'habit.create': createHabit,
+  'habit.update': updateHabit,
+  'habit.resize': resizeHabit,
+  'habit.archive': archiveHabit,
+  'habit.reactivate': reactivateHabit,
+  'habit.delete': deleteHabit,
+  'habit.mark': markHabit,
+  'habit.unmark': unmarkHabit,
 };
 
 /** A command's result plus whom to tell what changed. */

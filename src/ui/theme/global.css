@@ -326,3 +326,558 @@ input[aria-invalid='true'] {
   border: var(--border-width) dashed var(--color-border-strong);
   border-radius: var(--radius);
 }
+
+/* Helpers */
+
+.visually-hidden {
+  position: absolute;
+  width: var(--border-width);
+  height: var(--border-width);
+  margin: calc(-1 * var(--border-width));
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.wide {
+  width: 100%;
+}
+
+.stack-tight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.row.tight {
+  margin-bottom: 0;
+}
+
+.list-link.column {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+button.list-link {
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+button.list-link:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+.text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--size-touch);
+  padding: 0 var(--space-2);
+  border: 0;
+  background: none;
+  color: var(--color-brand-ink);
+  font: inherit;
+  font-weight: var(--font-weight-strong);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.section-head h1,
+.section-head h2 {
+  margin: 0;
+}
+
+.count-pill,
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--color-neutral-soft);
+  color: var(--color-neutral);
+  font-size: var(--font-size-small);
+}
+
+.tag {
+  margin-bottom: var(--space-2);
+}
+
+/* Progress: the plum top of Hoje, the level card of Perfil */
+
+.progress-top {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-4)) var(--space-6);
+  padding: var(--space-4);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: var(--color-top);
+  color: var(--color-on-top);
+}
+
+.progress-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.progress-top-row.small {
+  margin-top: var(--space-2);
+}
+
+.top-muted {
+  color: var(--color-top-muted);
+}
+
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-level);
+  color: var(--color-on-level);
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-strong);
+}
+
+.gold-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-coin);
+  color: var(--color-gold);
+  font-weight: var(--font-weight-strong);
+}
+
+.gold-pill .icon {
+  width: var(--size-icon-small);
+  height: var(--size-icon-small);
+}
+
+.xp-bar {
+  height: var(--size-bar);
+  margin-top: var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-track);
+  overflow: hidden;
+}
+
+.xp-bar.on-top {
+  background: var(--color-top-track);
+}
+
+.xp-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--color-gold);
+  transition: width var(--duration-base) var(--easing);
+}
+
+.level-card {
+  margin-top: var(--space-2);
+}
+
+.level-card .xp-bar {
+  margin-bottom: var(--space-2);
+}
+
+.level-card p {
+  margin: 0;
+}
+
+.level-toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  background: var(--color-toast);
+  color: var(--color-on-toast);
+  box-shadow: var(--shadow-toast);
+  animation: level-toast var(--duration-toast) var(--easing) both;
+}
+
+.level-toast-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--size-level-number);
+  height: var(--size-level-number);
+  border-radius: var(--radius-full);
+  background: var(--color-level);
+  color: var(--color-on-level);
+  font-weight: var(--font-weight-strong);
+}
+
+@keyframes level-toast {
+  0% {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--space-2)));
+  }
+  10%,
+  85% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Hoje */
+
+.habit-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--size-touch);
+  margin-bottom: var(--space-2);
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.habit-item.leaving {
+  animation: habit-leave var(--duration-gain) var(--easing) both;
+}
+
+@keyframes habit-leave {
+  0%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The marker: a --size-touch button drawing a smaller circle, so it is easy to hit. */
+.marker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--size-touch);
+  height: var(--size-touch);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--color-on-brand);
+  cursor: pointer;
+}
+
+.marker::before {
+  content: '';
+  position: absolute;
+  width: var(--size-marker);
+  height: var(--size-marker);
+  border: var(--border-width-strong) solid var(--color-brand);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  transition: background-color var(--duration-fast) var(--easing);
+}
+
+.marker > * {
+  position: relative;
+}
+
+.marker.checked::before {
+  background: var(--color-brand);
+}
+
+.marker:disabled {
+  cursor: default;
+}
+
+.marker-count {
+  color: var(--color-brand-ink);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-strong);
+}
+
+.marker .icon {
+  width: var(--size-icon-small);
+  height: var(--size-icon-small);
+}
+
+.habit-name {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: var(--size-touch);
+  color: var(--color-text);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.counter {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.gain {
+  flex-shrink: 0;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-gold-soft);
+  color: var(--color-gold-ink);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-strong);
+}
+
+.habit-item.done {
+  flex-wrap: wrap;
+}
+
+.done-card {
+  margin-bottom: var(--space-4);
+}
+
+.done-card h2 {
+  margin-bottom: var(--space-2);
+}
+
+.done-card p {
+  margin: 0;
+}
+
+.fab {
+  position: fixed;
+  right: var(--space-4);
+  bottom: calc(var(--size-tab-bar) + var(--space-4) + env(safe-area-inset-bottom));
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-fab);
+  height: var(--size-fab);
+  border-radius: var(--radius-lg);
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  box-shadow: var(--shadow-fab);
+}
+
+/* Forms: new and edit habit */
+
+.form {
+  gap: var(--space-6);
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--size-choice), 1fr));
+  gap: var(--space-2);
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-touch);
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  cursor: pointer;
+}
+
+.choice:has(input:checked) {
+  border-color: var(--color-brand);
+  background: var(--color-brand-soft);
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-brand);
+}
+
+.choice input {
+  min-height: 0;
+  margin: 0;
+  accent-color: var(--color-brand);
+}
+
+.choice-label {
+  display: block;
+  font-weight: var(--font-weight-medium);
+}
+
+.choice-hint {
+  display: block;
+}
+
+.xp-tag {
+  flex-shrink: 0;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-gold-soft);
+  color: var(--color-gold-ink);
+  font-size: var(--font-size-small);
+}
+
+.weekdays {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.weekday {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-touch);
+  height: var(--size-touch);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  font-weight: var(--font-weight-strong);
+  cursor: pointer;
+}
+
+.weekday input {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.weekday:has(input:checked) {
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+}
+
+.weekday:has(input:focus-visible) {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Habit detail */
+
+.habit-header {
+  margin-bottom: var(--space-6);
+}
+
+.stat {
+  display: inline-flex;
+  flex-direction: column;
+  min-width: var(--size-choice);
+}
+
+.stat-value {
+  color: var(--color-gold-ink);
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-strong);
+  line-height: var(--line-height-tight);
+}
+
+.action-list .list-link {
+  color: var(--color-brand-ink);
+  font-weight: var(--font-weight-medium);
+}
+
+.disclosure {
+  gap: var(--space-2);
+}
+
+.chevron {
+  display: inline-flex;
+  transition: transform var(--duration-fast) var(--easing);
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Sheets and the delete confirmation */
+
+.dialog {
+  max-width: var(--size-content);
+  padding: 0;
+  border: 0;
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sheet);
+}
+
+.dialog::backdrop {
+  background: var(--color-top);
+  opacity: var(--opacity-backdrop);
+}
+
+.dialog.sheet {
+  width: 100%;
+  max-height: 90dvh;
+  margin: auto auto 0;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  animation: sheet-in var(--duration-celebration) var(--easing);
+}
+
+.dialog.confirm {
+  width: calc(100% - 2 * var(--space-4));
+  border-radius: var(--radius-lg);
+}
+
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-4) calc(var(--space-6) + env(safe-area-inset-bottom));
+}
+
+.dialog-body h2,
+.dialog-body p {
+  margin: 0;
+}
+
+.sheet-handle {
+  align-self: center;
+  width: var(--size-handle);
+  height: var(--space-1);
+  border-radius: var(--radius-full);
+  background: var(--color-border-strong);
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}

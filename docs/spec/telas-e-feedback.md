@@ -39,7 +39,8 @@ Ordem, de cima para baixo:
 
 - O "+" de criar hábito fica fixo no canto de baixo. *(1a)*
 - Primeiro uso, sem hábitos: uma frase com a ideia do app e um único botão, "Criar meu primeiro
-  hábito", com exemplos (água, leitura, "Ficar sem refrigerante"). Sem tutorial. *(1a)*
+  hábito", com exemplos (água, leitura, "Ficar sem refrigerante"). Tocar num exemplo abre o cadastro
+  já preenchido. Sem tutorial. *(1a)*
 - Tudo feito hoje: uma mensagem positiva curta no lugar da lista; "Mostrar concluídos" continua
   ali. *(1a)*
 - Nada programado para hoje: "Nada programado para hoje", com Hábitos livres aberto. *(1a)*
@@ -62,7 +63,8 @@ Ordem, de cima para baixo:
 1. **Nível** e o XP até o próximo. *(1a)*
 2. **Conquistas:** as trilhas Automatizados e Coragem lado a lado. *(1c)*
 3. **Heatmap geral.** *(1d)*
-4. **Hábitos arquivados**, com a contagem. *(1a)*
+4. **Hábitos arquivados**, com a contagem: uma seção recolhível que abre a lista ali mesmo; cada
+   item leva ao detalhe do arquivado. *(1a)*
 
 ## Configurações
 

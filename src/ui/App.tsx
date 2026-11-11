@@ -7,6 +7,9 @@ import { Button } from './components/Button';
 import { Notice } from './components/Notice';
 import { TabBar, type Tab } from './components/TabBar';
 import { navigate, usePath } from './router';
+import { HabitDetail } from './screens/HabitDetail';
+import { HabitEdit } from './screens/HabitEdit';
+import { HabitNew } from './screens/HabitNew';
 import { Invites } from './screens/Invites';
 import { Members } from './screens/Members';
 import { Profile } from './screens/Profile';
@@ -66,7 +69,7 @@ function SignedIn({ me, onSignedOut }: { me: MeView; onSignedOut: () => void }) 
       <main>
         <Screen me={me} path={path} onSignOut={() => void signOut()} />
       </main>
-      <TabBar tabs={TABS} path={path} />
+      <TabBar tabs={TABS} path={tabPathOf(path)} />
     </div>
   );
 }
@@ -83,5 +86,13 @@ function Screen({ me, path, onSignOut }: { me: MeView; path: string; onSignOut: 
   if (path === '/perfil/configuracoes') return <Settings me={me} onSignOut={onSignOut} />;
   if (path === '/perfil/configuracoes/membros' && canManageGroup(me)) return <Members me={me} />;
   if (path === '/perfil/configuracoes/convites' && canManageGroup(me)) return <Invites />;
+  if (path === '/habito/novo') return <HabitNew />;
+  const habit = /^\/habito\/([\w-]+)(\/editar)?$/.exec(path);
+  if (habit) return habit[2] ? <HabitEdit key={habit[1]} habitId={habit[1]} /> : <HabitDetail key={habit[1]} habitId={habit[1]} />;
   return <Today />;
+}
+
+/** Habit screens open from Hoje, so the Hoje tab stays current on them. */
+function tabPathOf(path: string): string {
+  return path.startsWith('/habito/') ? '/' : path;
 }
