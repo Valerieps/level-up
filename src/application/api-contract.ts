@@ -32,6 +32,8 @@ export interface InviteView {
   readonly email: string;
   readonly state: InviteState;
   readonly invitedByName: string;
+  /** The theme the invitee starts with; they may change it later. */
+  readonly theme: ThemeId;
   readonly createdAt: string;
   readonly acceptedAt: string | null;
 }
@@ -282,7 +284,8 @@ export interface Queries {
  * device's `timeZone` to every command's body (ADR-009); the server stores it on the member.
  */
 export interface Commands {
-  'invite.create': { input: { email: string }; output: InviteView };
+  /** Admins. `theme` is the invitee's starting theme; without it, the default. */
+  'invite.create': { input: { email: string; theme?: ThemeId }; output: InviteView };
   'invite.revoke': { input: { email: string }; output: null };
   'member.setRoles': { input: { memberId: string; roles: Role[] }; output: MemberView };
   /** Admins; never oneself, so the last admin stays. */

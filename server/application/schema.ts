@@ -169,6 +169,8 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
   ],
   // 8: each member's visual theme (ADR-012). Existing members get the default, Ameixa.
   [`ALTER TABLE member_settings ADD COLUMN theme TEXT NOT NULL DEFAULT 'ameixa'`],
+  // 9: the theme an invitee starts with, picked by the admin who invites (docs/spec/temas.md).
+  [`ALTER TABLE invites ADD COLUMN theme TEXT NOT NULL DEFAULT 'ameixa'`],
 ];
 
 export function migrate(sql: Sql): void {
