@@ -32,7 +32,7 @@ function isFunctional(name: IconName): name is FunctionalIconName {
 function Svg({ d, style }: { d: string; style: IconStyle }) {
   return (
     <svg
-      className="icon"
+      className={style.tone ? `icon icon-${style.tone}` : 'icon'}
       viewBox={style.viewBox}
       fill={style.fill}
       stroke={style.stroke}

@@ -41,6 +41,22 @@
   font-weight: 100 800;
   src: url('/fonts/jetbrains-mono-latin-wght-normal.woff2') format('woff2-variations');
 }
+/* Ocarina. Nunito (OFL). Hylia Serif is a fan font (see public/fonts/hylia-serif-NOTICE.txt) with
+ * one weight: the range keeps the browser from faking a bold. */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 1000;
+  src: url('/fonts/nunito-latin-wght-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Hylia Serif';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/hylia-serif-latin-normal.woff2') format('woff2');
+}
 
 /* Fixed in every theme. */
 :root {
@@ -135,6 +151,11 @@
   --color-level: #ff8a5c;
   --color-on-level: #2b1208;
   --color-coin: #3e2f12;
+  /*
+   * The coin icon when a theme gives it a color of its own (IconStyle.tone 'currency'). Ameixa's
+   * coin follows the gold text around it and never uses this; the value only keeps the pairs valid.
+   */
+  --color-currency: #c27f00;
   /* Reward: gold, XP, stars and the Prêmio de Domínio use this family, and nothing else does. */
   --color-gold: #ffcf5c;
   --color-gold-ink: #7f5000;
@@ -216,4 +237,97 @@
   --easing: cubic-bezier(0.2, 0, 0, 1);
   --opacity-disabled: 0.55;
   --opacity-backdrop: 0.5;
+}
+
+/*
+ * Theme: Ocarina, after The Legend of Zelda: Ocarina of Time (spec/temas.md). The game's dialog
+ * boxes: navy panels with off-white text over the night of the Kokiri forest. Actions in the blue
+ * of the A button, the level in the green of the magic bar, the Rupee green, the focus in a fairy's
+ * cyan. Hylia Serif for titles, the rounded Nunito for text, as the game's text boxes. One dark mode.
+ */
+[data-theme='ocarina'] {
+  color-scheme: dark;
+
+  /* Colors */
+  --color-bg: #0d1f14;
+  --color-surface: #101a33;
+  --color-surface-raised: #16234a;
+  --color-text: #f5f1e3;
+  --color-text-muted: #b4bdd6;
+  --color-border: #26355f;
+  --color-border-strong: #7f8fbf;
+  --color-track: #1d2a4d;
+  --color-brand: #6f9bff;
+  --color-brand-ink: #a9c2ff;
+  --color-brand-soft: #1c2e63;
+  --color-on-brand: #0a1430;
+  --color-top: #070d1c;
+  --color-on-top: #ffffff;
+  --color-top-muted: #aab6d8;
+  --color-top-track: #1c2847;
+  --color-top-line: #34446f;
+  --color-level: #62d35d;
+  --color-on-level: #0b2410;
+  --color-coin: #241d07;
+  /* The Rupee: green, whatever the amount. */
+  --color-currency: #3ddc61;
+  --color-gold: #ffd23f;
+  --color-gold-ink: #ffd966;
+  --color-gold-soft: #3a2f0a;
+  --color-star: #ffd23f;
+  --color-faz: #cbb8ff;
+  --color-faz-soft: #2a2352;
+  --color-danger: #ff7b6e;
+  --color-danger-soft: #3d1714;
+  --color-on-danger: #2a0602;
+  --color-success: #74e08f;
+  --color-success-soft: #12331d;
+  --color-warning: #ffc552;
+  --color-warning-soft: #3a2a08;
+  --color-neutral: #c6c9d6;
+  --color-neutral-soft: #252a3a;
+  --color-toast: #1c2b5a;
+  --color-on-toast: #ffffff;
+  --color-focus: #8fd8ff;
+  --color-heat-0: #1a2b46;
+  --color-heat-1: #1e5a32;
+  --color-heat-2: #2d8a45;
+  --color-heat-3: #47b85a;
+  --color-heat-4: #8fe58a;
+  --color-browser-bar: #0d1f14;
+
+  --shadow-fab: 0 10px 20px -8px rgba(111, 155, 255, 0.5);
+  --shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-toast: 0 8px 24px -8px rgba(0, 0, 0, 0.6);
+
+  --font-sans: Nunito, 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --font-display: 'Hylia Serif', Georgia, 'Times New Roman', serif;
+  --font-mono: Nunito, 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 600;
+  --font-weight-strong: 800;
+  --line-height-tight: 1.25;
+  --line-height-body: 1.5;
+  --letter-spacing-display: 0.02em;
+
+  /* Shapes: the dialog boxes' small rounded corners; a squarer marker and heatmap. */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 999px;
+  --radius-marker: 6px;
+  --radius-heat-cell: 2px;
+  --border-width: 1px;
+  --border-width-strong: 2px;
+
+  /* Motion: a little slower and heavier, as the game's menus. */
+  --duration-fast: 180ms;
+  --duration-base: 260ms;
+  --duration-celebration: 500ms;
+  --duration-gain: 1200ms;
+  --duration-toast: 3500ms;
+  --easing: cubic-bezier(0.3, 0, 0.2, 1);
+  --opacity-disabled: 0.5;
+  --opacity-backdrop: 0.6;
 }

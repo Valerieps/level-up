@@ -98,7 +98,7 @@ ilegível.
 ### Adicionar um tema
 
 Um tema muda só o visual (`docs/spec/temas.md`, ADR-012).
-Os temas de jogos são inspirados, nunca cópia: nada de arte, logo ou fonte oficial.
+Quão perto do jogo um tema chega, e o que pode e o que não pode, está em `docs/spec/temas.md`.
 
 1. O id no fim de `THEME_IDS` em `src/domain/themes.ts` e o nome em `strings.themes`.
 2. Um bloco `[data-theme='<id>']` no `tokens.css`, depois do Ameixa, com `color-scheme` e
@@ -107,11 +107,13 @@ Os temas de jogos são inspirados, nunca cópia: nada de arte, logo ou fonte ofi
    cada `--radius-*` (`--radius-marker` e `--radius-heat-cell` dizem se o marcador e o dia do heatmap
    são redondos ou quadrados), `--border-width*`, `--easing`, `--duration-*` e `--opacity-*`.
    `--color-danger*` continua um vermelho reconhecível.
-3. Fontes só com licença livre (OFL), em `public/fonts` com a licença ao lado, num `@font-face` no
-   `tokens.css`.
+3. Fontes em `public/fonts`, num `@font-face` no `tokens.css`, com a licença ao lado (ou, numa
+   fonte de fã sem licença, um `-NOTICE.txt` dizendo de onde veio e o que mudou). Confira os acentos
+   do português: uma fonte sem `á`, `ç`, `ã` prontos mistura letras de outra fonte nos títulos.
 4. A entrada em `THEMES` (`src/ui/theme/themes.tsx`): o estilo dos ícones, os ícones temáticos que
    o tema redesenha (os outros caem no desenho do Ameixa), o `Logo` (pintado com tokens, por
-   classes no `global.css`) e o favicon em `public/themes/<id>/`.
+   classes no `global.css`) e o favicon em `public/themes/<id>/`. Uma moeda com cor própria (a Rupee
+   do Ocarina) usa `tone: 'currency'` no estilo do ícone, e a cor vem de `--color-currency`.
 5. `npm test`: o teste de tokens confere o bloco e o contraste do tema; o seletor Tema aparece no
    Perfil assim que há mais de um tema.
 
