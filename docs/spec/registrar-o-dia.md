@@ -59,8 +59,8 @@ dia, em poucos segundos.
 - A virada define o que é "hoje", o limite diário dos hábitos livres, o prazo para desmarcar e a
   contagem do streak. *(1a)*
 - Na virada, o app trava os desmarques de ontem, zera o streak dos hábitos programados não feitos
-  (exceto os pausados), reavalia domínio e convites, põe "Faz tempo" nos livres parados há 10 dias
-  ou mais e encerra as pausas que chegaram na data. Nada disso mostra mensagem. *(1a; streak e
+  (exceto os pausados), reavalia domínio e convites, põe "Faz tempo" nos livres parados há mais de
+  10 dias e encerra as pausas que chegaram na data. Nada disso mostra mensagem. *(1a; streak e
   "Faz tempo" 1b; domínio e convites 1c)*
 
 ## Conexão

@@ -70,10 +70,10 @@ usa. Todas têm `member_id` e toda consulta filtra por ele (ADR-008).
 | Tabela | Campos principais | Observação |
 | --- | --- | --- |
 | `progress` | `member_id`, `xp_total`, `gold` | Nível e XP do nível saem de `xp_total` pela curva; não se guarda o nível |
-| `habits` | `id`, `member_id`, `name`, `rule` (`daily`, `weekdays`, `free`), `difficulty`, `daily_goal`, `weekdays` (máscara), `minimum`, `stars`, `position`, `state` (`active`, `archived`), `archived_on`, `tier_started_on` | O patamar atual são as colunas de tamanho; `tier_started_on` é onde a janela de domínio começa |
+| `habits` | `id`, `member_id`, `name`, `rule` (`daily`, `weekdays`, `free`), `difficulty`, `daily_goal`, `weekdays` (máscara), `minimum`, `stars`, `position`, `state` (`active`, `archived`), `archived_on`, `tier_started_on`, `streak_carry` | O patamar atual são as colunas de tamanho; `tier_started_on` é onde a janela de domínio e a do streak começam; `streak_carry` é o streak que atravessou a última mudança de régua (ADR-011) |
 | `habit_tiers` | `habit_id`, `difficulty`, `daily_goal`, `days_per_week`, `mastered_on` | Cada patamar que o hábito já teve: decide se uma subida rende estrela e se o Prêmio de Domínio já foi pago |
 | `completions` | `id`, `member_id`, `habit_id`, `day`, `count`, `done`, `minimum`, `xp`, `gold` | Uma linha por hábito e dia. `xp` e `gold` guardam o que a conclusão rendeu, para desmarcar devolver o mesmo |
-| `pauses` | `id`, `member_id`, `habit_id` (nulo = app inteiro), `from_day`, `until_day` (nulo = sem prazo), `ended_on` | |
+| `pauses` | `id`, `member_id`, `habit_id` (nulo = app inteiro), `kind` (`pause`, `archive`), `from_day`, `until_day` (a data de volta, fora da pausa; nulo = sem prazo), `ended_on` (o dia do "Voltar", ainda dentro) | Uma pausa ou o tempo em que um hábito ficou arquivado: os dois congelam o streak (ADR-011) |
 | `invitations` | `habit_id`, `kind` (`raise`, `adjust`), `dismissed_on`, `available_from` | Estado dos convites de régua |
 | `achievements` | `member_id`, `track` (`automated`, `courage`), `milestone`, `reached_on`, `gold` | Uma linha por marco atingido; nunca apagada |
 | `rewards` | `id`, `member_id`, `name`, `cost` | |
@@ -91,8 +91,9 @@ Streak, ritmo, última vez, domínio e o heatmap são calculados a partir de `co
   conquistas e grava o que mudou (`habit_tiers`, `achievements`, `milestones`, `progress`).
 - O comando devolve os eventos de feedback (ganho, nível, Automatizado, conquista) para a tela
   mostrar; eles não são guardados.
-- A virada do dia (ADR-009) roda no `tick` do cron, por membro: encerra pausas vencidas e reavalia
-  os convites. O streak não precisa de gravação: ele é calculado.
+- A virada do dia (ADR-009) roda no `tick` do cron, por membro, e avisa os apps (`day`) para
+  refazerem as consultas; na 1c, reavalia os convites. Streak, "Faz tempo" e o fim de uma pausa na
+  data de volta não precisam de gravação: são calculados.
 
 ## Migrações
 

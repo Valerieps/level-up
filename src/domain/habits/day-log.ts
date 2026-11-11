@@ -2,17 +2,19 @@
 // same step the server runs, so the screen answers at once (optimistic) and agrees afterwards.
 import type { Day } from '../day';
 import { canBeDoneOn, isScheduledOn, type HabitShape } from './habit';
-import { goldFor, xpFor } from './progression';
+import { goldFor, minimumXpFor, xpFor } from './progression';
 
 /** A habit's record for one day. */
 export interface DayEntry {
   readonly count: number;
   readonly done: boolean;
+  /** The day was done with the versão mínima (docs/spec/registrar-o-dia.md). */
+  readonly minimum: boolean;
   readonly xp: number;
   readonly gold: number;
 }
 
-export const NOT_STARTED: DayEntry = { count: 0, done: false, xp: 0, gold: 0 };
+export const NOT_STARTED: DayEntry = { count: 0, done: false, minimum: false, xp: 0, gold: 0 };
 
 /**
  * One tap on the marker. Below the goal it only moves the counter; reaching the goal completes the
@@ -27,7 +29,21 @@ export function tap(habit: HabitShape & { readonly stars: number }, day: Day, en
 /** The day completed at the habit's current size. */
 export function complete(habit: { readonly difficulty: HabitShape['difficulty']; readonly stars: number }, count: number): DayEntry {
   const xp = xpFor(habit.difficulty, habit.stars);
-  return { count, done: true, xp, gold: goldFor(xp) };
+  return { count, done: true, minimum: false, xp, gold: goldFor(xp) };
+}
+
+/**
+ * The versão mínima: completes the day at once, whatever the counter says, for a quarter of the
+ * XP. Null when the habit has no versão mínima (free habits never do) or the day cannot take it.
+ */
+export function markMinimum(
+  habit: HabitShape & { readonly stars: number; readonly minimum: string | null },
+  day: Day,
+  entry: DayEntry = NOT_STARTED,
+): DayEntry | null {
+  if (entry.done || habit.minimum === null || habit.rule === 'free' || !canBeDoneOn(habit, day)) return null;
+  const xp = minimumXpFor(habit.difficulty, habit.stars);
+  return { count: entry.count, done: true, minimum: true, xp, gold: goldFor(xp) };
 }
 
 export interface TodayHabit<H> {

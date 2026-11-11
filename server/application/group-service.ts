@@ -10,6 +10,7 @@ import {
   deleteHabit,
   getHabit,
   markHabit,
+  markHabitMinimum,
   reactivateHabit,
   resizeHabit,
   todayView,
@@ -30,6 +31,7 @@ import {
   type Member,
   type SignInResult,
 } from './members';
+import { endPause, listPauses, startPause } from './pauses';
 import type { Clock, IdGenerator, Sql } from './ports';
 import { getProgress } from './progress';
 import { migrate } from './schema';
@@ -49,6 +51,7 @@ const QUERIES: { [N in QueryName]: Handler<Queries[N]['output'] | QueryError | n
   progress: (ctx, actor) => getProgress(ctx, actor),
   habit: getHabit,
   archivedHabits: (ctx, actor) => archivedHabits(ctx, actor),
+  pauses: (ctx, actor) => listPauses(ctx, actor),
 };
 
 /** Every command the API runs; each checks the actor's role itself. */
@@ -66,7 +69,10 @@ const COMMANDS: { [N in CommandName]: Handler<CommandResult<Commands[N]['output'
   'habit.reactivate': reactivateHabit,
   'habit.delete': deleteHabit,
   'habit.mark': markHabit,
+  'habit.markMinimum': markHabitMinimum,
   'habit.unmark': unmarkHabit,
+  'pause.start': startPause,
+  'pause.end': endPause,
 };
 
 /** A command's result plus whom to tell what changed. */

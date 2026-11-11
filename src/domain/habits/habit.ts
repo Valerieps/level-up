@@ -10,6 +10,7 @@ export const DIFFICULTIES: readonly Difficulty[] = ['trivial', 'easy', 'medium',
 
 export const NAME_MAX_LENGTH = 80;
 export const MAX_DAILY_GOAL = 99;
+export const MINIMUM_MAX_LENGTH = 80;
 
 /**
  * Days of the week as a bit mask: bit 0 is Sunday … bit 6 is Saturday, like Date.getUTCDay().
@@ -46,6 +47,18 @@ export function normalizeHabitName(name: unknown): string | null {
   if (typeof name !== 'string') return null;
   const clean = name.trim().replace(/\s+/g, ' ');
   return clean.length > 0 && clean.length <= NAME_MAX_LENGTH ? clean : null;
+}
+
+/**
+ * The versão mínima as stored, cleaned like the name. Undefined when the input is not text; null
+ * when it is empty (no versão mínima). Too long is undefined, so the command refuses it.
+ */
+export function normalizeMinimum(text: unknown): string | null | undefined {
+  if (text === null) return null;
+  if (typeof text !== 'string') return undefined;
+  const clean = text.trim().replace(/\s+/g, ' ');
+  if (clean.length === 0) return null;
+  return clean.length <= MINIMUM_MAX_LENGTH ? clean : undefined;
 }
 
 export function isValidDailyGoal(goal: unknown): goal is number {

@@ -2,6 +2,7 @@
 // Types only. The server imports it with `import type`, so nothing here runs on either side.
 import type { Day } from '../domain/day';
 import type { Role } from '../domain/group/roles';
+import type { Consistency } from '../domain/habits/consistency';
 import type { DayEntry } from '../domain/habits/day-log';
 import type { Difficulty, HabitState, Rule } from '../domain/habits/habit';
 
@@ -51,6 +52,28 @@ export interface HabitView {
   readonly stars: number;
   readonly state: HabitState;
   readonly archivedOn: Day | null;
+  /** The versão mínima's text; always null for free habits. */
+  readonly minimum: string | null;
+  /** A running pause of the app or of the habit: Hoje shows it at the end, as optional. */
+  readonly paused: boolean;
+  /** Streak, or Ritmo, Última vez and "Faz tempo", on the member's today. */
+  readonly consistency: Consistency;
+}
+
+/** A pause still running: of the whole app (habitId null) or of one habit. */
+export interface PauseView {
+  readonly id: string;
+  readonly habitId: string | null;
+  readonly habitName: string | null;
+  readonly fromDay: Day;
+  /** The first day back; null when the pause has no deadline. */
+  readonly untilDay: Day | null;
+}
+
+/** The pauses running today (Configurações, the Hoje banner and the pause button). */
+export interface PausesView {
+  readonly app: PauseView | null;
+  readonly habits: readonly PauseView[];
 }
 
 /** Hoje: every active habit, in the member's order, with what was done on the member's day. */
@@ -81,6 +104,8 @@ export interface NewHabitInput {
   difficulty: Difficulty;
   dailyGoal?: number;
   weekdays?: number;
+  /** Daily and weekday habits only; empty means none. */
+  minimum?: string | null;
 }
 
 /** Reads: `POST /api/query/<name>`. They never change anything. */
@@ -95,6 +120,7 @@ export interface Queries {
   /** One of the member's habits, active or archived. */
   habit: { input: { habitId: string }; output: HabitView };
   archivedHabits: { input: Record<string, never>; output: HabitView[] };
+  pauses: { input: Record<string, never>; output: PausesView };
 }
 
 /**
@@ -111,8 +137,12 @@ export interface Commands {
   /** Every field is optional; an empty input only records the device's zone. */
   'settings.update': { input: { dayTurnover?: number }; output: SettingsView };
   'habit.create': { input: NewHabitInput; output: HabitView };
-  /** Name and time rule. Changing to weekdays needs the days; size changes go through the régua. */
-  'habit.update': { input: { habitId: string; name: string; rule: Rule; weekdays?: number }; output: HabitView };
+  /**
+   * Name, versão mínima and time rule. Changing to weekdays needs the days; size changes go through
+   * the régua. A new rule restarts the streak; a free habit loses its versão mínima. Leaving
+   * `minimum` out keeps it.
+   */
+  'habit.update': { input: { habitId: string; name: string; rule: Rule; weekdays?: number; minimum?: string | null }; output: HabitView };
   /** Subir or baixar a régua: the new size. */
   'habit.resize': { input: { habitId: string; difficulty: Difficulty; dailyGoal: number; weekdays: number }; output: HabitView };
   'habit.archive': { input: { habitId: string }; output: HabitView };
@@ -121,8 +151,17 @@ export interface Commands {
   'habit.delete': { input: { habitId: string }; output: null };
   /** One tap on the marker, on the member's today. */
   'habit.mark': { input: { habitId: string }; output: MarkResult };
+  /** The long press: the versão mínima completes today at once. */
+  'habit.markMinimum': { input: { habitId: string }; output: MarkResult };
   /** Undoes today's completion, giving back exactly what it earned. */
   'habit.unmark': { input: { habitId: string }; output: null };
+  /**
+   * Pauses the whole app (no habitId) or one active habit, from today. `untilDay` is the first day
+   * back (after today); null or absent means no deadline. One running pause per target.
+   */
+  'pause.start': { input: { habitId?: string; untilDay?: Day | null }; output: PauseView };
+  /** "Voltar": today is still covered; the normal count starts tomorrow. */
+  'pause.end': { input: { pauseId: string }; output: null };
 }
 
 export type QueryName = keyof Queries;
@@ -132,7 +171,7 @@ export type CommandName = keyof Commands;
  * What a live message says changed; the screens that show it refetch. A change to a member's own
  * data reaches only that member's apps (ADR-008). `day` means the member's day turned over.
  */
-export type Topic = 'me' | 'members' | 'invites' | 'settings' | 'day' | 'habits' | 'progress';
+export type Topic = 'me' | 'members' | 'invites' | 'settings' | 'day' | 'habits' | 'progress' | 'pauses';
 
 export interface LiveMessage {
   readonly type: 'changed';

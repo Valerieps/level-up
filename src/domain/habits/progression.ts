@@ -24,6 +24,13 @@ export function xpFor(difficulty: Difficulty, stars = 0): number {
   return Math.max(1, round(BASE_XP * DIFFICULTY_MULTIPLIER[difficulty] * bonus));
 }
 
+const MINIMUM_SHARE = 0.25;
+
+/** XP for the versão mínima: a quarter of the full completion's XP, rounded, at least 1. */
+export function minimumXpFor(difficulty: Difficulty, stars = 0): number {
+  return Math.max(1, round(xpFor(difficulty, stars) * MINIMUM_SHARE));
+}
+
 /** Gold comes from the XP already rounded, so what the screen shows adds up; at least 1. */
 export function goldFor(xp: number): number {
   return Math.max(1, round(xp * GOLD_PER_XP));

@@ -39,6 +39,8 @@ O que é um hábito no LevelUp e como eu crio, edito, arquivo e excluo.
   "Ler 30 minutos"). É opcional e só existe em hábitos diários e de dias específicos. *(1b)*
   Por quê: mantém a identidade ("sou alguém que lê") sem exigir o hábito inteiro.
 - Eu defino a versão mínima no cadastro, na edição ou ao ajustar a régua. *(1b)*
+- O texto da versão mínima tem até 80 caracteres. Um hábito que vira livre perde a versão mínima.
+  *(1b)*
 
 ## Cadastro
 
