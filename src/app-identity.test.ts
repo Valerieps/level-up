@@ -5,9 +5,9 @@ import { DEFAULT_THEME } from './domain/themes';
 import { THEMES } from './ui/theme/themes';
 
 /**
- * The app identity files (installed icons, index.html's theme-color and favicon) follow the DEFAULT
- * theme's palette in tokens.css. The installed icon never follows the member's theme (ADR-012);
- * the favicon and the browser bar do, at runtime; the manifest is one, black, for every theme.
+ * index.html's theme-color and favicon follow the DEFAULT theme's palette in tokens.css. The
+ * installed icon belongs to no theme (ADR-012); the favicon and the browser bar follow the member's
+ * theme, at runtime; the manifest is one, black, for every theme.
  */
 
 const ROOT = join(__dirname, '..');
@@ -51,7 +51,7 @@ describe('app identity', () => {
     for (const purpose of ['any', 'maskable']) {
       const icon = manifest.icons.find((i) => i.purpose === purpose);
       expect(icon).toBeDefined();
-      expect(read(`public/${icon!.src}`)).toContain(token('color-brand'));
+      expect(read(`public/${icon!.src}`)).toContain('<svg');
     }
   });
 });

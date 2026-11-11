@@ -2,7 +2,7 @@ import { strings } from '../../domain/strings';
 import type { DefaultThemeVisuals } from './types';
 
 /**
- * The plate, the orange disc and the check of public/icon.svg, painted with the theme's tokens
+ * The plate, the orange disc and the check of public/themes/ameixa/favicon.svg, painted with the theme's tokens
  * (`.logo-*` in global.css) so it follows the colors of tokens.css.
  */
 function AmeixaLogo() {
@@ -44,5 +44,5 @@ export const AMEIXA: DefaultThemeVisuals = {
     },
   },
   Logo: AmeixaLogo,
-  favicon: '/icon.svg',
+  favicon: '/themes/ameixa/favicon.svg',
 };
