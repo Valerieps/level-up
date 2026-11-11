@@ -62,7 +62,7 @@ app (celular) ──POST /api/query|command──► Worker ──RPC──► G
 | `members` | `id`, `google_sub`, `email`, `name`, `photo_url`, `roles` (JSON), `active` | Removido fica com `active = 0`; um convite novo traz o mesmo membro de volta |
 | `sessions` | `token_hash`, `member_id`, `expires_at` | Só o SHA-256 do token; o cron apaga as vencidas |
 | `invites` | `email`, `invited_by`, `state` (`pending`, `accepted`, `revoked`) | Um por e-mail |
-| `member_settings` | `member_id`, `day_turnover` (minutos), `time_zone` (IANA), `last_closed_day` | O dia de cada membro (ADR-009). O app manda o fuso do aparelho em todo comando; o cron fecha o dia de quem passou da virada |
+| `member_settings` | `member_id`, `day_turnover` (minutos), `time_zone` (IANA), `last_closed_day`, `yesterday_reviewed_on` | O dia de cada membro (ADR-009). O app manda o fuso do aparelho em todo comando; o cron fecha o dia de quem passou da virada. `yesterday_reviewed_on` é o "hoje" em que o membro fechou a revisão de ontem |
 
 As tabelas abaixo são o desenho do LevelUp; cada uma entra numa migração junto com a feature que a
 usa. Todas têm `member_id` e toda consulta filtra por ele (ADR-008).
@@ -87,7 +87,8 @@ Streak, ritmo, última vez, domínio e o heatmap são calculados a partir de `co
 
 - `completions` é o histórico: marcar grava ou atualiza a linha do dia; desmarcar a apaga e devolve
   `xp` e `gold` (o ouro para em 0). Desmarcar só alcança a linha do "hoje" do membro, então a trava
-  dos desmarques de ontem vem da virada sem gravar nada. Na mesma transação, o comando recalcula domínio, estrelas e
+  dos desmarques de ontem vem da virada sem gravar nada. A única escrita em ontem é
+  `day.reviewYesterday`, uma vez por dia, que conclui de uma vez os hábitos escolhidos na revisão. Na mesma transação, o comando recalcula domínio, estrelas e
   conquistas e grava o que mudou (`habit_tiers`, `achievements`, `milestones`, `progress`).
 - O comando devolve os eventos de feedback (ganho, nível, Automatizado, conquista) para a tela
   mostrar; eles não são guardados.

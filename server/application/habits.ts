@@ -1,9 +1,9 @@
 // Habits and the member's day (docs/spec/habitos.md, registrar-o-dia.md, regua.md). Every query
 // and command reads and writes only the actor's own rows (ADR-008): an id of someone else's habit
 // is simply not found.
-import type { HabitView, MarkResult, TodayView } from '../../src/application/api-contract';
-import type { Day } from '../../src/domain/day';
-import { complete, NOT_STARTED, tap, type DayEntry } from '../../src/domain/habits/day-log';
+import type { HabitView, MarkResult, ReviewResult, TodayView, YesterdayView } from '../../src/application/api-contract';
+import { addDays, dayOf, type Day } from '../../src/domain/day';
+import { complete, completeInReview, NOT_STARTED, planReview, tap, type DayEntry } from '../../src/domain/habits/day-log';
 import {
   isDifficulty,
   isRule,
@@ -18,7 +18,7 @@ import {
 import { failure, nowIso, QueryError, type CommandResult, type Context } from './context';
 import type { Member } from './members';
 import { addProgress } from './progress';
-import { today } from './settings';
+import { memberDay, recordReview, today } from './settings';
 
 interface HabitRow {
   id: string;
@@ -33,6 +33,7 @@ interface HabitRow {
   state: HabitState;
   tier_started_on: Day;
   archived_on: Day | null;
+  created_at: string;
 }
 
 interface CompletionRow {
@@ -106,6 +107,32 @@ export function todayView(ctx: Context, actor: Member): TodayView {
     ctx.sql.all<CompletionRow>('SELECT * FROM completions WHERE member_id = ? AND day = ?', actor.id, day).map((c) => [c.habit_id, c]),
   );
   return { day, habits: habits.map((row) => ({ habit: toView(row), entry: toEntry(entries.get(row.id)) })) };
+}
+
+/**
+ * Revisar ontem: the active habits that existed yesterday, could be done then and were not. Empty
+ * once the member closed the review today.
+ */
+function reviewItems(ctx: Context, actor: Member): { day: Day; today: Day; reviewed: boolean; items: { row: HabitRow; entry: DayEntry }[] } {
+  const member = memberDay(ctx, actor.id);
+  const day = addDays(member.today, -1);
+  if (member.reviewedOn === member.today) return { day, today: member.today, reviewed: true, items: [] };
+  const rows = ctx.sql
+    .all<HabitRow>("SELECT * FROM habits WHERE member_id = ? AND state = 'active' ORDER BY position", actor.id)
+    .filter((row) => dayOf(new Date(row.created_at), member.timeZone, member.turnover) <= day);
+  const entries = new Map(
+    ctx.sql.all<CompletionRow>('SELECT * FROM completions WHERE member_id = ? AND day = ?', actor.id, day).map((c) => [c.habit_id, c]),
+  );
+  const plan = planReview(
+    rows.map((row) => ({ habit: { ...toView(row), row }, entry: toEntry(entries.get(row.id)) })),
+    day,
+  );
+  return { day, today: member.today, reviewed: false, items: plan.map(({ habit, entry }) => ({ row: habit.row, entry })) };
+}
+
+export function yesterdayView(ctx: Context, actor: Member): YesterdayView {
+  const { day, items } = reviewItems(ctx, actor);
+  return { day, habits: items.map(({ row, entry }) => ({ habit: toView(row), entry })) };
 }
 
 export function getHabit(ctx: Context, actor: Member, input: Input): HabitView | QueryError {
@@ -264,4 +291,31 @@ export function unmarkHabit(ctx: Context, actor: Member, input: Input): CommandR
   if (completion.done !== 1) return { ok: true, value: null, changed: CHANGED };
   addProgress(ctx, actor.id, -completion.xp, -completion.gold);
   return { ok: true, value: null, changed: CHANGED_WITH_PROGRESS };
+}
+
+/**
+ * Closes Revisar ontem: each chosen habit completes yesterday at its current size, earning XP and
+ * gold as if marked then. Runs once a day; a second close (another device) is a conflict.
+ */
+export function reviewYesterday(ctx: Context, actor: Member, input: Input): CommandResult<ReviewResult> {
+  const ids = input.habitIds;
+  if (!Array.isArray(ids) || ids.some((id) => typeof id !== 'string') || new Set(ids).size !== ids.length) return failure('invalid');
+  const { day, today: todayDay, reviewed, items } = reviewItems(ctx, actor);
+  if (reviewed) return failure('conflict');
+  const open = new Map(items.map((item) => [item.row.id, item]));
+  if (ids.some((id) => !open.has(id as string))) return failure('invalid');
+
+  let xp = 0;
+  let gold = 0;
+  for (const id of ids as string[]) {
+    const { row, entry } = open.get(id)!;
+    const done = completeInReview({ difficulty: row.difficulty, dailyGoal: row.daily_goal, stars: row.stars }, entry);
+    saveEntry(ctx, actor, row.id, day, done);
+    xp += done.xp;
+    gold += done.gold;
+  }
+  recordReview(ctx, actor.id, todayDay);
+  if (ids.length === 0) return { ok: true, value: { xp, gold, levelUp: null }, changed: CHANGED };
+  const levels = addProgress(ctx, actor.id, xp, gold);
+  return { ok: true, value: { xp, gold, levelUp: levels.after > levels.before ? levels.after : null }, changed: CHANGED_WITH_PROGRESS };
 }

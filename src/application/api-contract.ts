@@ -59,6 +59,23 @@ export interface TodayView {
   readonly habits: readonly { readonly habit: HabitView; readonly entry: DayEntry }[];
 }
 
+/**
+ * Revisar ontem: the habits that could have been done yesterday and were not. Empty when there is
+ * nothing to review or the member already closed the review today.
+ */
+export interface YesterdayView {
+  readonly day: Day;
+  readonly habits: readonly { readonly habit: HabitView; readonly entry: DayEntry }[];
+}
+
+/** What closing Revisar ontem earned. */
+export interface ReviewResult {
+  readonly xp: number;
+  readonly gold: number;
+  /** The new level when the review passed one. */
+  readonly levelUp: number | null;
+}
+
 /** XP, gold and level (docs/spec/progressao.md). */
 export interface ProgressView {
   readonly xpTotal: number;
@@ -92,6 +109,7 @@ export interface Queries {
   settings: { input: Record<string, never>; output: SettingsView };
   today: { input: Record<string, never>; output: TodayView };
   progress: { input: Record<string, never>; output: ProgressView };
+  yesterday: { input: Record<string, never>; output: YesterdayView };
   /** One of the member's habits, active or archived. */
   habit: { input: { habitId: string }; output: HabitView };
   archivedHabits: { input: Record<string, never>; output: HabitView[] };
@@ -123,6 +141,8 @@ export interface Commands {
   'habit.mark': { input: { habitId: string }; output: MarkResult };
   /** Undoes today's completion, giving back exactly what it earned. */
   'habit.unmark': { input: { habitId: string }; output: null };
+  /** Closes Revisar ontem, completing yesterday the habits chosen there (none is fine). Once a day. */
+  'day.reviewYesterday': { input: { habitIds: string[] }; output: ReviewResult };
 }
 
 export type QueryName = keyof Queries;

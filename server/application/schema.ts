@@ -80,6 +80,8 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
       gold INTEGER NOT NULL DEFAULT 0
     )`,
   ],
+  // 4: the day each member last closed Revisar ontem (docs/spec/registrar-o-dia.md).
+  [`ALTER TABLE member_settings ADD COLUMN yesterday_reviewed_on TEXT`],
 ];
 
 export function migrate(sql: Sql): void {

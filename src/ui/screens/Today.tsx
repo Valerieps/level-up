@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { HabitView } from '../../application/api-contract';
+import type { HabitView, ReviewResult } from '../../application/api-contract';
 import { formatDayLong } from '../../domain/day';
 import { NOT_STARTED, planToday, tap, type DayEntry, type TodayHabit } from '../../domain/habits/day-log';
 import { describeRule } from '../../domain/habits/describe';
@@ -11,6 +11,7 @@ import { Notice } from '../components/Notice';
 import { ProgressTop } from '../components/ProgressTop';
 import { Link, navigate } from '../router';
 import { useQuery } from '../use-query';
+import { YesterdaySheet } from './YesterdaySheet';
 
 const t = strings.today;
 const FREE_COLLAPSED_KEY = 'levelup.freeCollapsed';
@@ -49,6 +50,7 @@ export function Today() {
   const { backend } = useServices();
   const today = useQuery('today', {}, ['habits', 'day']);
   const progress = useQuery('progress', {}, ['progress']);
+  const yesterday = useQuery('yesterday', {}, ['habits', 'day']);
   const [overlays, setOverlays] = useState<ReadonlyMap<string, Overlay>>(new Map());
   const [gains, setGains] = useState<readonly PendingGain[]>([]);
   const [leaving, setLeaving] = useState<ReadonlySet<string>>(new Set());
@@ -148,6 +150,13 @@ export function Today() {
     progress.reload();
   }
 
+  function reviewed(result: ReviewResult | null) {
+    if (result?.levelUp != null) setCelebration(result.levelUp);
+    yesterday.reload();
+    today.reload();
+    progress.reload();
+  }
+
   function toggleFree() {
     setFreeCollapsed((current) => {
       writeCollapsed(!current);
@@ -155,7 +164,15 @@ export function Today() {
     });
   }
 
-  const top = <ProgressTop xpTotal={xpTotal} gold={gold} celebration={celebration} onCelebrationEnd={() => setCelebration(null)} />;
+  const review = yesterday.data && yesterday.data.habits.length > 0 && (
+    <YesterdaySheet key={yesterday.data.day} review={yesterday.data} onDone={reviewed} />
+  );
+  const top = (
+    <>
+      <ProgressTop xpTotal={xpTotal} gold={gold} celebration={celebration} onCelebrationEnd={() => setCelebration(null)} />
+      {review}
+    </>
+  );
   const fab = (
     <Link to="/habito/novo" className="fab" aria-label={t.create}>
       <Icon name="plus" />
