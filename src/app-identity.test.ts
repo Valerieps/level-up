@@ -1,34 +1,44 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_THEME } from './domain/themes';
+import { DEFAULT_THEME, THEME_IDS, type ThemeId } from './domain/themes';
+import { manifestPath } from './ui/theme/apply-theme';
 import { THEMES } from './ui/theme/themes';
 
 /**
- * The app identity files (manifest, installed icons, theme-color, favicon) follow the DEFAULT
+ * The app identity files (installed icons, index.html's theme-color and favicon) follow the DEFAULT
  * theme's palette in tokens.css. The installed icon never follows the member's theme (ADR-012);
- * the favicon and the browser bar do, at runtime.
+ * the favicon, the browser bar and the manifest (its colors) do, at runtime.
  */
 
 const ROOT = join(__dirname, '..');
 const read = (path: string) => readFileSync(join(ROOT, path), 'utf8');
-const manifest = JSON.parse(read('public/manifest.webmanifest')) as {
+interface Manifest {
+  id: string;
   theme_color: string;
   background_color: string;
   icons: { src: string; purpose: string }[];
-};
+}
+const manifestOf = (theme: string) => JSON.parse(read(`public${manifestPath(theme as ThemeId)}`)) as Manifest;
+const manifest = manifestOf(DEFAULT_THEME);
 const tokens = read('src/ui/theme/tokens.css');
 // The default theme's block: it opens with ":root," and its own [data-theme] selector.
 const defaultBlock = tokens.slice(tokens.indexOf(`[data-theme='${DEFAULT_THEME}'] {`));
 
-function token(name: string) {
-  return new RegExp(`--${name}: *(#[0-9a-f]{6})`).exec(defaultBlock)?.[1];
+function token(name: string, block = defaultBlock) {
+  return new RegExp(`--${name}: *(#[0-9a-f]{6})`).exec(block)?.[1];
 }
 
 describe('app identity', () => {
-  it('uses the brand and the background of the default theme in the manifest', () => {
-    expect(manifest.theme_color).toBe(token('color-brand'));
-    expect(manifest.background_color).toBe(token('color-bg'));
+  it("gives every theme a manifest with the theme's browser bar and background (ADR-012)", () => {
+    for (const id of THEME_IDS) {
+      const block = tokens.slice(tokens.indexOf(`[data-theme='${id}'] {`));
+      const m = manifestOf(id);
+      expect(m.theme_color, id).toBe(token('color-browser-bar', block));
+      expect(m.background_color, id).toBe(token('color-bg', block));
+      expect(m.id, id).toBe(manifest.id);
+    }
+    expect(read('index.html')).toContain(`<link rel="manifest" href="${manifestPath(DEFAULT_THEME)}" />`);
   });
 
   it("has one theme-color, the default theme's browser bar, and no dark variant", () => {

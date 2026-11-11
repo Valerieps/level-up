@@ -126,8 +126,9 @@ Um tema de jogo (ADR-012): uma paródia do RPG indie, nunca cópia. Os valores e
 ## Mudar a identidade visual
 
 Mude só os valores do bloco do tema no `tokens.css`, sem renomear os tokens. No tema padrão,
-mude também as mesmas cores no `index.html`, no manifest e nos ícones instalados
-(`src/app-identity.test.ts` confere). Rode `npm test`: o teste de contraste diz qual par ficou
+mude também as mesmas cores no `index.html`, em `public/manifests/ameixa.webmanifest` e nos ícones
+instalados (`src/app-identity.test.ts` confere). Em qualquer tema, o manifest dele
+(`public/manifests/<id>.webmanifest`) repete `--color-browser-bar` e `--color-bg`. Rode `npm test`: o teste de contraste diz qual par ficou
 ilegível.
 
 ### Adicionar um tema
@@ -151,8 +152,12 @@ Quão perto do jogo um tema chega, e o que pode e o que não pode, está em `doc
    o tema redesenha (os outros caem no desenho do Ameixa), o `Logo` (pintado com tokens, por
    classes no `global.css`) e o favicon em `public/themes/<id>/`. Uma moeda com cor própria (a Rupee
    do Ocarina) usa `tone: 'currency'` no estilo do ícone, e a cor vem de `--color-currency`.
-5. `npm test`: o teste de tokens confere o bloco e o contraste do tema; o seletor Tema aparece no
+5. O manifest do tema, `public/manifests/<id>.webmanifest`: copie o de outro tema e troque
+   `theme_color` por `--color-browser-bar` e `background_color` por `--color-bg` do bloco novo
+   (mantenha `id`, `start_url`, `scope` e os ícones). Sem ele a barra de status e a barra de navegação
+   do Android do app instalado continuam na cor de outro tema. `src/app-identity.test.ts` falha se faltar.
+6. `npm test`: o teste de tokens confere o bloco e o contraste do tema; o seletor Tema aparece no
    Perfil assim que há mais de um tema.
 
-O ícone instalado na tela inicial (manifest) é sempre o do Ameixa; o favicon e a cor da barra do
-navegador seguem o tema.
+O ícone instalado na tela inicial é sempre o do Ameixa; o favicon, a cor da barra do navegador e
+o manifest (as cores das barras do Android no app instalado) seguem o tema.
