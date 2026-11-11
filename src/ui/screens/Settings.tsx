@@ -9,14 +9,18 @@ import { Notice } from '../components/Notice';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { Link } from '../router';
 import { useQuery } from '../use-query';
+import { PauseSheet, pauseWhen } from './pause';
 
 const HOURS = Array.from({ length: MINUTES_PER_DAY / 60 }, (_, hour) => hour);
+const p = strings.pause;
 
-// Configurações (docs/spec/telas-e-feedback.md): the day turnover, the account and, for admins,
-// the group. Modo Pausa joins in phase 1b.
+// Configurações (docs/spec/telas-e-feedback.md): the day turnover, Modo Pausa, the account and,
+// for admins, the group.
 export function Settings({ me, onSignOut }: { me: MeView; onSignOut: () => void }) {
   const { backend } = useServices();
   const settings = useQuery('settings', {}, ['settings']);
+  const pauses = useQuery('pauses', {}, ['pauses', 'day']);
+  const [pausing, setPausing] = useState(false);
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
   const turnoverId = useId();
@@ -29,6 +33,16 @@ export function Settings({ me, onSignOut }: { me: MeView; onSignOut: () => void 
     setError(!result.ok);
     if (result.ok) settings.reload();
   }
+
+  async function resume(pauseId: string) {
+    setBusy(true);
+    const result = await backend.command('pause.end', { pauseId });
+    setBusy(false);
+    setError(!result.ok);
+    pauses.reload();
+  }
+
+  const appPause = pauses.data?.app ?? null;
 
   return (
     <section>
@@ -57,6 +71,43 @@ export function Settings({ me, onSignOut }: { me: MeView; onSignOut: () => void 
           {strings.settings.dayTurnoverHint}
         </span>
       </div>
+
+      <h2 className="section-title">{p.settingsTitle}</h2>
+      {pauses.data &&
+        (appPause ? (
+          <div className="card row tight">
+            <span className="grow">
+              {p.appPaused}
+              <br />
+              <span className="muted small">{pauseWhen(appPause)}</span>
+            </span>
+            <Button variant="secondary" aria-label={p.backLabel} disabled={busy} onClick={() => void resume(appPause.id)}>
+              {p.back}
+            </Button>
+          </div>
+        ) : (
+          <button type="button" className="card list-link column" onClick={() => setPausing(true)}>
+            <span>{p.pauseApp}</span>
+            <span className="muted small">{p.pauseAppHint}</span>
+          </button>
+        ))}
+      {pauses.data && pauses.data.habits.length > 0 && (
+        <ul className="list">
+          {pauses.data.habits.map((pause) => (
+            <li key={pause.id} className="card row tight">
+              <span className="grow">
+                {pause.habitName}
+                <br />
+                <span className="muted small">{pauseWhen(pause)}</span>
+              </span>
+              <Button variant="secondary" aria-label={p.backOf(pause.habitName ?? '')} disabled={busy} onClick={() => void resume(pause.id)}>
+                {p.back}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+      <PauseSheet open={pausing} onClose={() => setPausing(false)} onPaused={pauses.reload} />
 
       <h2 className="section-title">{strings.settings.account}</h2>
       <div className="row">

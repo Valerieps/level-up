@@ -1,6 +1,7 @@
 // Marking a habit on a day (docs/spec/registrar-o-dia.md) and what Hoje shows. The app runs the
 // same step the server runs, so the screen answers at once (optimistic) and agrees afterwards.
 import type { Day } from '../day';
+import type { Consistency } from './consistency';
 import { canBeDoneOn, isScheduledOn, type HabitShape } from './habit';
 import { goldFor, minimumXpFor, xpFor } from './progression';
 
@@ -51,29 +52,43 @@ export interface TodayHabit<H> {
   readonly entry: DayEntry;
 }
 
+/** What Hoje needs beyond the shape: a running pause and, for free habits, "Faz tempo". */
+export interface TodayHabitShape extends HabitShape {
+  readonly paused?: boolean;
+  readonly consistency?: Consistency;
+}
+
 export interface TodayPlan<H> {
-  /** Daily and weekday habits of the day still to do, in the member's order. */
+  /** Daily and weekday habits of the day still to do, not paused, in the member's order. */
   readonly scheduled: TodayHabit<H>[];
-  /** Free habits not done today. */
+  /** Habits of the day in a running pause, still to do: at the end of Hoje, as optional. */
+  readonly paused: TodayHabit<H>[];
+  /** Free habits not done today: the "Faz tempo" first, then the rest in the member's order. */
   readonly free: TodayHabit<H>[];
   /** What was done today, in the member's order. */
   readonly done: TodayHabit<H>[];
-  /** How many habits the day has scheduled, done or not. */
+  /** How many habits the day has scheduled and not paused, done or not. */
   readonly scheduledCount: number;
 }
 
-/** Splits the active habits into the sections of Hoje. */
-export function planToday<H extends HabitShape>(items: readonly TodayHabit<H>[], day: Day): TodayPlan<H> {
+const isLongAgo = (habit: TodayHabitShape) => habit.consistency?.kind === 'rhythm' && habit.consistency.longAgo;
+
+/** Splits the active habits into the sections of Hoje (docs/spec/telas-e-feedback.md "Hoje"). */
+export function planToday<H extends TodayHabitShape>(items: readonly TodayHabit<H>[], day: Day): TodayPlan<H> {
   const scheduled: TodayHabit<H>[] = [];
+  const paused: TodayHabit<H>[] = [];
   const free: TodayHabit<H>[] = [];
   const done: TodayHabit<H>[] = [];
   let scheduledCount = 0;
   for (const item of items) {
     const isScheduled = isScheduledOn(item.habit, day);
-    if (isScheduled) scheduledCount++;
+    const isPaused = item.habit.paused === true;
+    if (isScheduled && !isPaused) scheduledCount++;
     if (item.entry.done) done.push(item);
-    else if (isScheduled) scheduled.push(item);
+    else if (isScheduled) (isPaused ? paused : scheduled).push(item);
     else if (item.habit.rule === 'free') free.push(item);
   }
-  return { scheduled, free, done, scheduledCount };
+  // A stable sort: the "Faz tempo" rise to the top, each group keeps the member's order.
+  free.sort((a, b) => Number(isLongAgo(b.habit)) - Number(isLongAgo(a.habit)));
+  return { scheduled, paused, free, done, scheduledCount };
 }

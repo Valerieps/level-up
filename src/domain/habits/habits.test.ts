@@ -88,6 +88,29 @@ describe('tapping the marker (spec/registrar-o-dia.md)', () => {
     expect(plan.done.map((i) => i.habit.id)).toEqual(['d']);
     expect(plan.scheduledCount).toBe(2);
   });
+
+  it('puts paused habits of the day at the end, as optional, out of the scheduled count', () => {
+    const items = [
+      { habit: { ...daily(), id: 'a', paused: true }, entry: NOT_STARTED },
+      { habit: { ...daily(), id: 'b', paused: false }, entry: NOT_STARTED },
+      { habit: { ...daily(), id: 'c', paused: true }, entry: { count: 1, done: true, minimum: false, xp: 10, gold: 5 } },
+      { habit: { ...shapeFor('weekdays', 'easy', 1, WORK_WEEK)!, stars: 0, id: 'd', paused: true }, entry: NOT_STARTED },
+    ];
+    const plan = planToday(items, SUNDAY);
+    expect(plan.scheduled.map((i) => i.habit.id)).toEqual(['b']);
+    expect(plan.paused.map((i) => i.habit.id)).toEqual(['a']);
+    expect(plan.done.map((i) => i.habit.id)).toEqual(['c']);
+    expect(plan.scheduledCount).toBe(1);
+  });
+
+  it('raises the "Faz tempo" to the top of Hábitos livres, keeping the order within each group', () => {
+    const free = (id: string, longAgo: boolean) => ({
+      habit: { ...shapeFor('free', 'easy', 1, 0)!, stars: 0, id, consistency: { kind: 'rhythm' as const, rhythm: 0, lastDoneDaysAgo: null, longAgo } },
+      entry: NOT_STARTED,
+    });
+    const plan = planToday([free('a', false), free('b', true), free('c', false), free('d', true)], SUNDAY);
+    expect(plan.free.map((i) => i.habit.id)).toEqual(['b', 'd', 'a', 'c']);
+  });
 });
 
 describe('régua (spec/regua.md)', () => {
