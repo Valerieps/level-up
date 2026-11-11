@@ -1463,6 +1463,11 @@ button.reward-open {
   stroke: var(--color-on-brand);
 }
 
+/* A pixel-art logo's lit pixels, on the plate. */
+.logo-pixels {
+  fill: var(--color-on-top);
+}
+
 .theme-swatch {
   display: inline-flex;
   gap: var(--space-1);

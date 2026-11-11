@@ -3,7 +3,7 @@
 // A theme changes only visuals, never words.
 
 /** Every theme the app ships, the default first. */
-export const THEME_IDS = ['ameixa'] as const;
+export const THEME_IDS = ['ameixa', 'stardew'] as const;
 
 export type ThemeId = (typeof THEME_IDS)[number];
 
