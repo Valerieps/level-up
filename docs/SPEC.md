@@ -36,6 +36,7 @@ Cada fase precisa ser usável sozinha. Cada regra em `spec/` diz de que fase val
 | 1b | Versão mínima, streak, ritmo e "Faz tempo", Modo Pausa |
 | 1c | Domínio e selo Automatizado, Prêmio de Domínio, Estrelas de Coragem, convites de subir e de ajustar a régua, conquistas, celebrações |
 | 1d | Heatmaps (por hábito e geral), Loja de recompensas |
+| 1e | Temas com nome de jogo: cores, fontes, ícones e logo, escolhidos no Perfil |
 | 2 | Interação entre as pessoas do grupo |
 
 ## Arquivos
@@ -52,6 +53,7 @@ Cada fase precisa ser usável sozinha. Cada regra em `spec/` diz de que fase val
 | [spec/conquistas.md](spec/conquistas.md) | Trilhas Automatizados e Coragem |
 | [spec/heatmap.md](spec/heatmap.md) | Heatmap por hábito, geral e a folha do dia |
 | [spec/loja.md](spec/loja.md) | Recompensas, resgates e histórico |
+| [spec/temas.md](spec/temas.md) | O que um tema muda e o que nunca muda; escolha no Perfil |
 | [spec/telas-e-feedback.md](spec/telas-e-feedback.md) | Abas, conteúdo e estados das telas, celebrações |
 | [spec/_modelo.md](spec/_modelo.md) | Modelo para um arquivo de feature novo |
 
