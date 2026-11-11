@@ -37,6 +37,13 @@ export const strings = {
     missing: (missing: number) => `faltam ${missing}`,
     missingFor: (missing: number, next: number) => `faltam ${missing} para o nível ${next}`,
     gold: (gold: number) => `${gold} de ouro`,
+    goldInfo: {
+      title: 'Seu ouro',
+      earn: 'Cada hábito que você marca como feito rende ouro, junto com o XP. Hábitos mais difíceis rendem mais, e a versão mínima também conta. Dominar um hábito e ganhar selos de conquista dão um prêmio extra em ouro.',
+      keep: 'Nada que você deixa de fazer tira ouro de você.',
+      spend: 'Na Loja, você troca o ouro por recompensas da vida real, que você mesma cria com nome e preço. Quando o saldo cobre o preço, é só resgatar.',
+      close: 'Entendi',
+    },
     gain: (xp: number, gold: number) => `+${xp} XP · +${gold} ouro`,
     levelUp: (level: number) => `Nível ${level}! O XP que sobrou já conta para o próximo.`,
   },
