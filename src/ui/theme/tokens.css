@@ -66,6 +66,29 @@
   src: url('/fonts/nunito-latin-wght-normal.woff2') format('woff2-variations');
 }
 
+/* Press Start 2P has one weight; the range keeps a bold title from being faked by the browser. */
+@font-face {
+  font-family: 'Press Start 2P';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url('/fonts/press-start-2p-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('/fonts/space-mono-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url('/fonts/space-mono-latin-700-normal.woff2') format('woff2');
+}
+
 /* Fixed in every theme. */
 :root {
   /* Type scale. It steps by 1.125 to 1.5 from one size to the next; nothing below 12px. */
@@ -145,6 +168,8 @@
   --color-border-strong: #8a7a8f;
   /* Empty part of bars and the quiet heatmap day. */
   --color-track: #efeaf1;
+  /* Inside an unchecked marker. */
+  --color-marker-fill: #ffffff;
   /* Orange: the habit marker, the primary button, the "+". Text in orange uses --color-brand-ink. */
   --color-brand: #c84a1c;
   --color-brand-ink: #a63a12;
@@ -233,6 +258,11 @@
   --radius-heat-cell: 6px;
   --border-width: 1px;
   --border-width-strong: 2px;
+  /* The box around a tab's icon: none here; a theme may draw one. */
+  --border-width-tab: 0px;
+  /* The marker's shape cut out of its box (clip-path): none keeps the box, rounded by --radius-marker. */
+  --clip-marker: none;
+  --clip-marker-checked: none;
 
   /* Motion. global.css turns it off under prefers-reduced-motion. */
   --duration-fast: 150ms;
@@ -265,6 +295,7 @@
   --color-border: #e2cc9c;
   --color-border-strong: #8a6640;
   --color-track: #eadab0;
+  --color-marker-fill: #fbf3dc;
   /* Leaf green: the habit marker, the primary button, the "+". */
   --color-brand: #356b21;
   --color-brand-ink: #2c5c1b;
@@ -335,6 +366,9 @@
   --radius-heat-cell: 0px;
   --border-width: 2px;
   --border-width-strong: 3px;
+  --border-width-tab: 0px;
+  --clip-marker: none;
+  --clip-marker-checked: none;
 
   /* Motion: the same rhythm as Ameixa. */
   --duration-fast: 150ms;
@@ -365,6 +399,7 @@
   --color-border: #26355f;
   --color-border-strong: #7f8fbf;
   --color-track: #1d2a4d;
+  --color-marker-fill: #101a33;
   --color-brand: #6f9bff;
   --color-brand-ink: #a9c2ff;
   --color-brand-soft: #1c2e63;
@@ -428,6 +463,9 @@
   --radius-heat-cell: 2px;
   --border-width: 1px;
   --border-width-strong: 2px;
+  --border-width-tab: 0px;
+  --clip-marker: none;
+  --clip-marker-checked: none;
 
   /* Motion: a little slower and heavier, as the game's menus. */
   --duration-fast: 180ms;
@@ -438,4 +476,112 @@
   --easing: cubic-bezier(0.3, 0, 0.2, 1);
   --opacity-disabled: 0.5;
   --opacity-backdrop: 0.6;
+}
+
+/*
+ * Theme: Uppertale, a parody of the indie RPG, never copied from it (docs/UI.md "Adicionar um
+ * tema"). A black screen and white dialog-box borders; white on actions, the game's pure yellow only
+ * on the reward. Pixel titles (Press Start 2P), a monospaced text for reading (Space Mono), square
+ * corners, no soft shadows, stepped motion. The marker is a soul: an empty heart that fills when done.
+ * Red stays only for danger, so the heart is white, never red.
+ */
+[data-theme='uppertale'] {
+  color-scheme: dark;
+
+  /* Colors */
+  --color-bg: #000000;
+  --color-surface: #111111;
+  --color-surface-raised: #1a1a1a;
+  --color-text: #ffffff;
+  --color-text-muted: #a6a6a6;
+  --color-border: #3d3d3d;
+  --color-border-strong: #b3b3b3;
+  --color-track: #2b2b2b;
+  --color-marker-fill: #ffffff;
+  /* White: the habit marker, the primary button, the "+", like the game's dialog box. */
+  --color-brand: #ffffff;
+  --color-brand-ink: #ffffff;
+  --color-brand-soft: #333333;
+  --color-on-brand: #000000;
+  /* The battle screen: black, white lines. */
+  --color-top: #000000;
+  --color-on-top: #ffffff;
+  --color-top-muted: #b3b3b3;
+  --color-top-track: #333333;
+  --color-top-line: #ffffff;
+  --color-level: #ffffff;
+  --color-on-level: #000000;
+  --color-coin: #333300;
+  /* The game's yellow: the reward, and nothing else. */
+  --color-gold: #ffff00;
+  --color-gold-ink: #ffff00;
+  --color-gold-soft: #2e2e00;
+  --color-star: #ffff00;
+  /* The coin follows the gold: no color of its own. */
+  --color-currency: #ffff00;
+  /* Cyan: "Faz tempo". */
+  --color-faz: #66e0ff;
+  --color-faz-soft: #0d2a33;
+  --color-danger: #ff4d4d;
+  --color-danger-soft: #330d0d;
+  --color-on-danger: #000000;
+  --color-success: #4ddb6a;
+  --color-success-soft: #0d2914;
+  --color-warning: #ffa04d;
+  --color-warning-soft: #33200d;
+  --color-neutral: #bfbfbf;
+  --color-neutral-soft: #262626;
+  --color-toast: #ffffff;
+  --color-on-toast: #000000;
+  --color-focus: #ffffff;
+  /* Heatmap: from the dark to full white. */
+  --color-heat-0: #1f1f1f;
+  --color-heat-1: #4d4d4d;
+  --color-heat-2: #808080;
+  --color-heat-3: #b3b3b3;
+  --color-heat-4: #ffffff;
+  --color-browser-bar: #000000;
+
+  /* Shadows: none but the sheet's white top edge, a dialog box's border. */
+  --shadow-fab: none;
+  --shadow-sheet: 0 -3px 0 #ffffff;
+  --shadow-toast: none;
+
+  /* Type. Press Start 2P for titles only (wide, it would overflow a list), Space Mono for the rest. */
+  --font-sans: 'Space Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-display: 'Press Start 2P', 'Space Mono', ui-monospace, monospace;
+  --font-mono: 'Space Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-weight-regular: 400;
+  /* Space Mono has 400 and 700 only. */
+  --font-weight-medium: 700;
+  --font-weight-strong: 700;
+  --line-height-tight: 1.4;
+  --line-height-body: 1.5;
+  --letter-spacing-display: 0em;
+
+  /* Shapes: square, like the game's boxes. */
+  --radius-sm: 0px;
+  --radius: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-full: 0px;
+  --radius-marker: 0px;
+  --radius-heat-cell: 0px;
+  --border-width: 2px;
+  --border-width-strong: 3px;
+  /* Each tab's icon in a box, like a battle menu's buttons. */
+  --border-width-tab: 2px;
+  /* A pixel heart, 7x6 pixels of 4px in the 28px marker: a ring when empty, solid when done. */
+  --clip-marker: path('M4 2h8v4h-8zM16 2h8v4h-8zM0 6h4v4h-4zM12 6h4v4h-4zM24 6h4v4h-4zM0 10h4v4h-4zM24 10h4v4h-4zM4 14h4v4h-4zM20 14h4v4h-4zM8 18h4v4h-4zM16 18h4v4h-4zM12 22h4v4h-4z');
+  --clip-marker-checked: path('M4 2h8v4h-8zM16 2h8v4h-8zM0 6h28v4h-28zM0 10h28v4h-28zM4 14h20v4h-20zM8 18h12v4h-12zM12 22h4v4h-4z');
+
+  /* Motion: the same durations, in steps, like sprite frames. */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-celebration: 300ms;
+  --duration-gain: 1000ms;
+  --duration-toast: 3500ms;
+  --easing: steps(4, end);
+  --opacity-disabled: 0.55;
+  --opacity-backdrop: 0.7;
 }

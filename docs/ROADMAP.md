@@ -12,7 +12,7 @@ O que ainda não está pronto.
 Nada do MVP (fases 1a a 1d) falta construir.
 
 - Os próximos temas com nome de jogo, um por vez (`spec/temas.md`; quais e em que ordem está em "Em
-  aberto" lá). Ameixa, Stardew Valley e Ocarina existem; como criar um tema está em `docs/UI.md`
+  aberto" lá). Ameixa, Stardew Valley, Ocarina e Uppertale existem; como criar um tema está em `docs/UI.md`
   "Adicionar um tema".
 
 ## O código ainda não segue o spec

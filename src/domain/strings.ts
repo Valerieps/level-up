@@ -306,6 +306,7 @@ export const strings = {
     ameixa: 'Ameixa',
     stardew: 'Stardew Valley',
     ocarina: 'Ocarina',
+    uppertale: 'Uppertale',
   },
 
   settings: {
