@@ -13,9 +13,9 @@ export interface ThemeDocument {
 }
 
 /**
- * Sets `data-theme` on <html> (the token block of tokens.css), the tab's favicon, the web app manifest
- * (the installed app's bar colors) and the browser bar's color, which comes from the theme's
- * `--color-browser-bar` token, never from a literal.
+ * Sets `data-theme` on <html> (the token block of tokens.css), the tab's favicon and the browser
+ * bar's color, which comes from the theme's `--color-browser-bar` token, never from a literal. The
+ * web app manifest is one for every theme (ADR-012): Android fixes the installed app's bars from it.
  */
 export function applyTheme(
   theme: ThemeId,
@@ -25,21 +25,11 @@ export function applyTheme(
 ): void {
   doc.documentElement.dataset.theme = theme;
   doc.querySelector('link[rel="icon"]')?.setAttribute('href', favicon);
-  replaceWithAttribute(doc.querySelector('link[rel="manifest"]'), 'href', manifestPath(theme));
   const bar = readToken('--color-browser-bar').trim();
   if (bar) replaceWithAttribute(doc.querySelector('meta[name="theme-color"]'), 'content', bar);
 }
 
-/** The theme's web app manifest, in public/manifests/ (its colors are the theme's, ADR-012). */
-export function manifestPath(theme: ThemeId): string {
-  return `/manifests/${theme}.webmanifest`;
-}
-
-/**
- * Android Chrome (the status bar and the system navigation bar of an installed app) reliably
- * re-reads a <meta theme-color> or <link rel="manifest"> only when the element is replaced, not
- * when its attribute changes.
- */
+/** Android Chrome reliably re-reads a <meta theme-color> only when the element is replaced. */
 function replaceWithAttribute(element: Element | null, name: string, value: string): void {
   if (!element) return;
   const fresh = element.cloneNode(false) as Element;

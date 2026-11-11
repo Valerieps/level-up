@@ -124,7 +124,7 @@ Each step rereads the whole conversation, so long sessions and back-and-forth co
 - `server/application` - the server's use cases (`GroupService`), synchronous, on the `Sql`/`Clock`/`IdGenerator` ports; `schema.ts` holds the migrations.
 - `server/infrastructure`, `server/entry` - Durable Object, Worker, Google sign-in, cookies. `server/testing` - `node:sqlite` for tests.
 - `wrangler.jsonc` - the Worker: assets, Durable Object, cron, vars. Secrets via `wrangler secret put`; locally in `.dev.vars` (see `.dev.vars.example`).
-- `public/` - static files: a manifest per theme (`manifests/`), icons, `_headers`.
+- `public/` - static files: one manifest for every theme, icons, `_headers`.
 - `network-policy.ts` - the servers the app (`ALLOWED_ORIGINS`, `IMAGE_ORIGINS`) and the Worker (`SERVER_ORIGINS`) may talk to.
 - `scripts/` - `check-docs.mjs` (run by CI) and `setup-repo.mjs` (once per new repository), `ship.mjs` and `branches.mjs` (see Commands).
 

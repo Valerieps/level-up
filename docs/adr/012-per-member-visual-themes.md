@@ -75,15 +75,15 @@ last theme: the sign-in screen shows it (`docs/spec/temas.md`).
 a home-screen icon is one per install, so it cannot follow the member's theme. The favicon (the
 tab) and the `theme-color` meta (the browser bar) do follow it, set by `applyTheme` at runtime.
 
-*The manifest per theme.* Changing the `theme-color` meta at runtime did not recolor the Android
-status and navigation bars of the installed app: they follow the manifest's `theme_color`. So each
-theme has its own static manifest, `public/manifests/<id>.webmanifest` (same `id`, `start_url`,
-`scope` and icons; `theme_color` = the theme's `--color-browser-bar`, `background_color` = its
-`--color-bg`), and `applyTheme` replaces the `<link rel="manifest">` (and the `<meta>`, since Chrome
-rereads them when the element is replaced) with the theme's. Android picks up a changed manifest
-when it next checks the installed app, so the bars may change on a later launch, not instantly.
-`index.html` points at the default theme's manifest. `src/app-identity.test.ts` checks every
-theme's manifest against its tokens, and the default theme against `index.html` and the icons.
+*One black manifest.* Android's system navigation bar in the installed app takes its color from
+the manifest Chrome read when it built the installed app; neither the `theme-color` meta nor
+swapping the `<link rel="manifest">` at runtime recolors it (one manifest per theme was tried and
+did not work). So there is one `public/manifest.webmanifest` for every theme, with `theme_color`
+and `background_color` black (`#000000`): it disappears under Uppertale and reads as the phone's
+frame under the light themes, where a white bar would glare under a dark theme. `applyTheme` still
+replaces the `theme-color` meta (Chrome rereads it only when the element is replaced) for the
+browser bar. A changed manifest reaches an installed app only when Chrome next updates it, or on
+reinstall. `src/app-identity.test.ts` checks the manifest's colors and that `index.html` links it.
 
 **Why:** The owner wants game-inspired looks without touching the product: per-member like
 everything else in the app, visuals only, and as close to the game as possible without copying its
