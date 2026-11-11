@@ -72,6 +72,16 @@ export const strings = {
     notNow: 'Agora não',
   },
 
+  yesterday: {
+    title: 'Ficou algo de ontem?',
+    intro: 'Marque o que você fez ontem e esqueceu de marcar. Rende XP e ouro como se fosse ontem.',
+    saveFailed: 'Não deu para salvar o que você marcou de ontem. Tenta de novo?',
+    markOf: (name: string) => `Fiz ${name} ontem`,
+    total: (xp: number, gold: number) => `+${xp} XP · +${gold} ouro`,
+    confirm: (count: number) => (count === 0 ? 'Não fiz nenhum' : count === 1 ? 'Marcar 1 hábito' : `Marcar ${count} hábitos`),
+    hint: 'Só aparece uma vez por dia; ao fechar, o que estiver marcado conta.',
+  },
+
   habit: {
     newTitle: 'Novo hábito',
     editTitle: 'Editar hábito',

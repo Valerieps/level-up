@@ -10,6 +10,7 @@ interface SettingsRow {
   day_turnover: number;
   time_zone: string;
   last_closed_day: Day | null;
+  yesterday_reviewed_on: Day | null;
 }
 
 function toView(row: SettingsRow): SettingsView {
@@ -36,6 +37,22 @@ function row(ctx: Context, memberId: string): SettingsRow {
 export function today(ctx: Context, memberId: string): Day {
   const settings = row(ctx, memberId);
   return dayOf(ctx.clock.now(), settings.time_zone, settings.day_turnover);
+}
+
+/** The member's day settings as the server keeps them: zone, turnover and today. */
+export function memberDay(ctx: Context, memberId: string): { today: Day; timeZone: string; turnover: number; reviewedOn: Day | null } {
+  const settings = row(ctx, memberId);
+  return {
+    today: dayOf(ctx.clock.now(), settings.time_zone, settings.day_turnover),
+    timeZone: settings.time_zone,
+    turnover: settings.day_turnover,
+    reviewedOn: settings.yesterday_reviewed_on,
+  };
+}
+
+/** Records that the member closed Revisar ontem on `day`, so it does not open again that day. */
+export function recordReview(ctx: Context, memberId: string, day: Day): void {
+  ctx.sql.run('UPDATE member_settings SET yesterday_reviewed_on = ? WHERE member_id = ?', day, memberId);
 }
 
 export function getSettings(ctx: Context, actor: Member): SettingsView {

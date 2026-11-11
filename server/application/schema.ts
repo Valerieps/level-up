@@ -98,6 +98,8 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
     `INSERT INTO pauses (id, member_id, habit_id, kind, from_day)
      SELECT 'archive-' || id, member_id, id, 'archive', archived_on FROM habits WHERE state = 'archived' AND archived_on IS NOT NULL`,
   ],
+  // 5: the day each member last closed Revisar ontem (docs/spec/registrar-o-dia.md).
+  [`ALTER TABLE member_settings ADD COLUMN yesterday_reviewed_on TEXT`],
 ];
 
 export function migrate(sql: Sql): void {

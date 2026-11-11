@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { HabitView } from '../../application/api-contract';
+import type { HabitView, ReviewResult } from '../../application/api-contract';
 import { formatDayLong, type Day } from '../../domain/day';
 import { markMinimum, NOT_STARTED, planToday, tap, type DayEntry, type TodayHabit } from '../../domain/habits/day-log';
 import { describeRule } from '../../domain/habits/describe';
@@ -14,6 +14,7 @@ import { useLongPress } from '../long-press';
 import { Link, navigate } from '../router';
 import { useQuery } from '../use-query';
 import { PauseSheet, pauseWhen } from './pause';
+import { YesterdaySheet } from './YesterdaySheet';
 
 const t = strings.today;
 const p = strings.pause;
@@ -73,6 +74,7 @@ export function Today() {
   const today = useQuery('today', {}, ['habits', 'day']);
   const progress = useQuery('progress', {}, ['progress']);
   const pauses = useQuery('pauses', {}, ['pauses', 'day']);
+  const yesterday = useQuery('yesterday', {}, ['habits', 'day']);
   const [overlays, setOverlays] = useState<ReadonlyMap<string, Overlay>>(new Map());
   const [gains, setGains] = useState<readonly PendingGain[]>([]);
   const [leaving, setLeaving] = useState<ReadonlySet<string>>(new Set());
@@ -188,6 +190,13 @@ export function Today() {
     today.reload();
   }
 
+  function reviewed(result: ReviewResult | null) {
+    if (result?.levelUp != null) setCelebration(result.levelUp);
+    yesterday.reload();
+    today.reload();
+    progress.reload();
+  }
+
   function toggleFree() {
     setFreeCollapsed((current) => {
       writeCollapsed(!current);
@@ -208,9 +217,13 @@ export function Today() {
       {appPause ? p.back : p.pause}
     </button>
   );
+  const review = yesterday.data && yesterday.data.habits.length > 0 && (
+    <YesterdaySheet key={yesterday.data.day} review={yesterday.data} onDone={reviewed} />
+  );
   const top = (
     <>
       <ProgressTop xpTotal={xpTotal} gold={gold} celebration={celebration} onCelebrationEnd={() => setCelebration(null)} action={pauseButton} />
+      {review}
       {welcome && <Notice>{p.welcomeBack}</Notice>}
       {appPause && (
         <div className="card row pause-banner">

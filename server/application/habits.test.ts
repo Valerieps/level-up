@@ -155,6 +155,57 @@ describe('archiving and deleting', () => {
   });
 });
 
+describe('revisar ontem', () => {
+  const review = (session = ana) => ok<{ day: string; habits: { habit: HabitView }[] }>(service.query(session, 'yesterday', {}));
+  const close = (habitIds: string[]) => service.command(ana, 'day.reviewYesterday', { habitIds });
+
+  it('leaves out habits created today', () => {
+    create();
+    expect(review()).toEqual({ day: '2026-11-10', habits: [] });
+  });
+
+  it('lists yesterday’s open habits, scheduled and free, and pays the chosen ones as of yesterday', () => {
+    create();
+    const water = create({ name: 'Água', dailyGoal: 8 });
+    const walk = create({ name: 'Caminhar', rule: 'free' });
+    const done = create({ name: 'Feito' });
+    mark(done.id);
+    clock.set('2026-11-12T12:00:00Z');
+
+    expect(review().habits.map((h) => h.habit.name)).toEqual(['Ler', 'Água', 'Caminhar']);
+    expect(close([water.id, walk.id])).toMatchObject({ ok: true, value: { xp: 20, gold: 10, levelUp: null }, changed: ['habits', 'progress'] });
+    expect(progress()).toMatchObject({ xpTotal: 30, gold: 15 });
+    // Yesterday's records, not today's: today is still open.
+    expect(today().habits.every((h) => !h.entry.done)).toBe(true);
+    expect(service['ctx'].sql.all('SELECT habit_id, day, count FROM completions WHERE done = 1 ORDER BY habit_id')).toEqual([
+      { habit_id: water.id, day: '2026-11-11', count: 8 },
+      { habit_id: walk.id, day: '2026-11-11', count: 1 },
+      { habit_id: done.id, day: '2026-11-11', count: 1 },
+    ]);
+  });
+
+  it('opens once a day, even when closed with nothing chosen', () => {
+    const habit = create();
+    clock.set('2026-11-12T12:00:00Z');
+    expect(close([])).toMatchObject({ ok: true, changed: ['habits'] });
+    expect(review().habits).toEqual([]);
+    expect(close([habit.id])).toEqual({ ok: false, error: 'conflict' });
+    clock.set('2026-11-13T12:00:00Z');
+    expect(review().habits).toHaveLength(1);
+  });
+
+  it('refuses habits that are not in the review', () => {
+    const habit = create();
+    const weekend = create({ name: 'Fim de semana', rule: 'weekdays', weekdays: 0b1000001 });
+    clock.set('2026-11-12T12:00:00Z');
+    expect(close([weekend.id])).toEqual({ ok: false, error: 'invalid' });
+    expect(close([habit.id, habit.id])).toEqual({ ok: false, error: 'invalid' });
+    expect(close(['someone-else'])).toEqual({ ok: false, error: 'invalid' });
+    expect(service.command(ana, 'day.reviewYesterday', {})).toEqual({ ok: false, error: 'invalid' });
+    expect(close([habit.id])).toMatchObject({ ok: true });
+  });
+});
+
 /** Moves the clock to `offset` days after Wednesday 11 Nov, 9:00 in São Paulo. */
 const onDay = (offset: number) => clock.set(new Date(Date.parse(WEDNESDAY) + offset * 86_400_000).toISOString());
 const view = (habitId: string) => ok<HabitView>(service.query(ana, 'habit', { habitId }));

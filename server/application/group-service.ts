@@ -13,9 +13,11 @@ import {
   markHabitMinimum,
   reactivateHabit,
   resizeHabit,
+  reviewYesterday,
   todayView,
   unmarkHabit,
   updateHabit,
+  yesterdayView,
 } from './habits';
 import { createInvite, listInvites, revokeInvite } from './invites';
 import {
@@ -49,6 +51,7 @@ const QUERIES: { [N in QueryName]: Handler<Queries[N]['output'] | QueryError | n
   settings: (ctx, actor) => getSettings(ctx, actor),
   today: (ctx, actor) => todayView(ctx, actor),
   progress: (ctx, actor) => getProgress(ctx, actor),
+  yesterday: (ctx, actor) => yesterdayView(ctx, actor),
   habit: getHabit,
   archivedHabits: (ctx, actor) => archivedHabits(ctx, actor),
   pauses: (ctx, actor) => listPauses(ctx, actor),
@@ -73,6 +76,7 @@ const COMMANDS: { [N in CommandName]: Handler<CommandResult<Commands[N]['output'
   'habit.unmark': unmarkHabit,
   'pause.start': startPause,
   'pause.end': endPause,
+  'day.reviewYesterday': reviewYesterday,
 };
 
 /** A command's result plus whom to tell what changed. */

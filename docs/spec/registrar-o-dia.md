@@ -4,7 +4,7 @@ Marcar o que eu fiz, ver o que falta hoje e desfazer um engano. É o que eu faç
 dia, em poucos segundos.
 
 - **Entra aqui:** marcar como feito, o contador de meta, marcar a versão mínima, os concluídos do
-  dia, desmarcar e a virada do dia.
+  dia, desmarcar, revisar ontem e a virada do dia.
 - **Não entra aqui:** quanto cada conclusão rende (`spec/progressao.md`), streak e domínio
   (`spec/streak-e-dominio.md`), a tela Hoje como um todo (`spec/telas-e-feedback.md`).
 
@@ -49,6 +49,20 @@ dia, em poucos segundos.
   rendeu, e pode desfazer um level up. Se o ouro já foi gasto, o saldo vai a 0 e nunca fica
   negativo. Nada é mostrado além dos números mudando. *(1a)*
 - Depois da virada do dia, as conclusões de ontem não podem mais ser desmarcadas. *(1a)*
+
+## Revisar ontem
+
+- Na primeira vez que eu abro o Hoje depois da virada, o app me pergunta "Ficou algo de ontem?" e
+  lista os hábitos de ontem que ficaram sem marcar: os programados para ontem e os livres. *(1a)*
+  Por quê: às vezes eu faço e esqueço de marcar; o app não deve me fazer perder isso.
+- Só ontem: se eu fiquei mais de um dia sem abrir, os dias antes de ontem não entram. *(1a)*
+- Não entram os hábitos criados hoje, os arquivados e os que eu já concluí ontem. Se não sobra
+  nada, a revisão não aparece. *(1a)*
+- Cada hábito que eu marco ali conta como feito ontem, com XP e ouro completos, do tamanho que ele
+  tem hoje. Um hábito com contador conta inteiro de uma vez, qualquer que seja a contagem. *(1a)*
+- A revisão aparece uma vez por dia. Fechar de qualquer jeito (o botão, arrastar, tocar fora)
+  salva o que estiver marcado; fechar sem marcar nada também conta como revisada. *(1a)*
+- O que eu marco na revisão segue a regra de ontem: não dá para desmarcar depois. *(1a)*
 
 ## Virada do dia
 

@@ -32,6 +32,9 @@ O que ainda não está pronto.
 
 ## Revisar as lacunas que o agente decidiu
 
+- [ ] Revisar ontem: um hábito com contador conta inteiro ao ser marcado; fechar a revisão de
+  qualquer jeito salva o que estiver marcado; hábitos criados hoje ficam de fora; o XP é o do
+  tamanho atual do hábito (`spec/registrar-o-dia.md`).
 - [ ] A virada do dia se escolhe em horas cheias, de meia-noite às 23h (`spec/registrar-o-dia.md`).
 - [ ] Subir e baixar a régua (sem estrelas) entram já na fase 1a, porque a edição não muda
   dificuldade, meta nem dias (`spec/regua.md`, `spec/habitos.md`).

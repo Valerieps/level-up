@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { planToday, tap, NOT_STARTED } from './day-log';
+import { completeInReview, planReview, planToday, tap, NOT_STARTED } from './day-log';
 import { countWeekdays, isScheduledOn, normalizeHabitName, shapeFor, WORK_WEEK, type HabitShape } from './habit';
 import { goldFor, levelOf, xpFor, xpToNext } from './progression';
 import { reguaOptions } from './regua';
@@ -110,6 +110,25 @@ describe('tapping the marker (spec/registrar-o-dia.md)', () => {
     });
     const plan = planToday([free('a', false), free('b', true), free('c', false), free('d', true)], SUNDAY);
     expect(plan.free.map((i) => i.habit.id)).toEqual(['b', 'd', 'a', 'c']);
+  });
+});
+
+describe('revisar ontem (spec/registrar-o-dia.md)', () => {
+  it('lists what could have been done and was not, scheduled before free', () => {
+    const items = [
+      { habit: { ...shapeFor('free', 'easy', 1, 0)!, stars: 0, id: 'free' }, entry: NOT_STARTED },
+      { habit: { ...daily(), id: 'a' }, entry: NOT_STARTED },
+      { habit: { ...shapeFor('weekdays', 'easy', 1, WORK_WEEK)!, stars: 0, id: 'workday' }, entry: NOT_STARTED },
+      { habit: { ...daily(3), id: 'counting' }, entry: { count: 2, done: false, minimum: false, xp: 0, gold: 0 } },
+      { habit: { ...daily(), id: 'done' }, entry: { count: 1, done: true, minimum: false, xp: 10, gold: 5 } },
+    ];
+    expect(planReview(items, SUNDAY).map((i) => i.habit.id)).toEqual(['a', 'counting', 'free']);
+    expect(planReview(items, MONDAY).map((i) => i.habit.id)).toEqual(['a', 'workday', 'counting', 'free']);
+  });
+
+  it('completes a counter at once, keeping a count above the goal', () => {
+    expect(completeInReview(daily(8), { count: 3, done: false, minimum: false, xp: 0, gold: 0 })).toEqual({ count: 8, done: true, minimum: false, xp: 10, gold: 5 });
+    expect(completeInReview(daily(2), { count: 5, done: false, minimum: false, xp: 0, gold: 0 })).toMatchObject({ count: 5, done: true });
   });
 });
 

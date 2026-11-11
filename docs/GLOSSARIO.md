@@ -29,6 +29,8 @@ Um termo, um sentido. Estes nomes valem para os textos da interface e para as do
   ativos, dashboard. (`spec/telas-e-feedback.md`)
 - **Hábitos livres:** a seção dos hábitos sem dia programado. Não usar na interface: deck,
   oportunidades. (`spec/telas-e-feedback.md`)
+- **Revisar ontem:** a pergunta "Ficou algo de ontem?", na primeira abertura do dia, para marcar o
+  que ficou sem marcar ontem. Não usar: atrasados, pendências. (`spec/registrar-o-dia.md`)
 - **Feito / Concluídos:** a ação de marcar / a lista do que foi feito hoje. Não usar: completar,
   check. (`spec/registrar-o-dia.md`)
 - **Virada do dia:** o horário em que o meu dia termina. Não usar: reset. (`spec/registrar-o-dia.md`)
