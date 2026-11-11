@@ -11,9 +11,13 @@ O que ainda não está pronto.
 
 Nada do MVP (fases 1a a 1d) falta construir.
 
+- Temas (fase 1e, `spec/temas.md`): primeiro a base técnica (temas em tokens, ícones e logo por
+  tema, escolha guardada por membro, seção "Tema" no Perfil, fim do modo escuro); depois, um tema
+  por vez, com nome de jogo.
+
 ## O código ainda não segue o spec
 
-Nada.
+- O app ainda segue o tema escuro do celular; o spec (`spec/temas.md`) não tem modo escuro.
 
 ## Adiado
 
@@ -79,3 +83,6 @@ Nada.
   abrindo nas semanas mais recentes (`spec/heatmap.md`).
 - [ ] Na Loja vazia, "Adicionar à Loja" cria a sugestão na hora, sem abrir a folha; "Resgatar" não
   pede confirmação; o "+" fica no cabeçalho da Loja (`spec/loja.md`).
+- [ ] Temas: a fase se chama 1e; a seção "Tema" fica escondida enquanto só existe o Ameixa; a
+  troca é na hora, sem confirmação; a tela de entrada usa o último tema daquele aparelho; o ícone
+  instalado fica sempre o do Ameixa (`spec/temas.md`).

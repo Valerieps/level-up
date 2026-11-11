@@ -60,6 +60,11 @@ Um termo, um sentido. Estes nomes valem para os textos da interface e para as do
 - **Loja · Recompensa · Resgatar:** prêmios da vida real comprados com ouro. Não usar: comprar.
   (`spec/loja.md`)
 
+## Aparência
+
+- **Tema:** o visual completo do app (cores, fontes, ícones e logo), com nome de um jogo; cada pessoa
+  escolhe o seu. Não usar: skin, modo. (`spec/temas.md`)
+
 ## Pausa
 
 - **Modo Pausa · Pausar · Voltar:** congelar o app ou um hábito sem custo, e retomar. Não usar:

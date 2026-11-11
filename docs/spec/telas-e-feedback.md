@@ -72,6 +72,7 @@ Ordem, de cima para baixo:
 3. **Heatmap geral.** *(1d)*
 4. **Hábitos arquivados**, com a contagem: uma seção recolhível que abre a lista ali mesmo; cada
    item leva ao detalhe do arquivado. *(1a)*
+5. **Tema**, a escolha do visual do app (`spec/temas.md`). *(1e)*
 
 ## Configurações
 
