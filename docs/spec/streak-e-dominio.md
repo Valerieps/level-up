@@ -20,13 +20,22 @@ Como o app mede a consistência e reconhece quando um hábito virou automático.
   retirado. *(1b)*
 - O streak não muda o XP nem o domínio: perder um streak não custa nada além do próprio número.
   *(1b)*
+- Hoje, enquanto o dia não vira, um programado ainda não feito não zera o streak. *(1b)*
+- Dias em pausa e dias em que o hábito ficou arquivado não contam e não interrompem o streak; se eu
+  marcar num deles, conta. *(1b)*
+- Subir ou baixar a régua mantém o streak: os dias de antes contam pelo tamanho de antes. Só mudar a
+  regra de tempo recomeça o streak (`spec/habitos.md`). *(1b)*
 
 ## Ritmo e última vez (livres)
 
 - Hábitos livres não têm streak. No lugar, mostram o Ritmo (quantas vezes foi feito nos últimos 30
-  dias) e a Última vez (há quantos dias). *(1b)*
+  dias, contando hoje) e a Última vez (há quantos dias). *(1b)*
 - Um livre parado há mais de 10 dias sobe para o topo de Hábitos livres com a etiqueta "Faz tempo".
   É só um lembrete, sem XP extra. *(1b)*
+- Os dias em pausa (do app ou do hábito) não entram nos 10 dias, e um livre pausado nunca mostra
+  "Faz tempo". A Última vez continua mostrando os dias reais. *(1b)*
+- Um livre que nunca foi feito conta os 10 dias desde a criação ou a última mudança de régua.
+  *(1b)*
 
 ## Domínio
 

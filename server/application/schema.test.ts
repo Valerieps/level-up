@@ -23,4 +23,33 @@ describe('migrations', () => {
     migrate(sql);
     expect(sql.all('SELECT version FROM schema_migrations')).toEqual(MIGRATIONS.map((_, i) => ({ version: i + 1 })));
   });
+
+  it('give habits archived before migration 4 their archived stretch', () => {
+    const sql = memorySql();
+    sql.run('CREATE TABLE schema_migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL)');
+    for (let v = 0; v < 3; v++) {
+      for (const statement of MIGRATIONS[v]) sql.run(statement);
+      sql.run('INSERT INTO schema_migrations VALUES (?, ?)', v + 1, '2026-11-01');
+    }
+    sql.run("INSERT INTO members (id, email, name, joined_at) VALUES ('m1', 'ana@example.com', 'Ana', '2026-11-01')");
+    for (const [id, state, archived] of [
+      ['h1', 'archived', '2026-11-05'],
+      ['h2', 'active', null],
+    ]) {
+      sql.run(
+        `INSERT INTO habits (id, member_id, name, rule, difficulty, position, state, tier_started_on, created_at, archived_on)
+         VALUES (?, 'm1', 'Ler', 'daily', 'easy', 1, ?, '2026-11-01', '2026-11-01', ?)`,
+        id,
+        state,
+        archived,
+      );
+    }
+
+    migrate(sql);
+
+    expect(sql.all('SELECT habit_id, kind, from_day, ended_on FROM pauses')).toEqual([
+      { habit_id: 'h1', kind: 'archive', from_day: '2026-11-05', ended_on: null },
+    ]);
+    expect(sql.all('SELECT streak_carry FROM habits')).toEqual([{ streak_carry: 0 }, { streak_carry: 0 }]);
+  });
 });

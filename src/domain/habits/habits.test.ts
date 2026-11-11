@@ -65,13 +65,13 @@ describe('tapping the marker (spec/registrar-o-dia.md)', () => {
   it('moves the counter and pays only when the goal is reached', () => {
     const water = daily(3);
     const one = tap(water, MONDAY)!;
-    expect(one).toEqual({ count: 1, done: false, xp: 0, gold: 0 });
+    expect(one).toEqual({ count: 1, done: false, minimum: false, xp: 0, gold: 0 });
     const two = tap(water, MONDAY, one)!;
-    expect(tap(water, MONDAY, two)).toEqual({ count: 3, done: true, xp: 10, gold: 5 });
+    expect(tap(water, MONDAY, two)).toEqual({ count: 3, done: true, minimum: false, xp: 10, gold: 5 });
   });
 
   it('refuses a second completion and a weekday habit off its days', () => {
-    expect(tap(daily(), MONDAY, { count: 1, done: true, xp: 10, gold: 5 })).toBeNull();
+    expect(tap(daily(), MONDAY, { count: 1, done: true, minimum: false, xp: 10, gold: 5 })).toBeNull();
     expect(tap({ ...shapeFor('weekdays', 'easy', 1, WORK_WEEK)!, stars: 0 }, SUNDAY)).toBeNull();
   });
 
@@ -80,7 +80,7 @@ describe('tapping the marker (spec/registrar-o-dia.md)', () => {
       { habit: { ...daily(), id: 'a' }, entry: NOT_STARTED },
       { habit: { ...shapeFor('weekdays', 'easy', 1, WORK_WEEK)!, stars: 0, id: 'b' }, entry: NOT_STARTED },
       { habit: { ...shapeFor('free', 'easy', 1, 0)!, stars: 0, id: 'c' }, entry: NOT_STARTED },
-      { habit: { ...daily(), id: 'd' }, entry: { count: 1, done: true, xp: 10, gold: 5 } },
+      { habit: { ...daily(), id: 'd' }, entry: { count: 1, done: true, minimum: false, xp: 10, gold: 5 } },
     ];
     const plan = planToday(items, SUNDAY);
     expect(plan.scheduled.map((i) => i.habit.id)).toEqual(['a']);
