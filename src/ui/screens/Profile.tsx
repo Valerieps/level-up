@@ -5,12 +5,14 @@ import { strings } from '../../domain/strings';
 import { Button } from '../components/Button';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
-import { XpBar } from '../components/ProgressTop';
+import { GoldPill, XpBar } from '../components/ProgressTop';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { Link } from '../router';
 import { useQuery } from '../use-query';
+import { PauseSheet } from './pause';
 
 const p = strings.profile;
+const pause = strings.pause;
 const a = strings.achievements;
 
 // The Perfil tab (docs/spec/telas-e-feedback.md "Perfil"): level and the XP to the next one, the
@@ -19,6 +21,8 @@ const a = strings.achievements;
 export function Profile({ me }: { me: MeView }) {
   const progress = useQuery('progress', {}, ['progress']);
   const archived = useQuery('archivedHabits', {}, ['habits']);
+  const pauses = useQuery('pauses', {}, ['pauses', 'day']);
+  const [pausing, setPausing] = useState(false);
   const achievements = useQuery('achievements', {}, ['achievements']);
   const [showArchived, setShowArchived] = useState(false);
   const count = archived.data?.length ?? 0;
@@ -43,13 +47,7 @@ export function Profile({ me }: { me: MeView }) {
           <div className="row tight">
             <span className="level-badge">{strings.progress.level(progress.data.level)}</span>
             <span className="grow" />
-            <span className="gold-pill">
-              <Icon name="coin" />
-              <span className="mono" aria-hidden="true">
-                {progress.data.gold}
-              </span>
-              <span className="visually-hidden">{strings.progress.gold(progress.data.gold)}</span>
-            </span>
+            <GoldPill gold={progress.data.gold} />
           </div>
           <XpBar inLevel={progress.data.xpInLevel} forNext={progress.data.xpForNext} />
           <p className="muted small">
@@ -62,6 +60,14 @@ export function Profile({ me }: { me: MeView }) {
       ) : (
         <p className="muted">{strings.loading}</p>
       )}
+
+      {pauses.data && !pauses.data.app && (
+        <Button variant="secondary" onClick={() => setPausing(true)}>
+          <Icon name="pause" />
+          {pause.pause}
+        </Button>
+      )}
+      <PauseSheet open={pausing} onClose={() => setPausing(false)} onPaused={pauses.reload} />
 
       <section className="section-title" aria-labelledby="achievements-title">
         <h2 id="achievements-title">{a.title}</h2>

@@ -10,7 +10,6 @@ const PATHS = {
   plus: 'M12 5v14M5 12h14',
   check: 'M20 6 9 17l-5-5',
   chevron: 'M6 9l6 6 6-6',
-  coin: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-13v8m-3-4h6',
   pause: 'M9 5v14M15 5v14',
   play: 'M7 5v14l12-7L7 5Z',
   star: 'M12 17.75l-6.17 3.25 1.18-6.88-5-4.87 6.9-1L12 2l3.09 6.25 6.9 1-5 4.87 1.18 6.88Z',
@@ -19,6 +18,17 @@ const PATHS = {
 } as const;
 
 export type IconName = keyof typeof PATHS;
+
+// The gold coin, 8-bit: an 8x8 grid of square pixels in the current text color.
+const COIN_PIXELS = 'M2 0h4v1H2zM1 1h1v1H1zM6 1h1v1H6zM0 2h1v4H0zM7 2h1v4H7zM3 2h2v4H3zM1 6h1v1H1zM6 6h1v1H6zM2 7h4v1H2z';
+
+export function CoinIcon() {
+  return (
+    <svg className="icon" viewBox="0 0 8 8" fill="currentColor" shapeRendering="crispEdges" aria-hidden="true" focusable="false">
+      <path d={COIN_PIXELS} />
+    </svg>
+  );
+}
 
 export function Icon({ name }: { name: IconName }) {
   return (

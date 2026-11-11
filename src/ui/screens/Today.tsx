@@ -17,7 +17,7 @@ import { useDragReorder, type Announcement, type DragItemProps } from '../drag-r
 import { useLongPress } from '../long-press';
 import { Link, navigate } from '../router';
 import { useQuery } from '../use-query';
-import { PauseSheet, pauseWhen } from './pause';
+import { pauseWhen } from './pause';
 import { YesterdaySheet } from './YesterdaySheet';
 
 const t = strings.today;
@@ -88,7 +88,6 @@ export function Today() {
   const [freeCollapsed, setFreeCollapsed] = useState(readCollapsed);
   const [undoing, setUndoing] = useState<string | null>(null);
   const [minimumFor, setMinimumFor] = useState<HabitView | null>(null);
-  const [pausing, setPausing] = useState(false);
   const [resuming, setResuming] = useState(false);
   const [welcome, setWelcome] = useState(false);
   /** The order just dragged, shown until the server confirms it. */
@@ -236,24 +235,12 @@ export function Today() {
   }
 
   const appPause = pauses.data?.app ?? null;
-  const pauseButton = pauses.data && (
-    <button
-      type="button"
-      className="top-button"
-      aria-label={appPause ? p.backLabel : undefined}
-      disabled={resuming}
-      onClick={() => (appPause ? void resume(appPause.id) : setPausing(true))}
-    >
-      <Icon name={appPause ? 'play' : 'pause'} />
-      {appPause ? p.back : p.pause}
-    </button>
-  );
   const review = yesterday.data && yesterday.data.habits.length > 0 && (
     <YesterdaySheet key={yesterday.data.day} review={yesterday.data} onDone={reviewed} />
   );
   const top = (
     <>
-      <ProgressTop xpTotal={xpTotal} gold={gold} celebration={celebration} onCelebrationEnd={() => setCelebration(null)} action={pauseButton} />
+      <ProgressTop xpTotal={xpTotal} gold={gold} celebration={celebration} onCelebrationEnd={() => setCelebration(null)} />
       {review}
       {celebrate.element}
       {welcome && <Notice>{p.welcomeBack}</Notice>}
@@ -266,14 +253,6 @@ export function Today() {
           </Button>
         </div>
       )}
-      <PauseSheet
-        open={pausing}
-        onClose={() => setPausing(false)}
-        onPaused={() => {
-          pauses.reload();
-          today.reload();
-        }}
-      />
     </>
   );
   const onMark = (habit: HabitView) => void mark(habit);
