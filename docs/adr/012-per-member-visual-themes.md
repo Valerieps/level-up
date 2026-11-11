@@ -71,11 +71,19 @@ signed in, the app loads the member's stored theme and switches to it if it diff
 picker switches at once and puts the old theme back if the server refuses. Sign-out keeps the device's
 last theme: the sign-in screen shows it (`docs/spec/temas.md`).
 
-*The installed icon.* The manifest, `public/icon.svg` and `public/icon-maskable.svg` stay the
-default theme's: a web app manifest has one icon per install and the browser does not re-read it
-on a preference, so the home-screen icon cannot follow the member's theme. The favicon (the tab)
-and the `theme-color` meta (the browser bar) do follow it, set by `applyTheme` at runtime.
-`src/app-identity.test.ts` checks the default theme against the manifest, `index.html` and the icons.
+*The installed icon.* `public/icon.svg` and `public/icon-maskable.svg` stay the default theme's:
+a home-screen icon is one per install, so it cannot follow the member's theme. The favicon (the
+tab) and the `theme-color` meta (the browser bar) do follow it, set by `applyTheme` at runtime.
+
+*The manifest per theme.* Changing the `theme-color` meta at runtime did not recolor the Android
+status and navigation bars of the installed app: they follow the manifest's `theme_color`. So each
+theme has its own static manifest, `public/manifests/<id>.webmanifest` (same `id`, `start_url`,
+`scope` and icons; `theme_color` = the theme's `--color-browser-bar`, `background_color` = its
+`--color-bg`), and `applyTheme` replaces the `<link rel="manifest">` (and the `<meta>`, since Chrome
+rereads them when the element is replaced) with the theme's. Android picks up a changed manifest
+when it next checks the installed app, so the bars may change on a later launch, not instantly.
+`index.html` points at the default theme's manifest. `src/app-identity.test.ts` checks every
+theme's manifest against its tokens, and the default theme against `index.html` and the icons.
 
 **Why:** The owner wants game-inspired looks without touching the product: per-member like
 everything else in the app, visuals only, and as close to the game as possible without copying its

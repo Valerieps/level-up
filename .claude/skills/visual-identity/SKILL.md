@@ -21,7 +21,9 @@ dark mode); a new theme follows "Adicionar um tema" in `docs/UI.md` (ADR-012).
    - A brand color too light for text on white stays the brand. Add a darker variant for text, and
      add the new pair to the contrast list in `tokens.test.ts`.
 4. For the default theme only, change the same colors in `index.html` (theme-color),
-   `public/manifest.webmanifest` and the icons. Other themes set their favicon and browser bar in
-   their registry entry and `--color-browser-bar`.
+   `public/manifests/ameixa.webmanifest` and the icons. Every theme has its own
+   `public/manifests/<id>.webmanifest` (`theme_color` = `--color-browser-bar`, `background_color` =
+   `--color-bg`); other themes set their favicon and browser bar in their registry entry and
+   `--color-browser-bar`.
 5. Run `npm test`. A failing contrast pair means changing the color, not the test.
 6. Record the choice and the reason in an ADR (`docs/adr/`, copy `000-template.md`).

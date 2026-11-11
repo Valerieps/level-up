@@ -15,6 +15,10 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 - Cada tema tem um único modo. Não existe modo escuro nem troca automática pelo tema do celular. *(1e)*
   Por quê: com um modo só, cada tema é desenhado uma vez e conferido uma vez.
 - O tema padrão é o Ameixa, o visual de hoje. *(1e)*
+- No app instalado no Android, as barras de status e de navegação do celular usam a cor forte do
+  tema (a mesma da barra do navegador). Todo tema novo traz o seu manifest com essa cor. *(1e)*
+  Por quê: o Android lê a cor do manifest do app instalado, não só da página; o celular pode
+  demorar até a próxima abertura para trocar.
 
 ## Os temas que existem
 

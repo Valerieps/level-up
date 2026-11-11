@@ -138,6 +138,7 @@ function fakeDocument() {
   const attributes = new Map<string, Map<string, string>>([
     ['link[rel="icon"]', new Map([['href', '/icon.svg']])],
     ['meta[name="theme-color"]', new Map([['content', '#c84a1c']])],
+    ['link[rel="manifest"]', new Map([['href', '/manifests/ameixa.webmanifest']])],
   ]);
   const element = (selector: string) => ({
     setAttribute: (name: string, value: string) => attributes.get(selector)!.set(name, value),
@@ -161,6 +162,7 @@ describe('applying a theme to the page', () => {
     expect(documentElement.dataset.theme).toBe('ameixa');
     expect(attr('link[rel="icon"]', 'href')).toBe('/themes/fixture/favicon.svg');
     expect(attr('meta[name="theme-color"]', 'content')).toBe('#1d4ed8');
+    expect(attr('link[rel="manifest"]', 'href')).toBe('/manifests/ameixa.webmanifest');
   });
 
   it('keeps the browser bar when the token is missing', () => {
