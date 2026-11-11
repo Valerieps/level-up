@@ -5,6 +5,7 @@ import { useServices } from '../backend-context';
 import { Button } from '../components/Button';
 import { Field } from '../components/Field';
 import { Notice } from '../components/Notice';
+import { ScreenHeader } from '../components/ScreenHeader';
 import { useQuery } from '../use-query';
 
 const STATE_LABEL: Record<InviteState, string> = {
@@ -47,7 +48,7 @@ export function Invites() {
 
   return (
     <section>
-      <h1>{strings.invites.title}</h1>
+      <ScreenHeader title={strings.invites.title} back="/perfil/configuracoes" />
       <form className="row end" onSubmit={submit}>
         <Field
           className="grow"

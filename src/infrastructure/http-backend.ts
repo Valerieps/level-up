@@ -2,6 +2,7 @@
 // (docs/SEGURANCA.md: no personal data in URLs).
 import type { ApiError, ApiResult } from '../application/api-contract';
 import type { Backend } from '../application/ports';
+import { deviceTimeZone } from '../domain/day';
 
 async function post<T>(path: string, body: unknown): Promise<ApiResult<T>> {
   let response: Response;
@@ -23,7 +24,8 @@ async function post<T>(path: string, body: unknown): Promise<ApiResult<T>> {
 export function httpBackend(): Backend {
   return {
     query: (name, input) => post(`/api/query/${name}`, input),
-    command: (name, input) => post(`/api/command/${name}`, input),
+    // The device's zone goes with every command, so "hoje" follows the member's travels (ADR-009).
+    command: (name, input) => post(`/api/command/${name}`, { ...input, timeZone: deviceTimeZone() }),
     signOut: async () => {
       await post('/api/auth/logout', {});
     },

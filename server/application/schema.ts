@@ -32,6 +32,16 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
       revoked_at TEXT
     )`,
   ],
+  // 2: each member's day (ADR-009). Members from before get the defaults.
+  [
+    `CREATE TABLE member_settings (
+      member_id TEXT PRIMARY KEY REFERENCES members(id),
+      day_turnover INTEGER NOT NULL DEFAULT 0,
+      time_zone TEXT NOT NULL,
+      last_closed_day TEXT
+    )`,
+    `INSERT INTO member_settings (member_id, day_turnover, time_zone) SELECT id, 0, 'America/Sao_Paulo' FROM members`,
+  ],
 ];
 
 export function migrate(sql: Sql): void {

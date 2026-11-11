@@ -5,6 +5,7 @@ import { strings } from '../../domain/strings';
 import { useServices } from '../backend-context';
 import { Button } from '../components/Button';
 import { Notice } from '../components/Notice';
+import { ScreenHeader } from '../components/ScreenHeader';
 import { useQuery } from '../use-query';
 
 function errorText(error: ApiError): string {
@@ -37,7 +38,7 @@ export function Members({ me }: { me: MeView }) {
 
   return (
     <section>
-      <h1>{strings.members.title}</h1>
+      <ScreenHeader title={strings.members.title} back="/perfil/configuracoes" />
       {members.error && !members.data && <Notice tone="error">{strings.genericError}</Notice>}
       {error && <Notice tone="error">{error}</Notice>}
       {members.data?.length === 1 && <p className="muted">{strings.members.empty}</p>}

@@ -53,7 +53,7 @@ dia, em poucos segundos.
 ## Virada do dia
 
 - Eu escolho em Configurações a que horas meu dia termina; o padrão é meia-noite (ex.: 4h para
-  quem dorme tarde). *(1a)*
+  quem dorme tarde). A escolha é em horas cheias, de meia-noite às 23h. *(1a)*
 - O dia segue o fuso do meu aparelho: quando eu viajo, "hoje" acompanha o fuso de onde estou.
   *(1a)*
 - A virada define o que é "hoje", o limite diário dos hábitos livres, o prazo para desmarcar e a

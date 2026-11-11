@@ -2,9 +2,9 @@
 // changed; screens refetch them. On reconnect every topic is refetched, since messages may have
 // been missed while offline.
 import type { LiveMessage, Topic } from '../application/api-contract';
+import { ALL_TOPICS } from '../application/topics';
 import type { LiveStatus, LiveUpdates } from '../application/ports';
 
-const ALL_TOPICS: readonly Topic[] = ['me', 'members', 'invites'];
 const MAX_BACKOFF_MS = 30_000;
 
 export function liveSocket(): LiveUpdates {

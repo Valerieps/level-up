@@ -128,6 +128,8 @@
   --size-icon: 20px;
   --size-icon-small: 16px;
   --size-content: 720px;
+  /* The bottom tab bar, without the phone's home-indicator area. */
+  --size-tab-bar: 64px;
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
 

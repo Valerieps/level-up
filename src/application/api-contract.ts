@@ -28,15 +28,27 @@ export interface InviteView {
   readonly acceptedAt: string | null;
 }
 
+/** The member's day settings (ADR-009). The app computes "hoje" from them with `dayOf`. */
+export interface SettingsView {
+  /** Minutes after midnight when the member's day ends; 0 is midnight. */
+  readonly dayTurnover: number;
+  /** The IANA zone the server last heard from the member's device. */
+  readonly timeZone: string;
+}
+
 /** Reads: `POST /api/query/<name>`. They never change anything. */
 export interface Queries {
   me: { input: Record<string, never>; output: MeView };
   members: { input: Record<string, never>; output: MemberListItem[] };
   /** Admins only. */
   invites: { input: Record<string, never>; output: InviteView[] };
+  settings: { input: Record<string, never>; output: SettingsView };
 }
 
-/** Writes: `POST /api/command/<name>`. Each runs alone, in one transaction. */
+/**
+ * Writes: `POST /api/command/<name>`. Each runs alone, in one transaction. The app adds the
+ * device's `timeZone` to every command's body (ADR-009); the server stores it on the member.
+ */
 export interface Commands {
   'invite.create': { input: { email: string }; output: InviteView };
   'invite.revoke': { input: { email: string }; output: null };
@@ -44,13 +56,18 @@ export interface Commands {
   /** Admins; never oneself, so the last admin stays. */
   'member.remove': { input: { memberId: string }; output: null };
   'member.rename': { input: { name: string }; output: MeView };
+  /** Every field is optional; an empty input only records the device's zone. */
+  'settings.update': { input: { dayTurnover?: number }; output: SettingsView };
 }
 
 export type QueryName = keyof Queries;
 export type CommandName = keyof Commands;
 
-/** What a live message says changed; the screens that show it refetch. */
-export type Topic = 'me' | 'members' | 'invites';
+/**
+ * What a live message says changed; the screens that show it refetch. A change to a member's own
+ * data reaches only that member's apps (ADR-008). `day` means the member's day turned over.
+ */
+export type Topic = 'me' | 'members' | 'invites' | 'settings' | 'day';
 
 export interface LiveMessage {
   readonly type: 'changed';

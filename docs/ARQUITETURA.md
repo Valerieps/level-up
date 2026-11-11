@@ -51,7 +51,8 @@ app (celular) ──POST /api/query|command──► Worker ──RPC──► G
 - Sempre existe pelo menos um admin.
 - A sessão vale só enquanto o membro está ativo. Remover alguém apaga as sessões dele e fecha os
   WebSockets abertos (o comando devolve `disconnect`), então o acesso acaba na hora.
-- Um comando devolve os tópicos (`Topic`) que mudou; o `Group` avisa todos os apps abertos, que
+- Um comando devolve os tópicos (`Topic`) que mudou. Os tópicos do grupo (`members`, `invites`)
+  vão para todos os apps abertos; os outros, só para os apps do próprio membro (ADR-008). Os apps
   refazem as consultas desses tópicos.
 
 ## Modelo de dados
@@ -61,13 +62,13 @@ app (celular) ──POST /api/query|command──► Worker ──RPC──► G
 | `members` | `id`, `google_sub`, `email`, `name`, `photo_url`, `roles` (JSON), `active` | Removido fica com `active = 0`; um convite novo traz o mesmo membro de volta |
 | `sessions` | `token_hash`, `member_id`, `expires_at` | Só o SHA-256 do token; o cron apaga as vencidas |
 | `invites` | `email`, `invited_by`, `state` (`pending`, `accepted`, `revoked`) | Um por e-mail |
+| `member_settings` | `member_id`, `day_turnover` (minutos), `time_zone` (IANA), `last_closed_day` | O dia de cada membro (ADR-009). O app manda o fuso do aparelho em todo comando; o cron fecha o dia de quem passou da virada |
 
 As tabelas abaixo são o desenho do LevelUp; cada uma entra numa migração junto com a feature que a
 usa. Todas têm `member_id` e toda consulta filtra por ele (ADR-008).
 
 | Tabela | Campos principais | Observação |
 | --- | --- | --- |
-| `member_settings` | `member_id`, `day_turnover` (minutos), `time_zone` (IANA), `last_closed_day` | O dia de cada membro (ADR-009) |
 | `progress` | `member_id`, `xp_total`, `gold` | Nível e XP do nível saem de `xp_total` pela curva; não se guarda o nível |
 | `habits` | `id`, `member_id`, `name`, `rule` (`daily`, `weekdays`, `free`), `difficulty`, `daily_goal`, `weekdays` (máscara), `minimum`, `stars`, `position`, `state` (`active`, `archived`), `tier_started_on` | O patamar atual são as colunas de tamanho; `tier_started_on` é onde a janela de domínio começa |
 | `habit_tiers` | `habit_id`, `difficulty`, `daily_goal`, `days_per_week`, `mastered_on` | Cada patamar que o hábito já teve: decide se uma subida rende estrela e se o Prêmio de Domínio já foi pago |

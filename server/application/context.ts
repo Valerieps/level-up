@@ -8,12 +8,31 @@ export interface Context {
   readonly ids: IdGenerator;
 }
 
+/** Topics whose open screens must refetch, on one member's apps or on everyone's (ADR-008). */
+export interface Notification {
+  readonly to: 'all' | { readonly memberId: string };
+  readonly topics: readonly Topic[];
+}
+
+/** Topics that changed for a member other than the one who ran the command. */
+export interface OtherMemberChange {
+  readonly memberId: string;
+  readonly topics: readonly Topic[];
+}
+
 /**
- * A command's result: on success, the topics whose open screens must refetch, and the members
- * whose live connections must close now because they lost access.
+ * A command's result. On success: the topics it changed (group topics reach every app, the
+ * others only the actor's own), the topics it changed for other members, and the members whose
+ * live connections must close now because they lost access.
  */
 export type CommandResult<T> =
-  | { readonly ok: true; readonly value: T; readonly changed: readonly Topic[]; readonly disconnect?: readonly string[] }
+  | {
+      readonly ok: true;
+      readonly value: T;
+      readonly changed: readonly Topic[];
+      readonly changedFor?: readonly OtherMemberChange[];
+      readonly disconnect?: readonly string[];
+    }
   | { readonly ok: false; readonly error: ApiError };
 
 export const failure = (error: ApiError) => ({ ok: false, error }) as const;
