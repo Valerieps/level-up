@@ -20,9 +20,13 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 
 - **Ameixa**, o padrão: o visual próprio do LevelUp. *(1e)*
 - **Stardew Valley**: rústico e aconchegante: pergaminho, madeira, folha verde e pixel art. *(1e)*
-- **Ocarina**, de *The Legend of Zelda: Ocarina of Time*: as caixas de diálogo do jogo (painéis
-  azul-marinho com texto claro) sobre a noite da floresta, ações no azul do botão A, o nível no verde
-  da barra de magia e títulos na letra do jogo. *(1e)*
+- **Ocarina**, de *The Legend of Zelda: Ocarina of Time*: a floresta Kokiri de dia (fundo verde-sálvia
+  claro, painéis creme e barras verde-floresta), ações e nível no verde da túnica e títulos na letra
+  do jogo. *(1e)*
+  Por quê: o primeiro Ocarina, escuro como a noite da floresta, era ruim de navegar.
+  - Do menu de pausa do jogo: a aba atual é uma placa escura de borda clara, como as abas laterais;
+    os botões têm um filete claro por dentro; as trilhas de conquista do Perfil são medalhões, com
+    aro escuro e brilho. *(1e)*
   - Hoje é um pergaminho, a Loja um baú, o Perfil um escudo de cavaleiro, o feito um visto de pena,
     o "+" uma cruz de brasão, a estrela uma faísca de fada e o logo uma ocarina.
   - A moeda de ouro é uma Rupee verde, sempre verde, qualquer que seja o valor. O número do ouro
@@ -56,6 +60,7 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 - **Ícones temáticos:** as abas (Hoje, Loja, Perfil), o marcador de feito, o "+", a estrela, o selo Automatizado e a moeda de ouro. *(1e)*
 - **Logo:** a que aparece dentro do app e o ícone da aba do navegador. *(1e)*
 - **Formas e movimento:** cantos mais quadrados ou mais redondos, espessura das bordas, o estilo das sombras, a forma do marcador e das células do heatmap, e o ritmo das animações. *(1e)*
+- **Detalhes de menu:** a placa da aba atual, o filete dos botões e os medalhões das conquistas no Perfil. *(1e)*
 
 ## O que um tema nunca muda
 

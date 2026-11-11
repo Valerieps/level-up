@@ -8,7 +8,7 @@ import type { IconStyle, ThemeVisuals } from './types';
  * Triforce: three diamonds where the game has three triangles.
  */
 
-/** The ocarina (body, mouthpiece and holes), painted with the theme's tokens (`.logo-*`). */
+/** The ocarina (body, mouthpiece and holes), light on the forest plate, painted with the theme's tokens (`.logo-*`). */
 const OCARINA_BODY =
   'M13 40c0-11 11-22 25-22 9 0 15 5 15 12 0 12-14 22-28 22-8 0-12-4-12-12ZM19 30l-8-7 5-5 9 7';
 
@@ -16,8 +16,8 @@ function OcarinaLogo() {
   return (
     <svg className="logo" viewBox="0 0 64 64" role="img" aria-label={strings.appName}>
       <rect className="logo-plate" width="64" height="64" rx="10" />
-      <path className="logo-disc" d={OCARINA_BODY} />
-      <g className="logo-mark" fill="none" strokeWidth="3">
+      <path className="logo-light" d={OCARINA_BODY} />
+      <g className="logo-cut" fill="none" strokeWidth="3">
         <circle cx="31" cy="30" r="2" />
         <circle cx="39" cy="28" r="2" />
         <circle cx="45" cy="33" r="2" />
