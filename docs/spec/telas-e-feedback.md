@@ -44,6 +44,8 @@ Ordem, de cima para baixo:
 - Tudo feito hoje: uma mensagem positiva curta no lugar da lista; "Mostrar concluídos" continua
   ali. *(1a)*
 - Nada programado para hoje: "Nada programado para hoje", com Hábitos livres aberto. *(1a)*
+- Na primeira abertura do dia, se ficou algo de ontem sem marcar, a revisão de ontem sobe por cima
+  do Hoje (`registrar-o-dia.md`, "Revisar ontem"). *(1a)*
 
 ## Detalhe do hábito
 

@@ -77,3 +77,17 @@ export function planToday<H extends HabitShape>(items: readonly TodayHabit<H>[],
   }
   return { scheduled, free, done, scheduledCount };
 }
+
+/**
+ * Revisar ontem (docs/spec/registrar-o-dia.md): the habits that could have been done on `day` and
+ * were not, scheduled first and then free, each in the member's order.
+ */
+export function planReview<H extends HabitShape>(items: readonly TodayHabit<H>[], day: Day): TodayHabit<H>[] {
+  const open = items.filter((item) => !item.entry.done && canBeDoneOn(item.habit, day));
+  return [...open.filter((item) => item.habit.rule !== 'free'), ...open.filter((item) => item.habit.rule === 'free')];
+}
+
+/** A habit marked in the review: the whole day at once, whatever its counter had. */
+export function completeInReview(habit: Pick<HabitShape, 'difficulty' | 'dailyGoal'> & { readonly stars: number }, entry: DayEntry): DayEntry {
+  return complete(habit, Math.max(entry.count, habit.dailyGoal));
+}
