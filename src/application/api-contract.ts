@@ -5,6 +5,7 @@ import type { Role } from '../domain/group/roles';
 import type { Consistency } from '../domain/habits/consistency';
 import type { Milestone, Track } from '../domain/habits/achievements';
 import type { DayEntry } from '../domain/habits/day-log';
+import type { OverallLevel } from '../domain/habits/heatmap';
 import type { InvitationKind } from '../domain/habits/invitations';
 import type { Difficulty, HabitState, Rule } from '../domain/habits/habit';
 
@@ -157,6 +158,81 @@ export interface ResizeResult {
   readonly celebrations: readonly Celebration[];
 }
 
+/** A heatmap marker: the day the habit mastered a patamar, or earned a star raising the bar. */
+export type HeatmapMarker = 'mastered' | 'raised';
+
+/**
+ * One habit's heatmap over the last 12 months (`heatmapRange`). Only days with something to show
+ * are listed; every other day is the neutral cell, with no sign of failure.
+ */
+export interface HabitHeatmapView {
+  readonly from: Day;
+  readonly to: Day;
+  readonly days: readonly {
+    readonly day: Day;
+    /** 1 when done; the part of the goal reached, below 1; 0 for a day with only a marker. */
+    readonly fraction: number;
+    /** Done with the versão mínima: a lighter tone, still a done day. */
+    readonly minimum: boolean;
+    readonly markers: readonly HeatmapMarker[];
+  }[];
+}
+
+/** The Perfil's heatmap: completions per day, archived habits included, deleted ones not. */
+export interface OverallHeatmapView {
+  readonly from: Day;
+  readonly to: Day;
+  /** Days with at least one completion. */
+  readonly days: readonly { readonly day: Day; readonly completions: number; readonly level: OverallLevel }[];
+}
+
+/** The folha do dia: what was done that day and its milestones. */
+export interface DaySheetView {
+  readonly day: Day;
+  /** Habits done that day, or with part of the goal reached, in the member's order. */
+  readonly habits: readonly {
+    readonly habitId: string;
+    readonly habitName: string;
+    readonly done: boolean;
+    readonly minimum: boolean;
+    readonly count: number;
+    /** The habit's current goal; above 1 only for daily habits with a goal. */
+    readonly dailyGoal: number;
+  }[];
+  readonly markers: readonly { readonly habitId: string; readonly habitName: string; readonly kind: HeatmapMarker }[];
+  readonly achievements: readonly { readonly track: Track; readonly milestone: number; readonly gold: number }[];
+}
+
+export interface RewardView {
+  readonly id: string;
+  readonly name: string;
+  readonly cost: number;
+}
+
+/** A redemption, with the name and cost the reward had then. */
+export interface RedemptionView {
+  readonly id: string;
+  readonly rewardId: string;
+  readonly name: string;
+  readonly cost: number;
+  /** The member's day when it was redeemed. */
+  readonly day: Day;
+}
+
+/** The Loja: the rewards, cheapest first, and the latest redemptions. */
+export interface ShopView {
+  readonly rewards: readonly RewardView[];
+  /** The latest redemptions, newest first (`RECENT_REDEMPTIONS`). */
+  readonly recent: readonly RedemptionView[];
+  /** All redemptions ever: "Ver tudo" shows when it is above `recent.length`. */
+  readonly redemptionCount: number;
+}
+
+export interface RewardInput {
+  name: string;
+  cost: number;
+}
+
 export interface NewHabitInput {
   name: string;
   rule: Rule;
@@ -183,6 +259,15 @@ export interface Queries {
   pauses: { input: Record<string, never>; output: PausesView };
   /** The two conquista tracks: Automatizados, then Coragem. */
   achievements: { input: Record<string, never>; output: TrackView[] };
+  /** One habit's heatmap, active or archived. */
+  habitHeatmap: { input: { habitId: string }; output: HabitHeatmapView };
+  /** The Perfil's heatmap. */
+  heatmap: { input: Record<string, never>; output: OverallHeatmapView };
+  /** The folha do dia, for any day up to today. */
+  daySheet: { input: { day: Day }; output: DaySheetView };
+  shop: { input: Record<string, never>; output: ShopView };
+  /** "Ver tudo": every redemption, newest first. */
+  redemptions: { input: Record<string, never>; output: RedemptionView[] };
 }
 
 /**
@@ -236,6 +321,12 @@ export interface Commands {
   'pause.end': { input: { pauseId: string }; output: null };
   /** Closes Revisar ontem, completing yesterday the habits chosen there (none is fine). Once a day. */
   'day.reviewYesterday': { input: { habitIds: string[] }; output: ReviewResult };
+  'reward.create': { input: RewardInput; output: RewardView };
+  'reward.update': { input: RewardInput & { rewardId: string }; output: RewardView };
+  /** Redemptions already made keep their name and cost. */
+  'reward.delete': { input: { rewardId: string }; output: null };
+  /** Debits the cost when the balance covers it (`conflict` when it does not); reusable. */
+  'reward.redeem': { input: { rewardId: string }; output: { readonly redemption: RedemptionView; readonly gold: number } };
 }
 
 export type QueryName = keyof Queries;
@@ -245,7 +336,7 @@ export type CommandName = keyof Commands;
  * What a live message says changed; the screens that show it refetch. A change to a member's own
  * data reaches only that member's apps (ADR-008). `day` means the member's day turned over.
  */
-export type Topic = 'me' | 'members' | 'invites' | 'settings' | 'day' | 'habits' | 'progress' | 'pauses' | 'achievements';
+export type Topic = 'me' | 'members' | 'invites' | 'settings' | 'day' | 'habits' | 'progress' | 'pauses' | 'achievements' | 'shop';
 
 export interface LiveMessage {
   readonly type: 'changed';
