@@ -428,7 +428,7 @@ button.list-link:disabled {
   z-index: 1;
   margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-4)) var(--space-6);
   padding: var(--space-4);
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  border-radius: var(--radius-lg);
   background: var(--color-top);
   color: var(--color-on-top);
 }
@@ -467,7 +467,10 @@ button.list-link:disabled {
   border-radius: var(--radius-full);
   background: var(--color-coin);
   color: var(--color-gold);
+  font: inherit;
   font-weight: var(--font-weight-strong);
+  border: 0;
+  cursor: pointer;
 }
 
 .gold-pill .icon {
@@ -922,32 +925,7 @@ button.list-link:disabled {
   color: var(--color-text-muted);
 }
 
-/* Modo Pausa: the button on the plum top and the discreet banner under it. */
-
-.top-button {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  min-height: var(--size-touch);
-  padding: 0 var(--space-3);
-  border: var(--border-width) solid var(--color-top-line);
-  border-radius: var(--radius-full);
-  background: none;
-  color: var(--color-on-top);
-  font: inherit;
-  font-weight: var(--font-weight-strong);
-  cursor: pointer;
-}
-
-.top-button .icon {
-  width: var(--size-icon-small);
-  height: var(--size-icon-small);
-}
-
-.top-button:disabled {
-  opacity: var(--opacity-disabled);
-  cursor: default;
-}
+/* Modo Pausa: the discreet banner under the plum top. */
 
 .pause-banner {
   margin-bottom: var(--space-4);
