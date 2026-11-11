@@ -305,6 +305,7 @@ export const strings = {
   themes: {
     ameixa: 'Ameixa',
     stardew: 'Stardew Valley',
+    ocarina: 'Ocarina',
   },
 
   settings: {

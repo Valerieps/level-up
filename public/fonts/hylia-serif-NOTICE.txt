@@ -1,0 +1,8 @@
+Hylia Serif Beta (v0.009), a fan-made typeface after the lettering of The Legend of Zelda,
+released for free by Zelda Universe. Taken from https://github.com/Zelda-Universe/Tingle
+(fonts/HyliaSerifBeta-Regular.otf). No license text ships with it; the owner of this app accepted
+that, for the Ocarina theme only.
+
+Changed here: converted to TrueType outlines and woff2, with the Latin-1 accented letters (á, ã,
+ç, ê...) and the middle dot composed from the font's own base letters and combining marks, which
+the original lacks as single characters.

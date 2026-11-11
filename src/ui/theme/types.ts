@@ -20,6 +20,11 @@ export interface IconStyle {
   readonly strokeLinejoin?: 'round' | 'miter' | 'bevel';
   /** 'crispEdges' for pixel art. */
   readonly shapeRendering?: 'auto' | 'crispEdges' | 'geometricPrecision';
+  /**
+   * 'currency' paints the icon in --color-currency instead of the text color around it: a coin
+   * with a color of its own (the Ocarina's green Rupee). Without it, the icon follows the text.
+   */
+  readonly tone?: 'currency';
 }
 
 /** One icon: its path, and its own style when it differs from the theme's (the 8-bit coin). */

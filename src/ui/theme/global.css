@@ -343,6 +343,8 @@ input[aria-invalid='true'] {
 
 .mono {
   font-family: var(--font-mono);
+  /* Even digit widths in any theme, also when its number font is not monospaced (Ocarina). */
+  font-variant-numeric: tabular-nums;
 }
 
 .wide {
@@ -1466,6 +1468,11 @@ button.reward-open {
 /* A pixel-art logo's lit pixels, on the plate. */
 .logo-pixels {
   fill: var(--color-on-top);
+}
+
+/* A coin with a color of its own (IconStyle.tone): the Ocarina's green Rupee. */
+.icon-currency {
+  color: var(--color-currency);
 }
 
 .theme-swatch {

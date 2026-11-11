@@ -6,6 +6,7 @@ import { CoinIcon, Icon } from '../components/Icon';
 import { Logo } from '../components/Logo';
 import { ThemePicker } from '../screens/theme-picker';
 import { AMEIXA } from './ameixa';
+import { OCARINA } from './ocarina';
 import { applyTheme, rememberedTheme, rememberTheme, THEME_KEY, type ThemeDocument } from './apply-theme';
 import { DEFAULT_VISUALS, THEME_LIST, THEMES, ThemeVisualsContext } from './themes';
 import { THEMED_ICONS, type ThemeVisuals } from './types';
@@ -84,6 +85,27 @@ describe('the logo', () => {
   it("is the active theme's", () => {
     expect(renderToStaticMarkup(<Logo />)).toContain('logo-plate');
     expect(inTheme(FIXTURE, <Logo />)).toContain('data-logo="fixture"');
+  });
+});
+
+describe('the Ocarina theme', () => {
+  it('redraws every themed icon in angular outlines', () => {
+    for (const name of THEMED_ICONS) expect(OCARINA.icons[name]?.d, name).toBeTruthy();
+    expect(inTheme(OCARINA, <Icon name="check" />)).toContain('stroke-linejoin="miter"');
+  });
+
+  it("paints its Rupee in the currency color, while Ameixa's coin follows the text", () => {
+    expect(inTheme(OCARINA, <CoinIcon />)).toContain('class="icon icon-currency"');
+    expect(renderToStaticMarkup(<CoinIcon />)).toContain('class="icon"');
+  });
+
+  it('draws its own logo and favicon', () => {
+    expect(inTheme(OCARINA, <Logo />)).not.toBe(renderToStaticMarkup(<Logo />));
+    expect(OCARINA.favicon).toBe('/themes/ocarina/favicon.svg');
+  });
+
+  it('shows the Tema picker, now that the app ships two themes', () => {
+    expect(renderToStaticMarkup(<ThemePicker themes={THEME_LIST} current="ocarina" onChoose={() => {}} />)).toContain('>Ocarina<');
   });
 });
 

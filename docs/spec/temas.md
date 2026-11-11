@@ -7,7 +7,7 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 
 ## Em aberto
 
-- [ ] Quais jogos viram tema depois do Stardew Valley, e em que ordem. Cada tema novo é um trabalho à parte: nome, paleta, fontes, ícones e logo.
+- [ ] Quais jogos viram tema depois do Stardew Valley e do Ocarina, e em que ordem. Cada tema novo é um trabalho à parte: nome, paleta, fontes, ícones e logo.
 
 ## O que é um tema
 
@@ -15,7 +15,31 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 - Cada tema tem um único modo. Não existe modo escuro nem troca automática pelo tema do celular. *(1e)*
   Por quê: com um modo só, cada tema é desenhado uma vez e conferido uma vez.
 - O tema padrão é o Ameixa, o visual de hoje. *(1e)*
-- Os temas que existem: Ameixa e Stardew Valley (rústico e aconchegante: pergaminho, madeira, folha verde e pixel art). *(1e)*
+
+## Os temas que existem
+
+- **Ameixa**, o padrão: o visual próprio do LevelUp. *(1e)*
+- **Stardew Valley**: rústico e aconchegante: pergaminho, madeira, folha verde e pixel art. *(1e)*
+- **Ocarina**, de *The Legend of Zelda: Ocarina of Time*: as caixas de diálogo do jogo (painéis
+  azul-marinho com texto claro) sobre a noite da floresta, ações no azul do botão A, o nível no verde
+  da barra de magia e títulos na letra do jogo. *(1e)*
+  - Hoje é um pergaminho, a Loja um baú, o Perfil um escudo de cavaleiro, o feito um visto de pena,
+    o "+" uma cruz de brasão, a estrela uma faísca de fada e o logo uma ocarina.
+  - A moeda de ouro é uma Rupee verde, sempre verde, qualquer que seja o valor. O número do ouro
+    continua dourado.
+  - O selo Automatizado é a paródia da Triforce: três losangos onde o jogo tem três triângulos.
+
+## Quão perto do jogo um tema chega
+
+- Um tema fica o mais perto possível do jogo no visual, e muda só o mínimo para não ser uma cópia. *(1e)*
+  Por quê: o app é privado e restrito às pessoas que eu convido; o que eu quero é sentir que estou no jogo.
+- **Pode:** a paleta, o clima e o estilo das telas do jogo; o nome do jogo no tema; fontes de fã que
+  imitam a letra do jogo, mesmo sem licença clara; símbolos do jogo redesenhados por nós, com o
+  mesmo formato e a mesma cor. *(1e)*
+- **Não pode:** copiar a arte do jogo: o logo, os brasões, os personagens, sprites, ícones ou fontes
+  tirados do jogo. *(1e)*
+- Quando um símbolo é tão marcante que redesenhá-lo seria copiá-lo, a primeira opção é uma
+  paródia: o mesmo arranjo com outra forma, como os três losangos no lugar da Triforce. *(1e)*
 
 ## O que um tema muda
 
@@ -34,6 +58,8 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 - **O vermelho de excluir e de erro de ação.** Cada tema ajusta o tom para ficar legível, mas ele continua sendo só isso. *(1e)*
 - **A regra de zero punição.** Nenhum tema usa vermelho, alerta ou animação de perda por hábito não feito. *(1e)*
 - **O dourado é do prêmio.** XP, ouro, estrelas e Prêmio de Domínio usam a família do dourado do tema, e nada mais usa. *(1e)*
+  A exceção é o ícone da moeda: ele pode ter a cor da moeda do jogo (a Rupee verde no Ocarina). O
+  número do ouro continua dourado.
 - **Tamanhos que garantem o toque:** alvos de toque, espaçamento e a estrutura das telas. *(1e)*
 - **Leitura:** em qualquer tema, o texto passa no contraste mínimo de acessibilidade (WCAG AA). *(1e)*
 

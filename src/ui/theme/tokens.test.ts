@@ -258,6 +258,9 @@ const NON_TEXT_PAIRS = [
   ['--color-brand', '--color-surface'],
   ['--color-star', '--color-surface'],
   ['--color-star', '--color-bg'],
+  // The coin icon with a color of its own: in the gold pill and on cards (the Loja).
+  ['--color-currency', '--color-coin'],
+  ['--color-currency', '--color-surface'],
 ] as const;
 
 const HEX = /^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/;
@@ -306,7 +309,7 @@ describe.each([...themes.keys()])('the %s theme', (id) => {
 
 /**
  * A second theme that exists only here proves the checks above see a new theme, and that a theme
- * switches what the page gets. The real game themes come later, one by one.
+ * switches what the page gets, apart from the real themes.
  */
 describe('a fixture theme', () => {
   const ameixa = themes.get(DEFAULT_THEME)!.tokens;
