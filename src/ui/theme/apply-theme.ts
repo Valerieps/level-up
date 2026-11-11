@@ -25,7 +25,18 @@ export function applyTheme(
   doc.documentElement.dataset.theme = theme;
   doc.querySelector('link[rel="icon"]')?.setAttribute('href', favicon);
   const bar = readToken('--color-browser-bar').trim();
-  if (bar) doc.querySelector('meta[name="theme-color"]')?.setAttribute('content', bar);
+  if (bar) setBrowserBar(doc.querySelector('meta[name="theme-color"]'), bar);
+}
+
+/**
+ * Android Chrome (the status bar and the system navigation bar of an installed app) reliably
+ * re-reads the color only when the <meta> element is replaced, not when its attribute changes.
+ */
+function setBrowserBar(meta: Element | null, color: string): void {
+  if (!meta) return;
+  const fresh = meta.cloneNode(false) as Element;
+  fresh.setAttribute('content', color);
+  meta.replaceWith(fresh);
 }
 
 type Store = Pick<Storage, 'getItem' | 'setItem'>;
