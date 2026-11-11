@@ -10,6 +10,29 @@
  * Identity: Ameixa (ADR-010; docs/rascunhos/design-system/README.md). Calm by default, color on
  * the reward: plum on the progress top, orange on actions, gold only on XP, gold and stars.
  */
+/* Fonts bundled in public/fonts (variable, latin subset; SIL OFL licenses beside them). */
+@font-face {
+  font-family: 'Sora';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url('/fonts/sora-latin-wght-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url('/fonts/jetbrains-mono-latin-wght-normal.woff2') format('woff2-variations');
+}
+
 :root {
   color-scheme: light;
 
@@ -75,8 +98,8 @@
 
   /*
    * Type. The scale steps by 1.125 to 1.5 from one size to the next; nothing below 12px.
-   * Sora for titles, Inter for text, JetBrains Mono for every progress number. Until the fonts are
-   * bundled in public/ (docs/ROADMAP.md), the system fonts stand in.
+   * Sora for titles, Inter for text, JetBrains Mono for every progress number. They are bundled in
+   * public/fonts (@font-face at the top); the system fonts are the fallback while they load.
    */
   --font-sans: Inter, 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
   --font-display: Sora, 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
