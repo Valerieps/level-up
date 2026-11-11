@@ -11,9 +11,6 @@ O que ainda não está pronto.
 
 | Feature | Fase | Spec | Observação |
 | --- | --- | --- | --- |
-| Telas do domínio: selo Automatizado, progresso até o domínio e a celebração com o Prêmio de Domínio | 1c | `spec/streak-e-dominio.md` | A base está pronta: `HabitView.automated`, `mastery`, `tierMastered` e `celebrations` em `habit.mark`, `habit.markMinimum` e `day.reviewYesterday` |
-| Telas da régua: estrela na folha "Subir a régua", convites de subir e de ajustar, folha "Ajustar a régua" | 1c | `spec/regua.md` | A base está pronta: `earnsStar`, `HabitView.invitation`, `habit.resize` devolve `star`, `habit.dismissInvitation` |
-| Telas das conquistas: trilhas no Perfil e celebração empilhada | 1c | `spec/conquistas.md`, `spec/telas-e-feedback.md` | A base está pronta: a consulta `achievements` e as `celebrations` dos comandos |
 | Heatmap por hábito, geral e folha do dia | 1d | `spec/heatmap.md` | |
 | Loja de recompensas | 1d | `spec/loja.md` | |
 
@@ -68,3 +65,9 @@ O que ainda não está pronto.
   hábito que já não tem como subir (`spec/regua.md`, `spec/streak-e-dominio.md`).
 - [ ] Voltar a um patamar já dominado e dominá-lo de novo traz o convite de subir de volta, sem
   outro Prêmio de Domínio nem celebração (`spec/streak-e-dominio.md`).
+- [ ] Qualquer ajuste feito pela folha "Ajustar a régua" (diminuir, versão mínima, dias, livre,
+  pausar) também dispensa o convite de ajustar, que só volta depois de 4 semanas; "Mudar os dias"
+  aceita trocar os dias ou ficar com menos, de uma vez (`spec/regua.md`).
+- [ ] A celebração empilhada abre com o maior momento (a conquista, senão o domínio); o botão é "Ver
+  conquistas" quando há conquista ou o hábito já não tem como subir, e "Ver opções de régua" abre a
+  folha "Subir a régua" no detalhe (`spec/telas-e-feedback.md`).
