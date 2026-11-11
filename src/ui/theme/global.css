@@ -478,7 +478,7 @@ button.list-link:disabled {
   position: sticky;
   top: 0;
   z-index: 1;
-  margin: calc(var(--space-2) - var(--space-6)) calc(-1 * var(--space-4)) var(--space-6);
+  margin: calc(var(--space-2) - var(--space-6)) calc(var(--space-2) - var(--space-4)) var(--space-6);
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   background: var(--color-top);
