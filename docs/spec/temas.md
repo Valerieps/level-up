@@ -7,7 +7,7 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 
 ## Em aberto
 
-- [ ] Quais jogos viram tema e em que ordem. Cada tema novo é um trabalho à parte: nome, paleta, fontes, ícones e logo.
+- [ ] Quais jogos viram tema depois do Stardew Valley, e em que ordem. Cada tema novo é um trabalho à parte: nome, paleta, fontes, ícones e logo.
 
 ## O que é um tema
 
@@ -15,6 +15,7 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 - Cada tema tem um único modo. Não existe modo escuro nem troca automática pelo tema do celular. *(1e)*
   Por quê: com um modo só, cada tema é desenhado uma vez e conferido uma vez.
 - O tema padrão é o Ameixa, o visual de hoje. *(1e)*
+- Os temas que existem: Ameixa e Stardew Valley (rústico e aconchegante: pergaminho, madeira, folha verde e pixel art). *(1e)*
 
 ## O que um tema muda
 
