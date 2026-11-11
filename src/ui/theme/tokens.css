@@ -118,6 +118,8 @@
   /* The smallest box a finger can hit reliably (WCAG 2.5.5, Apple HIG). */
   --size-touch: 44px;
   --size-avatar: 40px;
+  /* The photo at the top of Perfil. */
+  --size-avatar-large: 64px;
   --size-icon: 20px;
   --size-icon-small: 16px;
   --size-content: 720px;
@@ -141,8 +143,6 @@
   --size-heat-cell: 14px;
   /* The in-app logo on the sign-in screen. */
   --size-logo: 64px;
-  /* One color of a theme's swatch in the Tema picker. */
-  --size-swatch: 16px;
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
 }

@@ -5,26 +5,22 @@ import { strings } from '../../domain/strings';
 import { Button } from '../components/Button';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
-import { GoldPill, XpBar } from '../components/ProgressTop';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { Link } from '../router';
 import { useQuery } from '../use-query';
 import { OverallHeatmapSection } from './heatmap';
-import { PauseSheet } from './pause';
 import { ThemeSection } from './theme-picker';
 
 const p = strings.profile;
-const pause = strings.pause;
 const a = strings.achievements;
 
-// The Perfil tab (docs/spec/telas-e-feedback.md "Perfil"): level and the XP to the next one, the
-// conquista tracks side by side, the overall heatmap, the archived habits and the Tema
-// (docs/spec/temas.md: only when the app ships more than one theme).
+// The Perfil tab (docs/spec/telas-e-feedback.md "Perfil"): who I am with my level and the XP to the
+// next one (the XP bar and the gold live at the top of Hoje, not repeated here), the conquista
+// tracks side by side, the overall heatmap, the archived habits and the Tema (docs/spec/temas.md:
+// only when the app ships more than one theme). Pausar lives in Configurações and on Hoje.
 export function Profile({ me }: { me: MeView }) {
   const progress = useQuery('progress', {}, ['progress']);
   const archived = useQuery('archivedHabits', {}, ['habits']);
-  const pauses = useQuery('pauses', {}, ['pauses', 'day']);
-  const [pausing, setPausing] = useState(false);
   const achievements = useQuery('achievements', {}, ['achievements']);
   const [showArchived, setShowArchived] = useState(false);
   const count = archived.data?.length ?? 0;
@@ -39,37 +35,28 @@ export function Profile({ me }: { me: MeView }) {
           </Link>
         }
       />
-      <div className="row">
-        {me.photoUrl && <img className="avatar" src={me.photoUrl} alt="" referrerPolicy="no-referrer" />}
-        <span className="strong">{me.name}</span>
-      </div>
-
-      {progress.data ? (
-        <div className="card level-card">
-          <div className="row tight">
-            <span className="level-badge">{strings.progress.level(progress.data.level)}</span>
-            <span className="grow" />
-            <GoldPill gold={progress.data.gold} />
-          </div>
-          <XpBar inLevel={progress.data.xpInLevel} forNext={progress.data.xpForNext} />
-          <p className="muted small">
-            <span className="mono">{strings.progress.xp(progress.data.xpInLevel, progress.data.xpForNext)}</span> ·{' '}
-            {strings.progress.missingFor(progress.data.xpForNext - progress.data.xpInLevel, progress.data.level + 1)}
-          </p>
+      <div className="profile-hero">
+        {me.photoUrl ? (
+          <img className="avatar large" src={me.photoUrl} alt="" referrerPolicy="no-referrer" />
+        ) : (
+          <span className="avatar large avatar-initial" aria-hidden="true">
+            {initialOf(me.name)}
+          </span>
+        )}
+        <div className="profile-hero-text">
+          <span className="profile-name">{me.name}</span>
+          {progress.data ? (
+            <span className="profile-level">
+              <span className="level-badge">{strings.progress.level(progress.data.level)}</span>
+              <span className="muted small">
+                {strings.progress.missingFor(progress.data.xpForNext - progress.data.xpInLevel, progress.data.level + 1)}
+              </span>
+            </span>
+          ) : (
+            <span className="muted small">{progress.error ? strings.genericError : strings.loading}</span>
+          )}
         </div>
-      ) : progress.error ? (
-        <Notice tone="error">{strings.genericError}</Notice>
-      ) : (
-        <p className="muted">{strings.loading}</p>
-      )}
-
-      {pauses.data && !pauses.data.app && (
-        <Button variant="secondary" onClick={() => setPausing(true)}>
-          <Icon name="pause" />
-          {pause.pause}
-        </Button>
-      )}
-      <PauseSheet open={pausing} onClose={() => setPausing(false)} onPaused={pauses.reload} />
+      </div>
 
       <section className="section-title" aria-labelledby="achievements-title">
         <h2 id="achievements-title">{a.title}</h2>
@@ -167,4 +154,9 @@ function TrackCard({ track }: { track: TrackView }) {
       )}
     </li>
   );
+}
+
+/** The first letter of a name, for the avatar when there is no photo. */
+export function initialOf(name: string): string {
+  return (name.trim()[0] ?? '?').toLocaleUpperCase('pt-BR');
 }

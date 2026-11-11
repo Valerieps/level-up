@@ -116,13 +116,11 @@ describe('the Tema picker', () => {
     expect(renderToStaticMarkup(<ThemePicker themes={THEME_LIST.slice(0, 1)} current={DEFAULT_THEME} onChoose={noop} />)).toBe('');
   });
 
-  it("lists every theme with its name and a swatch in that theme's own tokens, the current one checked", () => {
+  it('lists every theme by name, the current one checked', () => {
     const html = renderToStaticMarkup(<ThemePicker themes={[AMEIXA, FIXTURE]} current="fixture" onChoose={noop} />);
     expect(html).toContain(strings.profile.theme);
     expect(html).toContain('>Ameixa<');
     expect(html).toContain('>Fixture<');
-    expect(html).toContain('data-theme="ameixa"');
-    expect(html).toContain('data-theme="fixture"');
     expect(html).toContain('checked="" value="fixture"');
     expect(html).not.toContain('checked="" value="ameixa"');
   });
