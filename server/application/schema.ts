@@ -80,7 +80,25 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
       gold INTEGER NOT NULL DEFAULT 0
     )`,
   ],
-  // 4: the day each member last closed Revisar ontem (docs/spec/registrar-o-dia.md).
+  // 4: phase 1b. Pauses (of the app or of a habit) and the time a habit spends archived, which
+  // freezes its streak like a pause; the streak a habit carries across a régua change (ADR-011).
+  // Habits archived before this get their archived stretch.
+  [
+    `ALTER TABLE habits ADD COLUMN streak_carry INTEGER NOT NULL DEFAULT 0`,
+    `CREATE TABLE pauses (
+      id TEXT PRIMARY KEY,
+      member_id TEXT NOT NULL REFERENCES members(id),
+      habit_id TEXT REFERENCES habits(id) ON DELETE CASCADE,
+      kind TEXT NOT NULL DEFAULT 'pause',
+      from_day TEXT NOT NULL,
+      until_day TEXT,
+      ended_on TEXT
+    )`,
+    `CREATE INDEX pauses_member ON pauses(member_id)`,
+    `INSERT INTO pauses (id, member_id, habit_id, kind, from_day)
+     SELECT 'archive-' || id, member_id, id, 'archive', archived_on FROM habits WHERE state = 'archived' AND archived_on IS NOT NULL`,
+  ],
+  // 5: the day each member last closed Revisar ontem (docs/spec/registrar-o-dia.md).
   [`ALTER TABLE member_settings ADD COLUMN yesterday_reviewed_on TEXT`],
 ];
 

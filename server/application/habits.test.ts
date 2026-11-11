@@ -89,7 +89,7 @@ describe('marking', () => {
 
     expect(service.command(ana, 'habit.unmark', { habitId: habits[4].id })).toMatchObject({ ok: true, changed: ['habits', 'progress'] });
     expect(progress()).toMatchObject({ xpTotal: 100, gold: 52, level: 1 });
-    expect(today().habits[4].entry).toEqual({ count: 0, done: false, xp: 0, gold: 0 });
+    expect(today().habits[4].entry).toEqual({ count: 0, done: false, minimum: false, xp: 0, gold: 0 });
   });
 
   it('never lets gold go below 0 when undoing', () => {
@@ -122,7 +122,7 @@ describe('régua', () => {
     for (let i = 0; i < 5; i++) mark(water.id);
     const result = service.command(ana, 'habit.resize', { habitId: water.id, difficulty: 'easy', dailyGoal: 4, weekdays: 0 });
     expect(result).toMatchObject({ ok: true, changed: ['habits', 'progress'] });
-    expect(today().habits[0].entry).toEqual({ count: 5, done: true, xp: 10, gold: 5 });
+    expect(today().habits[0].entry).toEqual({ count: 5, done: true, minimum: false, xp: 10, gold: 5 });
   });
 
   it('refuses sizes that do not fit the rule', () => {
@@ -203,5 +203,87 @@ describe('revisar ontem', () => {
     expect(close(['someone-else'])).toEqual({ ok: false, error: 'invalid' });
     expect(service.command(ana, 'day.reviewYesterday', {})).toEqual({ ok: false, error: 'invalid' });
     expect(close([habit.id])).toMatchObject({ ok: true });
+  });
+});
+
+/** Moves the clock to `offset` days after Wednesday 11 Nov, 9:00 in São Paulo. */
+const onDay = (offset: number) => clock.set(new Date(Date.parse(WEDNESDAY) + offset * 86_400_000).toISOString());
+const view = (habitId: string) => ok<HabitView>(service.query(ana, 'habit', { habitId }));
+
+describe('versão mínima (phase 1b)', () => {
+  it('is set at creation and in the edit, never on a free habit', () => {
+    const reading = create({ minimum: ' Ler 1  página ' });
+    expect(reading.minimum).toBe('Ler 1 página');
+    expect(service.command(ana, 'habit.create', { name: 'Passear', rule: 'free', difficulty: 'easy', minimum: 'x' })).toEqual({ ok: false, error: 'invalid' });
+    expect(service.command(ana, 'habit.update', { habitId: reading.id, name: 'Ler', rule: 'daily' })).toMatchObject({ value: { minimum: 'Ler 1 página' } });
+    expect(service.command(ana, 'habit.update', { habitId: reading.id, name: 'Ler', rule: 'daily', minimum: '' })).toMatchObject({ value: { minimum: null } });
+    service.command(ana, 'habit.update', { habitId: reading.id, name: 'Ler', rule: 'daily', minimum: '1 página' });
+    expect(service.command(ana, 'habit.update', { habitId: reading.id, name: 'Ler', rule: 'free' })).toMatchObject({ value: { minimum: null } });
+  });
+
+  it('completes the day at once for a quarter of the XP, and undoing gives it back', () => {
+    const water = create({ dailyGoal: 8, minimum: '1 copo' });
+    mark(water.id);
+    const result = service.command(ana, 'habit.markMinimum', { habitId: water.id });
+    expect(result).toMatchObject({ ok: true, value: { entry: { count: 1, done: true, minimum: true, xp: 3, gold: 2 } }, changed: ['habits', 'progress'] });
+    expect(today().habits[0].entry.minimum).toBe(true);
+    expect(service.command(ana, 'habit.markMinimum', { habitId: water.id })).toEqual({ ok: false, error: 'conflict' });
+    service.command(ana, 'habit.unmark', { habitId: water.id });
+    expect(progress()).toMatchObject({ xpTotal: 0, gold: 0 });
+  });
+
+  it('is refused when the habit has none', () => {
+    const habit = create();
+    expect(service.command(ana, 'habit.markMinimum', { habitId: habit.id })).toEqual({ ok: false, error: 'conflict' });
+  });
+});
+
+describe('streak and Ritmo (phase 1b)', () => {
+  it('counts days done in a row, kept by the versão mínima, and a missed day restarts it', () => {
+    const habit = create({ minimum: '1 página' });
+    mark(habit.id);
+    onDay(1);
+    expect(view(habit.id).consistency).toEqual({ kind: 'streak', streak: 1 });
+    service.command(ana, 'habit.markMinimum', { habitId: habit.id });
+    expect(view(habit.id).consistency).toEqual({ kind: 'streak', streak: 2 });
+    onDay(3);
+    expect(view(habit.id).consistency).toEqual({ kind: 'streak', streak: 0 });
+  });
+
+  it('goes on through a régua change, and restarts with a new time rule', () => {
+    const habit = create();
+    mark(habit.id);
+    onDay(1);
+    mark(habit.id);
+    service.command(ana, 'habit.resize', { habitId: habit.id, difficulty: 'medium', dailyGoal: 1, weekdays: 0 });
+    service.command(ana, 'habit.resize', { habitId: habit.id, difficulty: 'hard', dailyGoal: 1, weekdays: 0 });
+    expect(view(habit.id).consistency).toEqual({ kind: 'streak', streak: 2 });
+    onDay(2);
+    mark(habit.id);
+    expect(view(habit.id).consistency).toEqual({ kind: 'streak', streak: 3 });
+    service.command(ana, 'habit.update', { habitId: habit.id, name: 'Ler', rule: 'weekdays', weekdays: 0b1111111 });
+    expect(view(habit.id).consistency).toEqual({ kind: 'streak', streak: 1 });
+  });
+
+  it('is frozen while archived and goes on after reactivating', () => {
+    const habit = create();
+    mark(habit.id);
+    onDay(1);
+    service.command(ana, 'habit.archive', { habitId: habit.id });
+    onDay(5);
+    expect(view(habit.id).consistency).toEqual({ kind: 'streak', streak: 1 });
+    service.command(ana, 'habit.reactivate', { habitId: habit.id });
+    onDay(6);
+    mark(habit.id);
+    expect(view(habit.id).consistency).toEqual({ kind: 'streak', streak: 2 });
+  });
+
+  it('shows Ritmo, Última vez and "Faz tempo" for free habits', () => {
+    const walk = create({ rule: 'free' });
+    mark(walk.id);
+    onDay(4);
+    expect(view(walk.id).consistency).toEqual({ kind: 'rhythm', rhythm: 1, lastDoneDaysAgo: 4, longAgo: false });
+    onDay(11);
+    expect(view(walk.id).consistency).toMatchObject({ lastDoneDaysAgo: 11, longAgo: true });
   });
 });

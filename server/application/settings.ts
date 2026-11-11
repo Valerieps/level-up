@@ -82,8 +82,9 @@ export function updateSettings(ctx: Context, actor: Member, input: { dayTurnover
 /**
  * The day turnover (UC-80), run by the cron for every active member whose yesterday is not closed
  * yet. A member seen for the first time has nothing to close. Returns the members whose day turned.
- * What a turnover does to habits (locking yesterday's completions, streaks, pauses) joins here with
- * those features.
+ * Locking yesterday's completions, streaks, "Faz tempo" and pauses reaching their return date need
+ * no write here: they are computed from the member's today (ADR-011). Domínio and the régua
+ * invitations (1c) join here.
  */
 export function closeDays(ctx: Context): string[] {
   const rows = ctx.sql.all<SettingsRow>(

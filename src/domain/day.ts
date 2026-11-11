@@ -67,3 +67,13 @@ const longDate = new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC', weekday: 'l
 export function formatDayLong(day: Day): string {
   return longDate.format(new Date(`${day}T12:00:00Z`));
 }
+
+/** True for a real calendar day written as "YYYY-MM-DD". */
+export function isDay(value: unknown): value is Day {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && addDays(value, 0) === value;
+}
+
+/** Whole days from `from` to `to`: 1 from one day to the next, negative when `to` comes first. */
+export function daysBetween(from: Day, to: Day): number {
+  return Math.round((Date.parse(`${to}T12:00:00Z`) - Date.parse(`${from}T12:00:00Z`)) / 86_400_000);
+}
