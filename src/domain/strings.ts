@@ -382,7 +382,6 @@ export const strings = {
 
   shop: {
     title: 'Loja',
-    balance: 'Seu ouro',
     rewards: 'Recompensas',
     create: 'Nova recompensa',
     edit: 'Editar recompensa',
