@@ -181,6 +181,8 @@ const TEXT_PAIRS = [
   ['--color-warning', '--color-warning-soft'],
   ['--color-neutral', '--color-neutral-soft'],
   ['--color-on-toast', '--color-toast'],
+  ['--color-text', '--color-brand-soft'],
+  ['--color-text-muted', '--color-brand-soft'],
 ] as const;
 
 const NON_TEXT_PAIRS = [

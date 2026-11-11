@@ -42,6 +42,44 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
     )`,
     `INSERT INTO member_settings (member_id, day_turnover, time_zone) SELECT id, 0, 'America/Sao_Paulo' FROM members`,
   ],
+  // 3: habits, what was done each day and each member's XP and gold (phase 1a).
+  [
+    `CREATE TABLE habits (
+      id TEXT PRIMARY KEY,
+      member_id TEXT NOT NULL REFERENCES members(id),
+      name TEXT NOT NULL,
+      rule TEXT NOT NULL,
+      difficulty TEXT NOT NULL,
+      daily_goal INTEGER NOT NULL DEFAULT 1,
+      weekdays INTEGER NOT NULL DEFAULT 0,
+      minimum TEXT,
+      stars INTEGER NOT NULL DEFAULT 0,
+      position INTEGER NOT NULL,
+      state TEXT NOT NULL DEFAULT 'active',
+      tier_started_on TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      archived_on TEXT
+    )`,
+    `CREATE INDEX habits_member ON habits(member_id, state, position)`,
+    `CREATE TABLE completions (
+      id TEXT PRIMARY KEY,
+      member_id TEXT NOT NULL REFERENCES members(id),
+      habit_id TEXT NOT NULL REFERENCES habits(id) ON DELETE CASCADE,
+      day TEXT NOT NULL,
+      count INTEGER NOT NULL DEFAULT 0,
+      done INTEGER NOT NULL DEFAULT 0,
+      minimum INTEGER NOT NULL DEFAULT 0,
+      xp INTEGER NOT NULL DEFAULT 0,
+      gold INTEGER NOT NULL DEFAULT 0,
+      UNIQUE (habit_id, day)
+    )`,
+    `CREATE INDEX completions_member_day ON completions(member_id, day)`,
+    `CREATE TABLE progress (
+      member_id TEXT PRIMARY KEY REFERENCES members(id),
+      xp_total INTEGER NOT NULL DEFAULT 0,
+      gold INTEGER NOT NULL DEFAULT 0
+    )`,
+  ],
 ];
 
 export function migrate(sql: Sql): void {

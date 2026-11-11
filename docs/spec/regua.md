@@ -24,6 +24,8 @@ do tamanho certo um hábito que pesa.
   valem para o hábito, cada uma com o XP atual e o novo ("10 → 17 XP"). *(1a)*
 - Subir antes do domínio é permitido e já rende o XP da dificuldade nova, sem estrela. *(1a)*
 - Meta e dias dão um caminho para continuar evoluindo hábitos que já estão no Difícil. *(1a)*
+- Cada opção muda um passo: a dificuldade seguinte, uma vez a mais na meta, um dia a mais. Para ir
+  mais longe, eu subo de novo. *(1a)*
 
 ## Estrelas de Coragem
 
@@ -48,6 +50,10 @@ do tamanho certo um hábito que pesa.
 
 - Eu posso baixar a régua a qualquer momento, sem punição: escolho o tamanho menor e vejo o XP novo
   antes de confirmar. As estrelas ficam. *(1a; estrelas 1c)*
+- Baixar também muda um passo por vez: a dificuldade anterior, uma vez a menos na meta, um dia a
+  menos. Não passa de Trivial, de meta 1 nem de um dia. *(1a)*
+- Se eu baixo a meta para um número que já atingi hoje, hoje vira feito na hora, com o XP e o ouro
+  do tamanho novo. *(1a)*
 
 ## Convite de ajustar a régua
 

@@ -56,6 +56,9 @@ O que é um hábito no LevelUp e como eu crio, edito, arquivo e excluo.
 - Mudar a regra de tempo recomeça o streak e a contagem para Automatizado; estrelas e selos ficam.
   O app avisa antes de salvar: "O streak e a contagem para Automatizado recomeçam. Estrelas e selos
   ficam." *(1a)*
+- Ao trocar para Dias específicos, eu escolho os dias ali mesmo, na edição. Ao trocar para Diário, a
+  meta começa em 1. *(1a)*
+- O nome tem até 80 caracteres; a meta diária vai de 1 a 99. *(1a)*
 
 ## Arquivar e reativar
 

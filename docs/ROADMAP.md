@@ -11,11 +11,7 @@ O que ainda não está pronto.
 
 | Feature | Fase | Spec | Observação |
 | --- | --- | --- | --- |
-| Cadastro, edição, arquivar, reativar e excluir hábito | 1a | `spec/habitos.md` | |
-| Hoje: marcar, contador de meta, Hábitos livres, concluídos e desmarcar | 1a | `spec/registrar-o-dia.md` | Resposta na hora na tela, sem esperar o servidor. Travar os desmarques de ontem entra em `closeDays` (`server/application/settings.ts`), que o cron já roda na virada |
-| XP, ouro, nível e celebração de nível | 1a | `spec/progressao.md` | |
-| Subir e baixar a régua, sem estrelas | 1a | `spec/regua.md` | |
-| Detalhe do hábito e Perfil (nível e arquivados) | 1a | `spec/telas-e-feedback.md` | |
+| Arrastar para reordenar os hábitos da Hoje | 1a | `spec/telas-e-feedback.md` | Adiado pela dona: por enquanto a ordem é a de criação (`habits.position`). Toque longo no item, sem conflitar com o toque longo do marcador da versão mínima (1b) |
 | Versão mínima | 1b | `spec/habitos.md` | |
 | Streak, ritmo e "Faz tempo" | 1b | `spec/streak-e-dominio.md` | |
 | Modo Pausa | 1b | `spec/modo-pausa.md` | |
@@ -48,3 +44,7 @@ O que ainda não está pronto.
 - [ ] Em um diário com meta, a ocorrência conta para o domínio quando a meta foi atingida ou a
   versão mínima foi marcada (`spec/streak-e-dominio.md`).
 - [ ] Excluir um hábito também não retira conquistas (`spec/conquistas.md`).
+- [ ] Subir e baixar a régua mudam um passo por vez: uma dificuldade, uma vez a mais ou a menos na
+  meta, um dia a mais ou a menos (`spec/regua.md`).
+- [ ] O nome de um hábito tem até 80 caracteres e a meta diária vai até 99 (`spec/habitos.md`).
+- [ ] Os exemplos do primeiro uso abrem o cadastro já preenchido (`spec/telas-e-feedback.md`).

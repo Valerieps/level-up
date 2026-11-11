@@ -1,6 +1,9 @@
 // The contract between the app and the server: query and command names, inputs and outputs.
 // Types only. The server imports it with `import type`, so nothing here runs on either side.
+import type { Day } from '../domain/day';
 import type { Role } from '../domain/group/roles';
+import type { DayEntry } from '../domain/habits/day-log';
+import type { Difficulty, HabitState, Rule } from '../domain/habits/habit';
 
 export interface MemberView {
   readonly id: string;
@@ -36,6 +39,50 @@ export interface SettingsView {
   readonly timeZone: string;
 }
 
+export interface HabitView {
+  readonly id: string;
+  readonly name: string;
+  readonly rule: Rule;
+  readonly difficulty: Difficulty;
+  /** Times per day; above 1 only for daily habits. */
+  readonly dailyGoal: number;
+  /** Weekday mask (bit 0 is Sunday); only for weekday habits. */
+  readonly weekdays: number;
+  readonly stars: number;
+  readonly state: HabitState;
+  readonly archivedOn: Day | null;
+}
+
+/** Hoje: every active habit, in the member's order, with what was done on the member's day. */
+export interface TodayView {
+  readonly day: Day;
+  readonly habits: readonly { readonly habit: HabitView; readonly entry: DayEntry }[];
+}
+
+/** XP, gold and level (docs/spec/progressao.md). */
+export interface ProgressView {
+  readonly xpTotal: number;
+  readonly gold: number;
+  readonly level: number;
+  readonly xpInLevel: number;
+  readonly xpForNext: number;
+}
+
+/** What a tap on the marker did, for the feedback on screen. */
+export interface MarkResult {
+  readonly entry: DayEntry;
+  /** The new level when this completion passed one. */
+  readonly levelUp: number | null;
+}
+
+export interface NewHabitInput {
+  name: string;
+  rule: Rule;
+  difficulty: Difficulty;
+  dailyGoal?: number;
+  weekdays?: number;
+}
+
 /** Reads: `POST /api/query/<name>`. They never change anything. */
 export interface Queries {
   me: { input: Record<string, never>; output: MeView };
@@ -43,6 +90,11 @@ export interface Queries {
   /** Admins only. */
   invites: { input: Record<string, never>; output: InviteView[] };
   settings: { input: Record<string, never>; output: SettingsView };
+  today: { input: Record<string, never>; output: TodayView };
+  progress: { input: Record<string, never>; output: ProgressView };
+  /** One of the member's habits, active or archived. */
+  habit: { input: { habitId: string }; output: HabitView };
+  archivedHabits: { input: Record<string, never>; output: HabitView[] };
 }
 
 /**
@@ -58,6 +110,19 @@ export interface Commands {
   'member.rename': { input: { name: string }; output: MeView };
   /** Every field is optional; an empty input only records the device's zone. */
   'settings.update': { input: { dayTurnover?: number }; output: SettingsView };
+  'habit.create': { input: NewHabitInput; output: HabitView };
+  /** Name and time rule. Changing to weekdays needs the days; size changes go through the régua. */
+  'habit.update': { input: { habitId: string; name: string; rule: Rule; weekdays?: number }; output: HabitView };
+  /** Subir or baixar a régua: the new size. */
+  'habit.resize': { input: { habitId: string; difficulty: Difficulty; dailyGoal: number; weekdays: number }; output: HabitView };
+  'habit.archive': { input: { habitId: string }; output: HabitView };
+  'habit.reactivate': { input: { habitId: string }; output: HabitView };
+  /** Deletes the habit and its history; XP and gold already earned stay. */
+  'habit.delete': { input: { habitId: string }; output: null };
+  /** One tap on the marker, on the member's today. */
+  'habit.mark': { input: { habitId: string }; output: MarkResult };
+  /** Undoes today's completion, giving back exactly what it earned. */
+  'habit.unmark': { input: { habitId: string }; output: null };
 }
 
 export type QueryName = keyof Queries;
@@ -67,7 +132,7 @@ export type CommandName = keyof Commands;
  * What a live message says changed; the screens that show it refetch. A change to a member's own
  * data reaches only that member's apps (ADR-008). `day` means the member's day turned over.
  */
-export type Topic = 'me' | 'members' | 'invites' | 'settings' | 'day';
+export type Topic = 'me' | 'members' | 'invites' | 'settings' | 'day' | 'habits' | 'progress';
 
 export interface LiveMessage {
   readonly type: 'changed';

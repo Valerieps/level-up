@@ -70,7 +70,7 @@ usa. Todas têm `member_id` e toda consulta filtra por ele (ADR-008).
 | Tabela | Campos principais | Observação |
 | --- | --- | --- |
 | `progress` | `member_id`, `xp_total`, `gold` | Nível e XP do nível saem de `xp_total` pela curva; não se guarda o nível |
-| `habits` | `id`, `member_id`, `name`, `rule` (`daily`, `weekdays`, `free`), `difficulty`, `daily_goal`, `weekdays` (máscara), `minimum`, `stars`, `position`, `state` (`active`, `archived`), `tier_started_on` | O patamar atual são as colunas de tamanho; `tier_started_on` é onde a janela de domínio começa |
+| `habits` | `id`, `member_id`, `name`, `rule` (`daily`, `weekdays`, `free`), `difficulty`, `daily_goal`, `weekdays` (máscara), `minimum`, `stars`, `position`, `state` (`active`, `archived`), `archived_on`, `tier_started_on` | O patamar atual são as colunas de tamanho; `tier_started_on` é onde a janela de domínio começa |
 | `habit_tiers` | `habit_id`, `difficulty`, `daily_goal`, `days_per_week`, `mastered_on` | Cada patamar que o hábito já teve: decide se uma subida rende estrela e se o Prêmio de Domínio já foi pago |
 | `completions` | `id`, `member_id`, `habit_id`, `day`, `count`, `done`, `minimum`, `xp`, `gold` | Uma linha por hábito e dia. `xp` e `gold` guardam o que a conclusão rendeu, para desmarcar devolver o mesmo |
 | `pauses` | `id`, `member_id`, `habit_id` (nulo = app inteiro), `from_day`, `until_day` (nulo = sem prazo), `ended_on` | |
@@ -86,7 +86,8 @@ Streak, ritmo, última vez, domínio e o heatmap são calculados a partir de `co
 ## Fluxo de eventos
 
 - `completions` é o histórico: marcar grava ou atualiza a linha do dia; desmarcar a apaga e devolve
-  `xp` e `gold` (o ouro para em 0). Na mesma transação, o comando recalcula domínio, estrelas e
+  `xp` e `gold` (o ouro para em 0). Desmarcar só alcança a linha do "hoje" do membro, então a trava
+  dos desmarques de ontem vem da virada sem gravar nada. Na mesma transação, o comando recalcula domínio, estrelas e
   conquistas e grava o que mudou (`habit_tiers`, `achievements`, `milestones`, `progress`).
 - O comando devolve os eventos de feedback (ganho, nível, Automatizado, conquista) para a tela
   mostrar; eles não são guardados.
