@@ -105,7 +105,7 @@ describe('the Ocarina theme', () => {
   });
 
   it('shows the Tema picker, now that the app ships two themes', () => {
-    expect(renderToStaticMarkup(<ThemePicker themes={THEME_LIST} current="ocarina" onChoose={() => {}} />)).toContain('>Ocarina<');
+    expect(renderToStaticMarkup(<ThemePicker themes={THEME_LIST} current="ocarina" onChoose={() => {}} />)).toContain('>Upcarina<');
   });
 });
 
