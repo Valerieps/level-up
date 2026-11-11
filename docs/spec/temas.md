@@ -78,7 +78,8 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 
 ## Como eu escolho
 
-- Eu escolho o tema no Perfil, numa seção "Tema" com cada tema mostrado com nome e uma amostra das cores. *(1e)*
+- Eu escolho o tema no Perfil, numa seção "Tema" com cada tema mostrado só pelo nome, o atual marcado. *(1e)*
+  Por quê: a amostra das cores e o texto explicativo amontoavam a seção; o tema muda na hora, então tocar já mostra como ele fica.
 - O tema muda na hora que eu toco, sem pedir confirmação. Eu posso voltar atrás quantas vezes quiser. *(1e)*
 - Enquanto só existir o Ameixa, a seção "Tema" não aparece. *(1e)*
   Por quê: uma escolha com uma opção só é ruído.

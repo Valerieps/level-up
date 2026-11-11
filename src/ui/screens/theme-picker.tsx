@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { isThemeId } from '../../domain/themes';
 import { strings } from '../../domain/strings';
 import { useServices } from '../backend-context';
-import { ChoiceGroup } from '../components/Choices';
+import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { THEME_LIST, useThemeControl } from '../theme/themes';
 import type { ThemeVisuals } from '../theme/types';
@@ -10,21 +10,7 @@ import { useQuery } from '../use-query';
 
 const p = strings.profile;
 
-/**
- * A few colors of a theme, painted by its own tokens: `data-theme` scopes the theme's block of
- * tokens.css to this element, whatever theme the page shows.
- */
-function ThemeSwatch({ id }: { id: string }) {
-  return (
-    <span className="theme-swatch" data-theme={id} aria-hidden="true">
-      <span className="theme-swatch-color top" />
-      <span className="theme-swatch-color brand" />
-      <span className="theme-swatch-color gold" />
-    </span>
-  );
-}
-
-/** The Tema choices, or nothing while the app ships a single theme. */
+/** The Tema choices, by name only, or nothing while the app ships a single theme. */
 export function ThemePicker({
   themes,
   current,
@@ -40,16 +26,16 @@ export function ThemePicker({
   return (
     <section className="section-title" aria-labelledby="theme-title">
       <h2 id="theme-title">{p.theme}</h2>
-      <p className="muted small">{p.themeHint}</p>
       {error && <Notice tone="error">{strings.genericError}</Notice>}
-      <ChoiceGroup
-        legend={p.theme}
-        name="theme"
-        value={current}
-        columns
-        choices={themes.map((theme) => ({ value: theme.id, label: theme.name, aside: <ThemeSwatch id={theme.id} /> }))}
-        onChange={onChoose}
-      />
+      <div className="theme-options" role="radiogroup" aria-labelledby="theme-title">
+        {themes.map((theme) => (
+          <label key={theme.id} className="theme-option">
+            <input className="visually-hidden" type="radio" name="theme" value={theme.id} checked={current === theme.id} onChange={() => onChoose(theme.id)} />
+            <span className="theme-option-name">{theme.name}</span>
+            {current === theme.id && <Icon name="check" />}
+          </label>
+        ))}
+      </div>
     </section>
   );
 }

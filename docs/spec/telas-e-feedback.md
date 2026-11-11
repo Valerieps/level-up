@@ -67,7 +67,9 @@ Ordem, de cima para baixo:
 
 ## Perfil
 
-1. **Nível** e o XP até o próximo. *(1a)*
+1. **Eu e o meu nível:** a foto (ou a inicial), o nome, o nível e quanto XP falta para o próximo,
+   num bloco só. A barra de XP e o ouro ficam no topo da Hoje, sem repetir aqui. Pausar fica em
+   Configurações e no topo da Hoje. *(1a)*
 2. **Conquistas:** as trilhas Automatizados e Coragem lado a lado. *(1c)*
 3. **Heatmap geral.** *(1d)*
 4. **Hábitos arquivados**, com a contagem: uma seção recolhível que abre a lista ali mesmo; cada
