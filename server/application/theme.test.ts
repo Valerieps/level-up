@@ -48,3 +48,30 @@ describe("the member's theme (ADR-012)", () => {
     expect(service.command('h-nobody', 'theme.set', { theme: 'ameixa' })).toEqual({ ok: false, error: 'unauthenticated' });
   });
 });
+
+describe('the starting theme an admin picks in the invite', () => {
+  it('is where a newcomer starts, and they may change it', () => {
+    expect(service.command(ana, 'invite.create', { email: 'dani@example.com', theme: 'ocarina' })).toMatchObject({
+      ok: true,
+      value: { email: 'dani@example.com', theme: 'ocarina' },
+    });
+    service.signIn(profile('dani@example.com', 'Dani'), 'h-dani', []);
+    expect(service.query('h-dani', 'theme', {})).toEqual({ ok: true, value: { theme: 'ocarina' } });
+    expect(service.command('h-dani', 'theme.set', { theme: 'stardew' })).toMatchObject({ ok: true });
+    expect(service.query('h-dani', 'theme', {})).toEqual({ ok: true, value: { theme: 'stardew' } });
+  });
+
+  it('is the default without a pick, and an id the app does not ship is invalid', () => {
+    expect(service.command(ana, 'invite.create', { email: 'dani@example.com' })).toMatchObject({ ok: true, value: { theme: 'ameixa' } });
+    expect(service.command(ana, 'invite.create', { email: 'eve@example.com', theme: 'retired' })).toEqual({ ok: false, error: 'invalid' });
+  });
+
+  it('does not override the theme of someone coming back', () => {
+    expect(service.command(carla, 'theme.set', { theme: 'uppertale' })).toMatchObject({ ok: true });
+    const carlaId = (service.query(carla, 'me', {}) as { value: { id: string } }).value.id;
+    expect(service.command(ana, 'member.remove', { memberId: carlaId })).toMatchObject({ ok: true });
+    service.command(ana, 'invite.create', { email: 'carla@example.com', theme: 'ocarina' });
+    service.signIn(profile('carla@example.com', 'Carla'), 'h-carla-2', []);
+    expect(service.query('h-carla-2', 'theme', {})).toEqual({ ok: true, value: { theme: 'uppertale' } });
+  });
+});

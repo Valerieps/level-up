@@ -2,6 +2,7 @@
 import type { InviteState, InviteView } from '../../src/application/api-contract';
 import { isPlausibleEmail, normalizeEmail } from '../../src/domain/group/email';
 import { canManageGroup } from '../../src/domain/group/roles';
+import { DEFAULT_THEME, isThemeId } from '../../src/domain/themes';
 import { failure, nowIso, type CommandResult, type Context } from './context';
 import type { Member } from './members';
 
@@ -11,13 +12,14 @@ interface InviteRow {
   invited_by_name: string;
   created_at: string;
   accepted_at: string | null;
+  theme: string;
 }
 
 const SELECT = `SELECT invites.*, members.name AS invited_by_name FROM invites
   JOIN members ON members.id = invites.invited_by`;
 
 function toView(row: InviteRow): InviteView {
-  return { email: row.email, state: row.state, invitedByName: row.invited_by_name, createdAt: row.created_at, acceptedAt: row.accepted_at };
+  return { email: row.email, state: row.state, invitedByName: row.invited_by_name, theme: isThemeId(row.theme) ? row.theme : DEFAULT_THEME, createdAt: row.created_at, acceptedAt: row.accepted_at };
 }
 
 export function listInvites(ctx: Context, actor: Member): InviteView[] | null {
@@ -25,22 +27,25 @@ export function listInvites(ctx: Context, actor: Member): InviteView[] | null {
   return ctx.sql.all<InviteRow>(`${SELECT} WHERE invites.state != 'revoked' ORDER BY invites.created_at DESC`).map(toView);
 }
 
-export function createInvite(ctx: Context, actor: Member, input: { email?: unknown }): CommandResult<InviteView> {
+export function createInvite(ctx: Context, actor: Member, input: { email?: unknown; theme?: unknown }): CommandResult<InviteView> {
   if (!canManageGroup(actor)) return failure('forbidden');
   if (typeof input.email !== 'string') return failure('invalid');
   const email = normalizeEmail(input.email);
   if (!isPlausibleEmail(email)) return failure('invalid');
+  if (input.theme !== undefined && !isThemeId(input.theme)) return failure('invalid');
+  const theme = input.theme ?? DEFAULT_THEME;
   const [member] = ctx.sql.all<{ id: string }>('SELECT id FROM members WHERE email = ? AND active = 1', email);
   if (member) return failure('conflict');
 
   // A revoked or old accepted invite (someone removed) becomes pending again.
   ctx.sql.run(
-    `INSERT INTO invites (email, invited_by, state, created_at) VALUES (?, ?, 'pending', ?)
+    `INSERT INTO invites (email, invited_by, state, created_at, theme) VALUES (?, ?, 'pending', ?, ?)
      ON CONFLICT (email) DO UPDATE SET invited_by = excluded.invited_by, state = 'pending',
-       created_at = excluded.created_at, accepted_at = NULL, revoked_at = NULL`,
+       created_at = excluded.created_at, accepted_at = NULL, revoked_at = NULL, theme = excluded.theme`,
     email,
     actor.id,
     nowIso(ctx),
+    theme,
   );
   const [row] = ctx.sql.all<InviteRow>(`${SELECT} WHERE invites.email = ?`, email);
   return { ok: true, value: toView(row), changed: ['invites'] };
