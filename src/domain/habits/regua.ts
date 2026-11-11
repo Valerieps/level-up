@@ -1,4 +1,5 @@
-// Raising and lowering the bar (docs/spec/regua.md), without stars in phase 1a.
+// Raising and lowering the bar (docs/spec/regua.md) and the Estrelas de Coragem it earns.
+import { MAX_STARS } from './progression';
 import { DIFFICULTIES, hasWeekday, MAX_DAILY_GOAL, countWeekdays, WEEK_ORDER, type Difficulty, type HabitShape, type HabitSize } from './habit';
 
 export type ReguaDirection = 'raise' | 'lower';
@@ -42,4 +43,33 @@ export function reguaOptions(habit: HabitShape, direction: ReguaDirection): Regu
     }
   }
   return options;
+}
+
+/**
+ * A patamar as a key: difficulty, daily goal and days per week (docs/spec/regua.md). Moving a
+ * weekday habit's days without changing how many keeps the patamar.
+ */
+export function tierKey(rule: HabitShape['rule'], size: HabitSize): string {
+  const days = rule === 'daily' ? 7 : rule === 'weekdays' ? countWeekdays(size.weekdays) : 0;
+  return `${size.difficulty}:${size.dailyGoal}:${days}`;
+}
+
+/** What decides whether raising the bar earns an Estrela de Coragem. */
+export interface StarState extends HabitShape {
+  readonly stars: number;
+  /** Whether the current patamar is mastered. */
+  readonly tierMastered: boolean;
+  /** Every patamar the habit has had (`tierKey`). */
+  readonly tiers: readonly string[];
+}
+
+/**
+ * Whether resizing to `size` earns a star: a raise offered by the "Subir a régua" sheet, from a
+ * mastered patamar, to a patamar the habit never had, below the 5-star cap.
+ */
+export function earnsStar(habit: StarState, size: HabitSize): boolean {
+  if (!habit.tierMastered || habit.stars >= MAX_STARS) return false;
+  const key = tierKey(habit.rule, size);
+  if (habit.tiers.includes(key)) return false;
+  return reguaOptions(habit, 'raise').some((option) => tierKey(habit.rule, option.size) === key);
 }

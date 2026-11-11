@@ -33,6 +33,12 @@ do tamanho certo um hábito que pesa.
   nesse hábito, até 5 estrelas (+50%). *(1c)*
 - A estrela só vem ao chegar a um patamar que o hábito nunca teve. *(1c)*
   Por quê: evita ganhar estrelas baixando e subindo de novo.
+- "Dominado" é o patamar atual: se eu baixo a régua depois do domínio, só ganho estrela ao subir
+  depois de dominar o patamar novo. *(1c)*
+- O patamar é a dificuldade, a meta diária e quantos dias por semana. Trocar os dias sem mudar a
+  quantidade (seg/qua/sex por ter/qui/sáb) não muda o patamar. *(1c)*
+- Só a folha "Subir a régua" rende estrela. Mudar a regra de tempo recomeça a janela de domínio,
+  mas nunca rende estrela. *(1c)*
 - A folha "Subir a régua" diz em cada opção se ela rende estrela, e confirma a estrela na própria
   folha. *(1c)*
 - O Total de Coragem é a soma das estrelas de todos os meus hábitos e alimenta a trilha Coragem.
@@ -43,6 +49,8 @@ do tamanho certo um hábito que pesa.
 - No domínio, o detalhe do hábito mostra um convite discreto: "Este hábito virou automático! Quer
   subir a régua? Você ganha uma Estrela de Coragem: +10% de XP para sempre nele." *(1c)*
 - Na Hoje, o item mostra só um ícone pequeno; o convite completo fica no detalhe. *(1c)*
+- Um hábito que já não tem como subir (Difícil, sem meta nem dia a acrescentar) não mostra o
+  convite. *(1c)*
 - Eu posso dispensar com "Agora não", sem consequência. Ele volta depois de mais 14 dias programados
   (ou 14 conclusões, nos livres). *(1c)*
 
@@ -60,6 +68,8 @@ do tamanho certo um hábito que pesa.
 - O convite aparece só em hábitos diários e de dias específicos, quando eles foram feitos em menos
   de 50% das últimas 8 ocorrências programadas e existem há pelo menos 4 semanas. A versão mínima
   conta como feita; dias em pausa ficam de fora. *(1c)*
+- As 8 ocorrências são do patamar atual, e o convite espera haver 8: depois de um ajuste, ele só
+  pode voltar quando o tamanho novo tiver tido tempo de mostrar se ainda pesa. *(1c)*
 - Nunca durante uma pausa nem nos 7 dias depois dela. *(1c)*
 - Aparece só no detalhe do hábito, como aviso discreto: "Esse hábito parece pesado agora. Quer
   deixá-lo do tamanho certo?" Nunca como modal e nunca na Hoje. Não mostra a taxa nem compara com

@@ -3,7 +3,9 @@
 import type { Day } from '../domain/day';
 import type { Role } from '../domain/group/roles';
 import type { Consistency } from '../domain/habits/consistency';
+import type { Milestone, Track } from '../domain/habits/achievements';
 import type { DayEntry } from '../domain/habits/day-log';
+import type { InvitationKind } from '../domain/habits/invitations';
 import type { Difficulty, HabitState, Rule } from '../domain/habits/habit';
 
 export interface MemberView {
@@ -58,6 +60,36 @@ export interface HabitView {
   readonly paused: boolean;
   /** Streak, or Ritmo, Última vez and "Faz tempo", on the member's today. */
   readonly consistency: Consistency;
+  /** The selo Automatizado: the habit mastered some patamar once. Permanent. */
+  readonly automated: boolean;
+  /** Whether the current patamar is mastered: "Subir a régua" may earn a star (`earnsStar`). */
+  readonly tierMastered: boolean;
+  /** The mastery window now: occurrences (or completions, for free habits) counted and needed. */
+  readonly mastery: { readonly done: number; readonly needed: number };
+  /** Every patamar the habit has had (`tierKey`), for `earnsStar`. */
+  readonly tiers: readonly string[];
+  /** The régua invitation the detail shows now; Hoje shows only an icon for `raise`. */
+  readonly invitation: InvitationKind | null;
+}
+
+/**
+ * A moment a command returns for the celebration layer (docs/spec/telas-e-feedback.md). Not
+ * stored. Commands list them smallest first; a level passed comes apart, in `levelUp`.
+ */
+export type Celebration =
+  /** A patamar mastered: the selo Automatizado (`firstTime` when the habit had none) and the prize. */
+  | { readonly kind: 'mastered'; readonly habitId: string; readonly habitName: string; readonly gold: number; readonly firstTime: boolean }
+  /** A milestone of a conquista track, with its prize. */
+  | { readonly kind: 'achievement'; readonly track: Track; readonly milestone: number; readonly gold: number };
+
+/** One conquista track on the Perfil. */
+export interface TrackView {
+  readonly track: Track;
+  /** Habits ever automated, or the Total de Coragem. Only grows. */
+  readonly count: number;
+  readonly reached: readonly { readonly milestone: number; readonly reachedOn: Day; readonly gold: number }[];
+  /** The next milestone and its prize; null when the track is complete. */
+  readonly next: Milestone | null;
 }
 
 /** A pause still running: of the whole app (habitId null) or of one habit. */
@@ -97,6 +129,7 @@ export interface ReviewResult {
   readonly gold: number;
   /** The new level when the review passed one. */
   readonly levelUp: number | null;
+  readonly celebrations: readonly Celebration[];
 }
 
 /** XP, gold and level (docs/spec/progressao.md). */
@@ -113,6 +146,15 @@ export interface MarkResult {
   readonly entry: DayEntry;
   /** The new level when this completion passed one. */
   readonly levelUp: number | null;
+  /** Mastery and conquistas this completion reached, smallest first. */
+  readonly celebrations: readonly Celebration[];
+}
+
+/** What a régua change did: the habit, whether it earned a star and the conquistas it reached. */
+export interface ResizeResult {
+  readonly habit: HabitView;
+  readonly star: boolean;
+  readonly celebrations: readonly Celebration[];
 }
 
 export interface NewHabitInput {
@@ -139,6 +181,8 @@ export interface Queries {
   habit: { input: { habitId: string }; output: HabitView };
   archivedHabits: { input: Record<string, never>; output: HabitView[] };
   pauses: { input: Record<string, never>; output: PausesView };
+  /** The two conquista tracks: Automatizados, then Coragem. */
+  achievements: { input: Record<string, never>; output: TrackView[] };
 }
 
 /**
@@ -161,8 +205,13 @@ export interface Commands {
    * `minimum` out keeps it.
    */
   'habit.update': { input: { habitId: string; name: string; rule: Rule; weekdays?: number; minimum?: string | null }; output: HabitView };
-  /** Subir or baixar a régua: the new size. */
-  'habit.resize': { input: { habitId: string; difficulty: Difficulty; dailyGoal: number; weekdays: number }; output: HabitView };
+  /**
+   * Subir, baixar or ajustar a régua: the new size. A raise from a mastered patamar to a new one
+   * earns an Estrela de Coragem (`earnsStar`); the mastery window restarts.
+   */
+  'habit.resize': { input: { habitId: string; difficulty: Difficulty; dailyGoal: number; weekdays: number }; output: ResizeResult };
+  /** "Agora não" on a régua invitation. */
+  'habit.dismissInvitation': { input: { habitId: string; kind: InvitationKind }; output: HabitView };
   'habit.archive': { input: { habitId: string }; output: HabitView };
   'habit.reactivate': { input: { habitId: string }; output: HabitView };
   /** Deletes the habit and its history; XP and gold already earned stay. */
@@ -191,7 +240,7 @@ export type CommandName = keyof Commands;
  * What a live message says changed; the screens that show it refetch. A change to a member's own
  * data reaches only that member's apps (ADR-008). `day` means the member's day turned over.
  */
-export type Topic = 'me' | 'members' | 'invites' | 'settings' | 'day' | 'habits' | 'progress' | 'pauses';
+export type Topic = 'me' | 'members' | 'invites' | 'settings' | 'day' | 'habits' | 'progress' | 'pauses' | 'achievements';
 
 export interface LiveMessage {
   readonly type: 'changed';

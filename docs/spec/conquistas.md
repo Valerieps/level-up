@@ -16,6 +16,8 @@ tive coragem de subir a régua.
 - **Automatizados:** quantos hábitos diferentes já ganharam o selo Automatizado pelo menos uma vez.
   *(1c)*
 - **Coragem:** o Total de Coragem, a soma das Estrelas de Coragem de todos os meus hábitos. *(1c)*
+- As duas contagens só crescem: excluir um hábito não tira dela o selo nem as estrelas que ele
+  ganhou. *(1c)*
 
 | Marco | Automatizados | Coragem (estrelas) | Prêmio em ouro |
 | --- | --- | --- | --- |

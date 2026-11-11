@@ -1,7 +1,7 @@
 // Habits and the member's day (docs/spec/habitos.md, registrar-o-dia.md, regua.md). Every query
 // and command reads and writes only the actor's own rows (ADR-008): an id of someone else's habit
 // is simply not found.
-import type { HabitView, MarkResult, ReviewResult, TodayView, YesterdayView } from '../../src/application/api-contract';
+import type { Celebration, HabitView, MarkResult, ResizeResult, ReviewResult, TodayView, YesterdayView } from '../../src/application/api-contract';
 import { addDays, dayOf, type Day } from '../../src/domain/day';
 import { consistencyOn, streakOn, type HabitHistory } from '../../src/domain/habits/consistency';
 import { complete, completeInReview, markMinimum, NOT_STARTED, planReview, tap, type DayEntry } from '../../src/domain/habits/day-log';
@@ -18,8 +18,12 @@ import {
   type HabitState,
   type Rule,
 } from '../../src/domain/habits/habit';
-import { isActive, isFrozenOn, type PausePeriod } from '../../src/domain/habits/pause';
+import { INVITATION_KINDS, invitationOn, type InvitationKind } from '../../src/domain/habits/invitations';
+import { masteryOn, type MasteryHistory } from '../../src/domain/habits/mastery';
+import { covers, isActive, isFrozenOn, type PausePeriod } from '../../src/domain/habits/pause';
+import { earnsStar, reguaOptions, tierKey } from '../../src/domain/habits/regua';
 import { failure, nowIso, QueryError, type CommandResult, type Context } from './context';
+import { checkMastery, dismissalsOf, dismissInvitation, giveStar, recordTier, tiersOf } from './mastery';
 import type { Member } from './members';
 import { deletePausesOf, endArchivedStretch, periodsOf, startArchivedStretch } from './pauses';
 import { addProgress } from './progress';
@@ -41,6 +45,8 @@ interface HabitRow {
   streak_carry: number;
   archived_on: Day | null;
   created_at: string;
+  automated_on: Day | null;
+  tier_mastered_on: Day | null;
 }
 
 interface CompletionRow {
@@ -59,43 +65,87 @@ type Input = Record<string, unknown>;
 const CHANGED = ['habits'] as const;
 const CHANGED_WITH_PROGRESS = ['habits', 'progress'] as const;
 const CHANGED_WITH_PAUSES = ['habits', 'pauses'] as const;
+const CHANGED_WITH_ACHIEVEMENTS = ['habits', 'progress', 'achievements'] as const;
 
-/** What a habit's view needs besides its row: the member's today, pauses and done days. */
+/**
+ * What a habit's view needs besides its row: the member's today and calendar, pauses, done days
+ * (and which were the versão mínima), the patamares each habit had and the invitations dismissed.
+ */
 interface Lens {
   readonly today: Day;
+  readonly dayOfInstant: (iso: string) => Day;
   readonly periods: readonly PausePeriod[];
   readonly doneDays: ReadonlyMap<string, ReadonlySet<Day>>;
+  readonly minimumDays: ReadonlyMap<string, ReadonlySet<Day>>;
+  readonly tiers: ReadonlyMap<string, readonly string[]>;
+  readonly dismissals: ReadonlyMap<string, Partial<Record<InvitationKind, Day>>>;
 }
 
-/** The lens for the member's habits; with `habitId`, only that habit's completions are read. */
+function addTo(map: Map<string, Set<Day>>, habitId: string, day: Day): void {
+  const days = map.get(habitId) ?? new Set<Day>();
+  days.add(day);
+  map.set(habitId, days);
+}
+
+/** The lens for the member's habits; with `habitId`, only that habit's rows are read. */
 function lensFor(ctx: Context, actor: Member, habitId?: string): Lens {
+  type Done = { habit_id: string; day: Day; minimum: number };
   const rows = habitId
-    ? ctx.sql.all<{ habit_id: string; day: Day }>('SELECT habit_id, day FROM completions WHERE habit_id = ? AND done = 1', habitId)
-    : ctx.sql.all<{ habit_id: string; day: Day }>('SELECT habit_id, day FROM completions WHERE member_id = ? AND done = 1', actor.id);
+    ? ctx.sql.all<Done>('SELECT habit_id, day, minimum FROM completions WHERE habit_id = ? AND done = 1', habitId)
+    : ctx.sql.all<Done>('SELECT habit_id, day, minimum FROM completions WHERE member_id = ? AND done = 1', actor.id);
   const doneDays = new Map<string, Set<Day>>();
+  const minimumDays = new Map<string, Set<Day>>();
   for (const row of rows) {
-    const days = doneDays.get(row.habit_id) ?? new Set<Day>();
-    days.add(row.day);
-    doneDays.set(row.habit_id, days);
+    addTo(doneDays, row.habit_id, row.day);
+    if (row.minimum === 1) addTo(minimumDays, row.habit_id, row.day);
   }
-  return { today: today(ctx, actor.id), periods: periodsOf(ctx, actor.id), doneDays };
+  const member = memberDay(ctx, actor.id);
+  return {
+    today: member.today,
+    dayOfInstant: (iso) => dayOf(new Date(iso), member.timeZone, member.turnover),
+    periods: periodsOf(ctx, actor.id),
+    doneDays,
+    minimumDays,
+    tiers: tiersOf(ctx, actor.id, habitId),
+    dismissals: dismissalsOf(ctx, actor.id),
+  };
 }
 
 function shapeOf(row: HabitRow): HabitShape {
   return { rule: row.rule, difficulty: row.difficulty, dailyGoal: row.daily_goal, weekdays: row.weekdays };
 }
 
-function historyOf(row: HabitRow, lens: Lens): HabitHistory {
+function historyOf(row: HabitRow, lens: Lens): MasteryHistory {
   return {
     shape: shapeOf(row),
     windowStart: row.tier_started_on,
     carry: row.streak_carry,
     doneDays: lens.doneDays.get(row.id) ?? new Set(),
+    minimumDays: lens.minimumDays.get(row.id) ?? new Set(),
     isFrozen: (day) => isFrozenOn(lens.periods, row.id, day),
   };
 }
 
+/** The régua invitation of an active habit, on the member's today. */
+function invitationFor(row: HabitRow, history: HabitHistory, lens: Lens): InvitationKind | null {
+  if (row.state !== 'active') return null;
+  const pauses = lens.periods.filter((p) => p.kind === 'pause' && (p.habitId === null || p.habitId === row.id));
+  return invitationOn(
+    {
+      history,
+      createdOn: lens.dayOfInstant(row.created_at),
+      tierMastered: row.tier_mastered_on !== null,
+      canRaise: reguaOptions(shapeOf(row), 'raise').length > 0,
+      isPausedOn: (day) => pauses.some((p) => covers(p, day)),
+      dismissedOn: lens.dismissals.get(row.id) ?? {},
+    },
+    lens.today,
+  );
+}
+
 function toView(row: HabitRow, lens: Lens): HabitView {
+  const history = historyOf(row, lens);
+  const mastery = masteryOn(history, lens.today);
   return {
     id: row.id,
     name: row.name,
@@ -113,8 +163,29 @@ function toView(row: HabitRow, lens: Lens): HabitView {
       row.id,
       lens.today,
     ),
-    consistency: consistencyOn(historyOf(row, lens), lens.today),
+    consistency: consistencyOn(history, lens.today),
+    automated: row.automated_on !== null,
+    tierMastered: row.tier_mastered_on !== null,
+    mastery: { done: mastery.done, needed: mastery.needed },
+    tiers: lens.tiers.get(row.id) ?? [],
+    invitation: invitationFor(row, history, lens),
   };
+}
+
+/** Domínio after a completion of the habit, with its history as it is now. */
+function masteryAfter(ctx: Context, actor: Member, habitId: string): Celebration[] {
+  const row = reload(ctx, habitId);
+  const lens = lensFor(ctx, actor, habitId);
+  const habit = {
+    id: row.id,
+    name: row.name,
+    difficulty: row.difficulty,
+    stars: row.stars,
+    tierKey: tierKey(row.rule, shapeOf(row)),
+    tierMastered: row.tier_mastered_on !== null,
+    automated: row.automated_on !== null,
+  };
+  return checkMastery(ctx, actor, habit, historyOf(row, lens), lens.today);
 }
 
 function toEntry(row: CompletionRow | undefined): DayEntry {
@@ -235,6 +306,7 @@ export function createHabit(ctx: Context, actor: Member, input: Input): CommandR
     today(ctx, actor.id),
     nowIso(ctx),
   );
+  recordTier(ctx, id, tierKey(shape.rule, shape), today(ctx, actor.id));
   return { ok: true, value: viewOf(ctx, actor, id), changed: CHANGED };
 }
 
@@ -255,25 +327,29 @@ export function updateHabit(ctx: Context, actor: Member, input: Input): CommandR
   if (input.rule !== habit.rule) {
     const shape = shapeFor(input.rule, habit.difficulty, habit.daily_goal, Number(input.weekdays ?? 0));
     if (!shape) return failure('invalid');
+    const day = today(ctx, actor.id);
     ctx.sql.run(
-      'UPDATE habits SET rule = ?, daily_goal = ?, weekdays = ?, tier_started_on = ?, streak_carry = 0 WHERE id = ?',
+      'UPDATE habits SET rule = ?, daily_goal = ?, weekdays = ?, tier_started_on = ?, streak_carry = 0, tier_mastered_on = NULL WHERE id = ?',
       shape.rule,
       shape.dailyGoal,
       shape.weekdays,
-      today(ctx, actor.id),
+      day,
       habit.id,
     );
+    recordTier(ctx, habit.id, tierKey(shape.rule, shape), day);
   }
   ctx.sql.run('UPDATE habits SET name = ?, minimum = ? WHERE id = ?', name, minimum, habit.id);
   return { ok: true, value: viewOf(ctx, actor, habit.id), changed: CHANGED };
 }
 
 /**
- * Subir or baixar a régua. The size must fit the rule. The streak goes on: what it was before
- * today is carried into the new window, so the days before count by the old size (ADR-011). When
- * a lower goal is already reached today, the day completes now, at the new size.
+ * Subir, baixar or ajustar a régua. The size must fit the rule. The streak goes on: what it was
+ * before today is carried into the new window, so the days before count by the old size
+ * (ADR-011); the mastery window restarts. A raise from a mastered patamar to a new one earns an
+ * Estrela de Coragem. When a lower goal is already reached today, the day completes now, at the
+ * new size.
  */
-export function resizeHabit(ctx: Context, actor: Member, input: Input): CommandResult<HabitView> {
+export function resizeHabit(ctx: Context, actor: Member, input: Input): CommandResult<ResizeResult> {
   const habit = findHabit(ctx, actor, input.habitId);
   if (!habit) return failure('not_found');
   if (habit.state !== 'active') return failure('conflict');
@@ -285,27 +361,44 @@ export function resizeHabit(ctx: Context, actor: Member, input: Input): CommandR
 
   const lens = lensFor(ctx, actor, habit.id);
   const day = lens.today;
+  const size = { difficulty: input.difficulty, dailyGoal: input.dailyGoal, weekdays: weekdays as number };
+  const star = earnsStar(
+    { ...shapeOf(habit), stars: habit.stars, tierMastered: habit.tier_mastered_on !== null, tiers: lens.tiers.get(habit.id) ?? [] },
+    size,
+  );
   const doneToday = lens.doneDays.get(habit.id)?.has(day) ? 1 : 0;
   const carry = streakOn(historyOf(habit, lens), day) - doneToday;
   ctx.sql.run(
-    'UPDATE habits SET difficulty = ?, daily_goal = ?, weekdays = ?, tier_started_on = ?, streak_carry = ? WHERE id = ?',
-    input.difficulty,
-    input.dailyGoal,
-    weekdays as number,
+    'UPDATE habits SET difficulty = ?, daily_goal = ?, weekdays = ?, tier_started_on = ?, streak_carry = ?, tier_mastered_on = NULL WHERE id = ?',
+    size.difficulty,
+    size.dailyGoal,
+    size.weekdays,
     day,
     carry,
     habit.id,
   );
+  recordTier(ctx, habit.id, tierKey(habit.rule, size), day);
+  const celebrations = star ? giveStar(ctx, actor, habit.id, day) : [];
 
   let changedProgress = false;
   const entry = toEntry(completionOn(ctx, habit.id, day));
   if (!entry.done && entry.count > 0 && entry.count >= input.dailyGoal) {
-    const done = complete({ difficulty: input.difficulty, stars: habit.stars }, entry.count);
+    const done = complete({ difficulty: input.difficulty, stars: habit.stars + (star ? 1 : 0) }, entry.count);
     saveEntry(ctx, actor, habit.id, day, done);
     addProgress(ctx, actor.id, done.xp, done.gold);
     changedProgress = true;
   }
-  return { ok: true, value: viewOf(ctx, actor, habit.id), changed: changedProgress ? CHANGED_WITH_PROGRESS : CHANGED };
+  const changed = star ? CHANGED_WITH_ACHIEVEMENTS : changedProgress ? CHANGED_WITH_PROGRESS : CHANGED;
+  return { ok: true, value: { habit: viewOf(ctx, actor, habit.id), star, celebrations }, changed };
+}
+
+/** "Agora não" on a régua invitation: it comes back by the rules of each (docs/spec/regua.md). */
+export function dismissHabitInvitation(ctx: Context, actor: Member, input: Input): CommandResult<HabitView> {
+  const habit = findHabit(ctx, actor, input.habitId);
+  if (!habit) return failure('not_found');
+  if (!INVITATION_KINDS.includes(input.kind as InvitationKind)) return failure('invalid');
+  dismissInvitation(ctx, habit.id, input.kind as InvitationKind, today(ctx, actor.id));
+  return { ok: true, value: viewOf(ctx, actor, habit.id), changed: CHANGED };
 }
 
 /** Archiving freezes the streak like a pause and ends the habit's own running pause. */
@@ -331,11 +424,15 @@ export function reactivateHabit(ctx: Context, actor: Member, input: Input): Comm
   return { ok: true, value: viewOf(ctx, actor, habit.id), changed: CHANGED };
 }
 
-/** Deletes the habit and its history. XP and gold already earned stay with the member. */
+/**
+ * Deletes the habit and its history. XP, gold, conquistas and the track counts (the selo and the
+ * stars it earned) stay with the member.
+ */
 export function deleteHabit(ctx: Context, actor: Member, input: Input): CommandResult<null> {
   const habit = findHabit(ctx, actor, input.habitId);
   if (!habit) return failure('not_found');
   ctx.sql.run('DELETE FROM completions WHERE habit_id = ?', habit.id);
+  for (const table of ['habit_tiers', 'invitations', 'milestones']) ctx.sql.run(`DELETE FROM ${table} WHERE habit_id = ?`, habit.id);
   deletePausesOf(ctx, habit.id);
   ctx.sql.run('DELETE FROM habits WHERE id = ?', habit.id);
   return { ok: true, value: null, changed: CHANGED_WITH_PAUSES };
@@ -363,14 +460,20 @@ function record(ctx: Context, actor: Member, input: Input, step: Step): CommandR
   const entry = step(habit, day, toEntry(completionOn(ctx, habit.id, day)));
   if (!entry) return failure('conflict');
   saveEntry(ctx, actor, habit.id, day, entry);
-  if (!entry.done) return { ok: true, value: { entry, levelUp: null }, changed: CHANGED };
+  if (!entry.done) return { ok: true, value: { entry, levelUp: null, celebrations: [] }, changed: CHANGED };
   const levels = addProgress(ctx, actor.id, entry.xp, entry.gold);
-  return { ok: true, value: { entry, levelUp: levels.after > levels.before ? levels.after : null }, changed: CHANGED_WITH_PROGRESS };
+  const celebrations = masteryAfter(ctx, actor, habit.id);
+  return {
+    ok: true,
+    value: { entry, levelUp: levels.after > levels.before ? levels.after : null, celebrations },
+    changed: celebrations.length > 0 ? CHANGED_WITH_ACHIEVEMENTS : CHANGED_WITH_PROGRESS,
+  };
 }
 
 /**
  * Undoes today's record of a habit and gives back exactly what it earned (gold stops at 0).
- * Yesterday's completions are locked: only the member's today can be undone.
+ * Yesterday's completions are locked: only the member's today can be undone. A mastery this
+ * completion reached stays, with its selo, prize and conquistas.
  */
 export function unmarkHabit(ctx: Context, actor: Member, input: Input): CommandResult<null> {
   const habit = findHabit(ctx, actor, input.habitId);
@@ -405,7 +508,14 @@ export function reviewYesterday(ctx: Context, actor: Member, input: Input): Comm
     gold += done.gold;
   }
   recordReview(ctx, actor.id, todayDay);
-  if (ids.length === 0) return { ok: true, value: { xp, gold, levelUp: null }, changed: CHANGED };
+  if (ids.length === 0) return { ok: true, value: { xp, gold, levelUp: null, celebrations: [] }, changed: CHANGED };
   const levels = addProgress(ctx, actor.id, xp, gold);
-  return { ok: true, value: { xp, gold, levelUp: levels.after > levels.before ? levels.after : null }, changed: CHANGED_WITH_PROGRESS };
+  const celebrations = (ids as string[]).flatMap((id) => masteryAfter(ctx, actor, id));
+  // Smallest first: every selo before the conquistas they reached.
+  celebrations.sort((a, b) => Number(a.kind === 'achievement') - Number(b.kind === 'achievement'));
+  return {
+    ok: true,
+    value: { xp, gold, levelUp: levels.after > levels.before ? levels.after : null, celebrations },
+    changed: celebrations.length > 0 ? CHANGED_WITH_ACHIEVEMENTS : CHANGED_WITH_PROGRESS,
+  };
 }

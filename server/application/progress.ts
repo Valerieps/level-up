@@ -39,3 +39,22 @@ export function addProgress(ctx: Context, memberId: string, xp: number, gold: nu
   );
   return { before: levelOf(current.xp_total).level, after: levelOf(next.xp_total).level };
 }
+
+export type TrackCounter = 'automated_count' | 'courage_total';
+
+/** The two conquista counts (docs/spec/conquistas.md); they only grow. */
+export function trackCounts(ctx: Context, memberId: string): { automated: number; courage: number } {
+  const [found] = ctx.sql.all<{ automated_count: number; courage_total: number }>(
+    'SELECT automated_count, courage_total FROM progress WHERE member_id = ?',
+    memberId,
+  );
+  return { automated: found?.automated_count ?? 0, courage: found?.courage_total ?? 0 };
+}
+
+/** Adds one to a conquista count and returns the new count. */
+export function bumpTrack(ctx: Context, memberId: string, counter: TrackCounter): number {
+  ctx.sql.run('INSERT OR IGNORE INTO progress (member_id) VALUES (?)', memberId);
+  ctx.sql.run(`UPDATE progress SET ${counter} = ${counter} + 1 WHERE member_id = ?`, memberId);
+  const counts = trackCounts(ctx, memberId);
+  return counter === 'automated_count' ? counts.automated : counts.courage;
+}
