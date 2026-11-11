@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Detalhe do hábito</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ameixa/tokens.css">
+<link rel="stylesheet" href="ds/ameixa/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 1100px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: var(--canvas); color: var(--ink); font-family: var(--font-body);">
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 16px 8px 8px; ">
+    <a class="am-btn am-btn-ghost" href="Main.dc.html" style="padding: 0 8px; color: var(--ink);" aria-label="Voltar para Hoje"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>Hoje</a>
+    <a class="am-btn am-btn-ghost" href="Edicao.dc.html">Editar</a>
+  </header>
+
+  <main style="flex: 1; padding: 0 16px 24px; display: flex; flex-direction: column; gap: 24px;">
+    <section style="display: flex; flex-direction: column; gap: 8px;">
+      <h1 style="margin: 0; font-family: var(--font-display); font-size: 26px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em;">Ler 30 minutos</h1>
+      <span style="font-size: 15px; color: var(--ink-muted);">Fácil · segunda a sexta</span>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 4px;">
+        <span class="am-badge am-badge-auto">Automatizado</span>
+        <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-muted);"><span class="am-stars" style="font-size: 16px;" aria-hidden="true">★★<span style="color: var(--line-strong);">★★★</span></span><span>2 de 5 Estrelas de Coragem · <span class="am-num" style="color: var(--ink);">+20% XP</span></span></span>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: var(--radius-md); background: var(--gold-soft); color: var(--ink);">
+      <div style="display: flex; gap: 12px; align-items: flex-start;">
+        <span style="flex: none; width: 36px; height: 36px; border-radius: var(--radius-full); display: grid; place-items: center; background: var(--top); color: var(--gold);"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M18 11l-6-6-6 6"></path></svg></span>
+        <p style="margin: 0; font-size: 15px; line-height: 22px;"><strong>Este hábito virou automático!</strong> Quer subir a régua? Você ganha uma Estrela de Coragem: <strong>+10% de XP para sempre</strong> nele.</p>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <a class="am-btn am-btn-primary" href="Folha-subir.dc.html" style="flex: 1;">Ver opções</a>
+        <button class="am-btn am-btn-ghost" style="color: var(--gold-ink);">Agora não</button>
+      </div>
+    </section>
+
+    <section style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+      <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-md);">
+        <span style="font-size: 12px; font-weight: 600; color: var(--ink-muted);">Streak</span>
+        <span class="am-num" style="font-size: 22px; line-height: 28px; font-weight: 700;">21</span>
+        <span style="font-size: 12px; color: var(--ink-muted);">dias seguidos</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-md);">
+        <span style="font-size: 12px; font-weight: 600; color: var(--ink-muted);">Domínio</span>
+        <span class="am-num" style="font-size: 22px; line-height: 28px; font-weight: 700;">13/14</span>
+        <span style="font-size: 12px; color: var(--ink-muted);">nas últimas</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-md);">
+        <span style="font-size: 12px; font-weight: 600; color: var(--ink-muted);">XP</span>
+        <span class="am-num" style="font-size: 22px; line-height: 28px; font-weight: 700;">12</span>
+        <span style="font-size: 12px; color: var(--ink-muted);">por conclusão</span>
+      </div>
+    </section>
+
+    <section style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px dashed var(--line-strong); border-radius: var(--radius-md);">
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+        <span style="font-size: 12px; font-weight: 600; color: var(--ink-muted);">Versão mínima</span>
+        <span style="font-size: 15px; font-weight: 600;">Ler 1 página</span>
+      </div>
+      <span style="font-size: 13px; color: var(--ink-muted); text-align: right;">Toque longo<br>no marcador</span>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between;">
+        <h2 style="margin: 0; font-family: var(--font-display); font-size: 18px; line-height: 24px; font-weight: 600;">Histórico</h2>
+        <span style="font-size: 13px; color: var(--ink-muted);">últimas 20 semanas</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-muted); padding-right: 40px;"><span>jul</span><span>ago</span><span>set</span><span>out</span><span>nov</span></div>
+      <div class="am-heat" role="img" aria-label="Heatmap das últimas 20 semanas: 96 dias com registro">
+        <sc-for list="{{cells}}" as="c" hint-placeholder-count="140"><i data-l="{{c.l}}"></i></sc-for>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+        <div class="am-heat-legend">Menos <i style="background: var(--heat-0);"></i><i style="background: var(--heat-1);"></i><i style="background: var(--heat-2);"></i><i style="background: var(--heat-3);"></i><i style="background: var(--heat-4);"></i> Mais</div>
+        <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--ink-muted);"><span class="am-stars">★</span>subiu a régua</span>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; border-top: 1px solid var(--line);">
+      <a href="Folha-subir.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-bottom: 1px solid var(--line); font-size: 15px; font-weight: 600;"><svg class="am-ic" style="color: var(--primary-ink);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M18 11l-6-6-6 6"></path></svg>Subir a régua</a>
+      <a href="Folha-ajustar.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-bottom: 1px solid var(--line); font-size: 15px; font-weight: 600;"><svg class="am-ic" style="color: var(--primary-ink);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 13l6 6 6-6"></path></svg>Baixar a régua</a>
+      <a href="Folha-pausar.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-bottom: 1px solid var(--line); font-size: 15px; font-weight: 600;"><svg class="am-ic" style="color: var(--primary-ink);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"></path></svg>Pausar este hábito</a>
+      <button style="font: inherit; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0; border: 0; border-bottom: 1px solid var(--line); background: none; color: var(--ink); font-size: 15px; font-weight: 600; cursor: pointer;"><svg class="am-ic" style="color: var(--primary-ink);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v4H3zM5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M10 12h4"></path></svg>Arquivar</button>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1100}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var cells = [];
+    var seed = 11;
+    for (var i = 0; i < 140; i++) {
+      seed = (seed * 9301 + 49297) % 233280;
+      var r = seed / 233280;
+      var weekday = i % 7;
+      var l = (weekday >= 5) ? 0 : (r < 0.08 ? 0 : (r < 0.2 ? 1 : 4));
+      cells.push({ l: l });
+    }
+    return { cells: cells };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Hoje com concluídos</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ameixa/tokens.css">
+<link rel="stylesheet" href="ds/ameixa/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: var(--canvas); color: var(--ink); font-family: var(--font-body);">
+  <header class="am-top" style="padding-top: 20px;">
+    <div class="am-top-row">
+      <span class="am-level">Nível 7</span>
+      <span class="am-coin"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M14.8 9a2 2 0 0 0-1.8-1h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1M12 6v2m0 8v2"></path></svg>133</span>
+      <button class="am-iconbtn" aria-label="Pausar"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"></path></svg></button>
+    </div>
+    <div class="am-xpbar"><i style="width: 70%;"></i></div>
+    <div class="am-xpmeta"><span>350 / 500 XP</span><span>faltam 150</span></div>
+  </header>
+
+  <main style="flex: 1; overflow: hidden; padding: 16px 16px 0; display: flex; flex-direction: column; gap: 8px;">
+    <div style="display: flex; align-items: baseline; justify-content: space-between;">
+      <h2 style="margin: 0; font-family: var(--font-display); font-size: 18px; line-height: 24px; font-weight: 600;">Hoje</h2>
+      <span style="font-size: 13px; color: var(--ink-muted);">terça, 10 nov</span>
+    </div>
+    <div class="am-item"><button class="am-mark is-count" style="--p: 37.5%;" aria-label="Avançar contador, 3 de 8"><span>3/8</span></button><div class="am-item-body"><span class="am-item-name">Beber 8 copos de água</span><span class="am-item-meta">Streak <span class="am-num">12</span></span></div></div>
+    <div class="am-item"><button class="am-mark" aria-label="Marcar Ler 30 minutos como feito"></button><div class="am-item-body"><span class="am-item-name">Ler 30 minutos</span><span class="am-item-meta"><span class="am-badge am-badge-auto">Automatizado</span><span class="am-stars" aria-label="2 Estrelas de Coragem">★★</span>Streak <span class="am-num">21</span></span></div></div>
+
+    <button style="font: inherit; display: flex; align-items: center; justify-content: space-between; min-height: 48px; margin-top: 12px; padding: 0; border: 0; background: none; color: var(--ink); cursor: pointer;">
+      <span style="font-family: var(--font-display); font-size: 18px; line-height: 24px; font-weight: 600;">Hábitos livres <span class="am-num" style="color: var(--ink-muted); font-size: 14px;">3</span></span>
+      <svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+
+    <label class="am-toggle-row" for="mostrar" style="color: var(--ink); font-size: 14px; font-weight: 600;">Mostrar concluídos (2)<input id="mostrar" type="checkbox" class="am-switch" role="switch" checked></label>
+
+    <div class="am-item is-done"><button class="am-mark is-done" aria-label="Feito. Desmarcar Academia"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></button><div class="am-item-body"><span class="am-item-name">Academia</span><span class="am-item-meta"><span class="am-num">+10 XP · +5 ouro</span></span></div><button class="am-link">Desfazer</button></div>
+    <div class="am-item is-done"><button class="am-mark is-done" aria-label="Feito, versão mínima. Desmarcar Meditar 15 minutos"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></button><div class="am-item-body"><span class="am-item-name">Meditar 15 minutos</span><span class="am-item-meta"><span class="am-badge">versão mínima</span><span class="am-num">+3 XP · +2 ouro</span></span></div><button class="am-link">Desfazer</button></div>
+    <p style="margin: 4px 2px 0; font-size: 13px; line-height: 18px; color: var(--ink-muted);">Dá para desfazer até a virada do dia. O XP e o ouro voltam exatamente como entraram.</p>
+  </main>
+
+  <button class="am-fab" aria-label="Criar hábito" style="position: absolute; right: 16px; bottom: 88px;"><svg class="am-ic" style="width: 24px; height: 24px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+
+  <nav class="am-tabs" aria-label="Principal">
+    <a class="am-tab" href="Main.dc.html" aria-current="page"><span class="pill"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12H3l9-9 9 9h-2M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path><path d="M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"></path></svg></span>Hoje</a>
+    <a class="am-tab" href="Loja.dc.html"><span class="pill"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h18v4H3zM12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"></path></svg></span>Loja</a>
+    <a class="am-tab" href="Perfil.dc.html"><span class="pill"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"></circle><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path></svg></span>Perfil</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

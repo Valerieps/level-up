@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Novo hábito</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ameixa/tokens.css">
+<link rel="stylesheet" href="ds/ameixa/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: var(--canvas); color: var(--ink); font-family: var(--font-body);">
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 16px 8px 4px;">
+    <a class="am-btn am-btn-ghost" href="Main.dc.html" style="color: var(--ink);">Cancelar</a>
+    <h1 style="margin: 0; font-family: var(--font-display); font-size: 17px; line-height: 22px; font-weight: 600;">Novo hábito</h1>
+    <span style="width: 92px;"></span>
+  </header>
+
+  <main style="flex: 1; padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 20px;">
+    <div class="am-field"><label for="nome">Nome</label><input id="nome" class="am-input" placeholder="Ex.: Ficar sem refrigerante" value="Ler 30 minutos"></div>
+
+    <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px;">
+      <legend style="padding: 0; margin-bottom: 6px; font-size: 13px; line-height: 18px; font-weight: 600;">Quando</legend>
+      <button class="am-choice" role="radio" aria-checked="false"><span>Diário<small>Todo dia, com meta de vezes</small></span></button>
+      <button class="am-choice" role="radio" aria-checked="true"><span>Dias específicos<small>Só nos dias que você escolher</small></span></button>
+      <div role="group" aria-label="Dias da semana" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; padding: 4px 0;">
+        <button aria-pressed="true" aria-label="segunda" style="font: inherit; min-height: 44px; border-radius: var(--radius-full); border: 0; background: var(--primary); color: var(--on-primary); font-weight: 700;">S</button>
+        <button aria-pressed="true" aria-label="terça" style="font: inherit; min-height: 44px; border-radius: var(--radius-full); border: 0; background: var(--primary); color: var(--on-primary); font-weight: 700;">T</button>
+        <button aria-pressed="true" aria-label="quarta" style="font: inherit; min-height: 44px; border-radius: var(--radius-full); border: 0; background: var(--primary); color: var(--on-primary); font-weight: 700;">Q</button>
+        <button aria-pressed="true" aria-label="quinta" style="font: inherit; min-height: 44px; border-radius: var(--radius-full); border: 0; background: var(--primary); color: var(--on-primary); font-weight: 700;">Q</button>
+        <button aria-pressed="true" aria-label="sexta" style="font: inherit; min-height: 44px; border-radius: var(--radius-full); border: 0; background: var(--primary); color: var(--on-primary); font-weight: 700;">S</button>
+        <button aria-pressed="false" aria-label="sábado" style="font: inherit; min-height: 44px; border-radius: var(--radius-full); border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-muted); font-weight: 700;">S</button>
+        <button aria-pressed="false" aria-label="domingo" style="font: inherit; min-height: 44px; border-radius: var(--radius-full); border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-muted); font-weight: 700;">D</button>
+      </div>
+      <button class="am-choice" role="radio" aria-checked="false"><span>Livre<small>Quando der, até uma vez por dia</small></span></button>
+    </fieldset>
+
+    <div class="am-field">
+      <label id="lbl-dif">Dificuldade</label>
+      <div class="am-seg" role="group" aria-labelledby="lbl-dif" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));">
+        <button aria-pressed="false" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 18px;">Trivial<span class="am-num" style="font-size: 11px; color: var(--ink-muted);">5 XP</span></button>
+        <button aria-pressed="true" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 18px;">Fácil<span class="am-num" style="font-size: 11px; color: var(--ink-muted);">10 XP</span></button>
+        <button aria-pressed="false" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 18px;">Média<span class="am-num" style="font-size: 11px; color: var(--ink-muted);">15 XP</span></button>
+        <button aria-pressed="false" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 18px;">Difícil<span class="am-num" style="font-size: 11px; color: var(--ink-muted);">25 XP</span></button>
+      </div>
+    </div>
+
+    <button style="font: inherit; display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 4px; border: 0; background: none; color: var(--primary-ink); font-weight: 600; cursor: pointer;"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg><span style="display: flex; flex-direction: column; text-align: left;">Adicionar versão mínima<span style="font-size: 13px; font-weight: 400; color: var(--ink-muted);">Opcional. O hábito em tamanho de dia ruim.</span></span></button>
+  </main>
+
+  <div style="padding: 12px 16px 24px; border-top: 1px solid var(--line);">
+    <a class="am-btn am-btn-primary am-btn-block" href="Main.dc.html" style="min-height: 52px; font-size: 16px;">Salvar hábito</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

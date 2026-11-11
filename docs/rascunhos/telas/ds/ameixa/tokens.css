@@ -1,0 +1,27 @@
+/* Ameixa — generated from tokens.json */
+:root, [data-theme="light"] {
+  --canvas: #ffffff; --surface: #ffffff; --surface-raised: #ffffff; --line: #eae4ec; --line-strong: #8a7a8f; --track: #efeaf1;
+  --ink: #2a1a2d; --ink-muted: #6b5870; --primary: #c84a1c; --primary-ink: #a63a12; --on-primary: #ffffff; --primary-soft: #fde2d6;
+  --top: #2a1a2d; --top-ink: #ffffff; --top-muted: #cdb9cf; --top-track: #4a3650; --top-line: #6d5874; --level: #ff8a5c; --on-level: #2b1208; --coin: #3e2f12;
+  --gold: #ffcf5c; --gold-ink: #7f5000; --gold-soft: #ffefc2; --star: #c27f00; --faz: #4b3596; --faz-soft: #ece6ff;
+  --success: #1d7a45; --success-soft: #dcf2e3; --warning: #8a5a00; --warning-soft: #fdf0d3; --danger: #b42318; --danger-soft: #fbe0e0; --on-danger: #ffffff;
+  --neutral: #4e4a57; --neutral-soft: #eeedf1; --toast: #2a1a2d; --on-toast: #ffffff; --focus: var(--primary);
+  --heat-0: #efeaf1; --heat-1: #fcd9c8; --heat-2: #f5a27f; --heat-3: #e06a3a; --heat-4: #a63a12;
+  --shadow-fab: 0 10px 20px -8px rgba(200, 74, 28, 0.55); --shadow-sheet: 0 -8px 32px rgba(42, 26, 45, 0.16); --shadow-toast: 0 8px 24px -8px rgba(42, 26, 45, 0.4);
+}
+[data-theme="dark"] {
+  --canvas: #100a12; --surface: #1a121d; --surface-raised: #221827; --line: #2c2131; --line-strong: #7a6882; --track: #33263a;
+  --ink: #f4e9f1; --ink-muted: #b8a6b9; --primary: #ff8a5c; --primary-ink: #ffa27e; --on-primary: #2b1208; --primary-soft: #46251a;
+  --gold-ink: #ffcf5c; --gold-soft: #3b2d12; --star: #ffcf5c; --faz: #d7ccff; --faz-soft: #30285a;
+  --success: #6fd49a; --success-soft: #173a26; --warning: #f0c060; --warning-soft: #3a2e12; --danger: #ff9b8f; --danger-soft: #3f1716; --on-danger: #2a0a06;
+  --neutral: #c9c0cc; --neutral-soft: #2a2230; --toast: #f4e9f1; --on-toast: #2a1a2d; --focus: var(--primary);
+  --heat-0: #2a1f2f; --heat-1: #4f2a1c; --heat-2: #8a3f22; --heat-3: #d2643a; --heat-4: #ffa27e;
+  --shadow-fab: 0 10px 22px -8px rgba(0, 0, 0, 0.7); --shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.6); --shadow-toast: 0 8px 24px -8px rgba(0, 0, 0, 0.7);
+}
+:root {
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px;
+  --radius-sm: 6px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 24px; --radius-full: 999px;
+  --font-display: Sora, "Segoe UI", system-ui, sans-serif;
+  --font-body: Inter, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}

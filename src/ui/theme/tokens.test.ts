@@ -164,6 +164,23 @@ const TEXT_PAIRS = [
   ['--color-on-danger', '--color-danger'],
   ['--color-success', '--color-bg'],
   ['--color-success', '--color-surface'],
+  ['--color-text', '--color-surface-raised'],
+  ['--color-text-muted', '--color-surface-raised'],
+  ['--color-brand-ink', '--color-bg'],
+  ['--color-brand-ink', '--color-surface'],
+  ['--color-brand-ink', '--color-brand-soft'],
+  ['--color-on-top', '--color-top'],
+  ['--color-top-muted', '--color-top'],
+  ['--color-gold', '--color-top'],
+  ['--color-gold', '--color-coin'],
+  ['--color-on-level', '--color-level'],
+  ['--color-gold-ink', '--color-gold-soft'],
+  ['--color-faz', '--color-faz-soft'],
+  ['--color-danger', '--color-danger-soft'],
+  ['--color-success', '--color-success-soft'],
+  ['--color-warning', '--color-warning-soft'],
+  ['--color-neutral', '--color-neutral-soft'],
+  ['--color-on-toast', '--color-toast'],
 ] as const;
 
 const NON_TEXT_PAIRS = [
@@ -171,6 +188,8 @@ const NON_TEXT_PAIRS = [
   ['--color-border-strong', '--color-surface'],
   ['--color-focus', '--color-bg'],
   ['--color-focus', '--color-surface'],
+  ['--color-brand', '--color-surface'],
+  ['--color-star', '--color-surface'],
 ] as const;
 
 describe.each([

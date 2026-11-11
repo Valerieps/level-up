@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Hoje, tudo feito</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ameixa/tokens.css">
+<link rel="stylesheet" href="ds/ameixa/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: var(--canvas); color: var(--ink); font-family: var(--font-body);">
+  <header class="am-top" style="padding-top: 20px;">
+    <div class="am-top-row">
+      <span class="am-level">Nível 7</span>
+      <span class="am-coin"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M14.8 9a2 2 0 0 0-1.8-1h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1M12 6v2m0 8v2"></path></svg>161</span>
+      <button class="am-iconbtn" aria-label="Pausar"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"></path></svg></button>
+    </div>
+    <div class="am-xpbar"><i style="width: 81%;"></i></div>
+    <div class="am-xpmeta"><span>405 / 500 XP</span><span>faltam 95</span></div>
+  </header>
+
+  <main style="flex: 1; overflow: hidden; padding: 16px 16px 0; display: flex; flex-direction: column; gap: 8px;">
+    <div style="display: flex; align-items: baseline; justify-content: space-between;">
+      <h2 style="margin: 0; font-family: var(--font-display); font-size: 18px; line-height: 24px; font-weight: 600;">Hoje</h2>
+      <span style="font-size: 13px; color: var(--ink-muted);">terça, 10 nov</span>
+    </div>
+    <section style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 32px 20px; text-align: center; border: 1px solid var(--line); border-radius: var(--radius-md);">
+      <span style="width: 56px; height: 56px; border-radius: var(--radius-full); display: grid; place-items: center; background: var(--primary); color: var(--on-primary);"><svg class="am-ic" style="width: 28px; height: 28px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></span>
+      <h3 style="margin: 0; font-family: var(--font-display); font-size: 22px; line-height: 28px; font-weight: 600;">Tudo feito por hoje</h3>
+      <p style="margin: 0; font-size: 15px; line-height: 22px; color: var(--ink-muted);">Quatro hábitos, <span class="am-num" style="color: var(--ink);">+55 XP</span> e <span class="am-num" style="color: var(--gold-ink);">+28 ouro</span>. Aproveite o resto do dia.</p>
+    </section>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 16px;">
+      <h2 style="margin: 0; font-family: var(--font-display); font-size: 18px; line-height: 24px; font-weight: 600;">Hábitos livres</h2>
+      <button class="am-btn am-btn-ghost" style="min-height: 36px; padding: 0 4px; font-size: 13px;">Recolher</button>
+    </div>
+    <div class="am-item"><button class="am-mark" aria-label="Marcar Ligar para os pais"></button><div class="am-item-body"><span class="am-item-name">Ligar para os pais</span><span class="am-item-meta"><span class="am-badge am-badge-faz">Faz tempo</span>Última vez: há <span class="am-num">12</span> dias</span></div></div>
+    <div class="am-item"><button class="am-mark" aria-label="Marcar Ficar sem refrigerante"></button><div class="am-item-body"><span class="am-item-name">Ficar sem refrigerante</span><span class="am-item-meta">Ritmo: <span class="am-num">18</span> nos últimos 30 dias</span></div></div>
+
+    <label class="am-toggle-row" for="mostrar" style="margin-top: 4px; color: var(--ink-muted); font-size: 14px;">Mostrar concluídos (4)<input id="mostrar" type="checkbox" class="am-switch" role="switch"></label>
+  </main>
+
+  <button class="am-fab" aria-label="Criar hábito" style="position: absolute; right: 16px; bottom: 88px;"><svg class="am-ic" style="width: 24px; height: 24px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+
+  <nav class="am-tabs" aria-label="Principal">
+    <a class="am-tab" href="Main.dc.html" aria-current="page"><span class="pill"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12H3l9-9 9 9h-2M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path><path d="M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"></path></svg></span>Hoje</a>
+    <a class="am-tab" href="Loja.dc.html"><span class="pill"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h18v4H3zM12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"></path></svg></span>Loja</a>
+    <a class="am-tab" href="Perfil.dc.html"><span class="pill"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"></circle><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path></svg></span>Perfil</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

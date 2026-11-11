@@ -17,7 +17,11 @@ conferidas pelo `src/security.test.ts`, que roda em todo build.
   `send_metrics: false`.
 - Segredos nunca vão para o código do cliente: tudo que está no bundle é público. O segredo do login
   Google, e qualquer chave de API, ficam só no Worker (`wrangler secret put`; localmente no `.dev.vars`).
-- <O `BOOTSTRAP.md` escreve aqui quais dados pessoais o app guarda e se algum é sensível.>
+- O app guarda, de cada membro: nome, e-mail e foto da conta Google; os hábitos com o histórico de
+  conclusões; XP, ouro, nível, estrelas e conquistas; as recompensas e os resgates; as pausas; o
+  horário da virada do dia e o fuso do aparelho. Nenhum dado é tratado como sensível, mas o nome de
+  um hábito pode revelar saúde ou rotina: os dados de um membro só saem do servidor para ele mesmo
+  (ADR-008). Não há exportação.
 
 ## 2. Acesso e dados
 
@@ -26,6 +30,8 @@ conferidas pelo `src/security.test.ts`, que roda em todo build.
   `localhost`; nunca no `wrangler.jsonc`.
 - O app não acessa o banco. Toda leitura e escrita passa pela API, que confere a sessão e o papel
   no servidor.
+- Toda consulta e todo comando sobre hábitos, progresso e loja leem e gravam só as linhas do membro
+  da sessão (`member_id`), nunca um id que venha da entrada (ADR-008).
 - A sessão é um cookie `HttpOnly`, `Secure`, `SameSite=Lax`; o banco guarda só o hash do token.
   Remover um membro corta o acesso na hora.
 - Toda chamada que muda dados, e a conexão ao vivo, precisa vir da própria origem do app (`Origin`).

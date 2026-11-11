@@ -1,0 +1,54 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Ameixa</title>
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--canvas); color:var(--ink); font-family:var(--font-body); overflow:hidden; }
+  .cover { position:relative; height:288px; overflow:hidden; }
+  .art { position:absolute; top:0; left:480px; width:480px; height:288px; overflow:hidden; }
+  .art svg { display:block; width:480px; height:288px; }
+  .plum { fill:var(--top); }
+  .brand { fill:var(--primary); }
+  .tint { fill:var(--primary-soft); }
+  .gold { fill:var(--gold); }
+  .trk { fill:var(--top-track); }
+  .lvl { fill:var(--level); }
+  .blk { rx:var(--radius-lg); }
+  .sm { rx:var(--radius-md); }
+  .bar { rx:4px; }
+  .words { position:absolute; left:var(--space-6); bottom:var(--space-6); max-width:440px; }
+  .name { margin:0; font-family:var(--font-display); font-size:112px; line-height:.92; font-weight:600; letter-spacing:-.03em; color:var(--ink); }
+  .tag { margin:var(--space-3) 0 0 4px; font-size:14px; line-height:20px; color:var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 480 288" width="480" height="288">
+<!--
+  blocks      top (ameixa) 288x240 bleeding off top and right, the signature · primary 160x168 · primary-soft 80x56 tint · gold 96x40 (the prize colour) — about 45% of the right half
+  arrangement one tall plum slab with satellites on its left, bottoms on one line space-6 above the edge, space-4 gutters
+  pattern     XP bars, from "a barra de XP é a assinatura": five radius-full progress bars (top-track with gold or level fill) at a space-8 pitch across the plum slab
+  scales      sides in space-2 multiples; gutters space-4; bar pitch space-8; corners radius-lg (slab, primary), radius-md (tint, gold), bars rx half of 8px
+-->
+<rect class="plum blk" x="208" y="-24" width="296" height="288" rx="16"/>
+<rect class="brand blk" x="24" y="96" width="168" height="168" rx="16"/>
+<rect class="tint sm" x="24" y="24" width="80" height="56" rx="12"/>
+<rect class="gold sm" x="120" y="40" width="72" height="40" rx="12"/>
+<rect class="trk bar" x="240" y="40" width="216" height="8" rx="4"/><rect class="gold bar" x="240" y="40" width="168" height="8" rx="4"/>
+<rect class="trk bar" x="240" y="72" width="216" height="8" rx="4"/><rect class="lvl bar" x="240" y="72" width="104" height="8" rx="4"/>
+<rect class="trk bar" x="240" y="104" width="216" height="8" rx="4"/><rect class="gold bar" x="240" y="104" width="200" height="8" rx="4"/>
+<rect class="trk bar" x="240" y="136" width="216" height="8" rx="4"/><rect class="lvl bar" x="240" y="136" width="64" height="8" rx="4"/>
+<rect class="trk bar" x="240" y="168" width="216" height="8" rx="4"/><rect class="gold bar" x="240" y="168" width="136" height="8" rx="4"/>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">Ameixa</h1>
+<p class="tag">Hábitos que crescem com coragem, sem punição.</p>
+</div>
+</div>
+</body>
+</html>

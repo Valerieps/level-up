@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Detalhe de hábito arquivado</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ameixa/tokens.css">
+<link rel="stylesheet" href="ds/ameixa/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: var(--canvas); color: var(--ink); font-family: var(--font-body);">
+  <header style="display: flex; align-items: center; padding: 16px 8px 8px;">
+    <a class="am-btn am-btn-ghost" href="Perfil.dc.html" style="padding: 0 8px; color: var(--ink);" aria-label="Voltar para Perfil"><svg class="am-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>Arquivados</a>
+  </header>
+
+  <main style="flex: 1; padding: 0 16px 24px; display: flex; flex-direction: column; gap: 24px;">
+    <section style="display: flex; flex-direction: column; gap: 8px;">
+      <span class="am-badge" style="align-self: flex-start;">Arquivado em 2 out</span>
+      <h1 style="margin: 0; font-family: var(--font-display); font-size: 26px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em;">Tocar violão</h1>
+      <span style="font-size: 15px; color: var(--ink-muted);">Média · livre</span>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 4px;">
+        <span class="am-badge am-badge-auto">Automatizado</span>
+        <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-muted);"><span class="am-stars" style="font-size: 16px;" aria-hidden="true">★<span style="color: var(--line-strong);">★★★★</span></span>1 de 5 Estrelas de Coragem</span>
+      </div>
+    </section>
+
+    <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+      <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-md);">
+        <span style="font-size: 12px; font-weight: 600; color: var(--ink-muted);">Ritmo</span>
+        <span class="am-num" style="font-size: 22px; line-height: 28px; font-weight: 700;">9</span>
+        <span style="font-size: 12px; color: var(--ink-muted);">nos 30 dias antes de arquivar</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-md);">
+        <span style="font-size: 12px; font-weight: 600; color: var(--ink-muted);">Conclusões</span>
+        <span class="am-num" style="font-size: 22px; line-height: 28px; font-weight: 700;">41</span>
+        <span style="font-size: 12px; color: var(--ink-muted);">no total</span>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 10px;">
+      <h2 style="margin: 0; font-family: var(--font-display); font-size: 18px; line-height: 24px; font-weight: 600;">Histórico</h2>
+      <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-muted); padding-right: 40px;"><span>jun</span><span>jul</span><span>ago</span><span>set</span><span>out</span></div>
+      <div class="am-heat" role="img" aria-label="Heatmap das 20 semanas antes de arquivar: 41 dias com registro">
+        <sc-for list="{{cells}}" as="c" hint-placeholder-count="140"><i data-l="{{c.l}}"></i></sc-for>
+      </div>
+      <p style="margin: 0; font-size: 13px; line-height: 18px; color: var(--ink-muted);">O histórico, o selo e as estrelas ficam guardados. Ao reativar, tudo continua de onde parou.</p>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 8px; margin-top: auto;">
+      <button class="am-btn am-btn-primary am-btn-block">Reativar hábito</button>
+      <a class="am-btn am-btn-block" href="Excluir.dc.html" style="color: var(--danger);">Excluir hábito</a>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var cells = [];
+    var seed = 5;
+    for (var i = 0; i < 140; i++) {
+      seed = (seed * 9301 + 49297) % 233280;
+      var r = seed / 233280;
+      var l = r < 0.68 ? 0 : (r < 0.8 ? 2 : (r < 0.92 ? 3 : 4));
+      if (i > 133) l = 0;
+      cells.push({ l: l });
+    }
+    return { cells: cells };
+  }
+}
+</script>
+</body>
+</html>

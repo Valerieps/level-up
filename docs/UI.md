@@ -64,6 +64,28 @@ cima.
 - Os textos da interface ficam em `src/domain/strings.ts`, com os termos do `docs/GLOSSARIO.md`.
 - O botão diz o que acontece ("Enviar convite"), não "OK".
 
+## Identidade Ameixa
+
+A identidade do LevelUp (ADR-010). O guia completo, com os componentes, está em
+`docs/rascunhos/design-system/README.md`; estas são as regras que a revisão confere.
+
+- **Calma por padrão, brilho no prêmio.** Fundo branco e texto ameixa. A cor forte fica em três
+  lugares: o topo ameixa (`--color-top`), o laranja das ações (`--color-brand`) e o dourado do
+  prêmio (`--color-gold*`). XP, ouro, estrelas e Prêmio de Domínio usam o dourado, e nada mais usa.
+- **Zero punição também no visual.** Nada de vermelho, ícone de alerta ou animação de perda por
+  hábito não feito. `--color-danger` existe só para excluir e para erros de ação.
+- **Uma ação por item.** O marcador é o único controle de registro; o resto abre detalhe ou folha.
+- **Números de progresso** (XP, ouro, nível, contador, streak) em `--font-mono`; títulos em
+  `--font-display`.
+- **Bordas finas em vez de sombras.** Sombra só no "+", nas folhas e nos toasts.
+- **Ícones:** Tabler Icons, contorno, traço 2, 20px nas abas e botões, 16px em pílulas, cor do texto.
+  Nunca emoji.
+- **Texto:** frases curtas, segunda pessoa informal. Exclamação só em celebrações. Palavras
+  proibidas em qualquer tela: falhou, perdeu, atrasado, quebrou, penalidade, dias perdidos.
+- **Movimento:** o marcador preenche em `--duration-fast`, o ganho sobe e some em `--duration-gain`,
+  o item sai em `--duration-base`; celebrações entram em `--duration-celebration`, sem confete
+  contínuo.
+
 ## Mudar a identidade visual
 
 Mude só os valores do `tokens.css`, sem renomear os tokens. Depois, mude as mesmas cores no

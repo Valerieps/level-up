@@ -43,6 +43,11 @@ app (celular) ──POST /api/query|command──► Worker ──RPC──► G
 - Um comando roda sozinho: o Durable Object processa uma chamada por vez, e tudo o que o comando
   causa entra junto ou não entra.
 - Papéis são conferidos no servidor, nunca só na interface.
+- Cada linha de hábito, progresso, conquista, pausa e loja pertence a um membro. Um comando só lê
+  e grava as linhas do membro da sessão; o admin também não vê as dos outros (ADR-008).
+- XP e ouro nunca caem por falta. Só desmarcar devolve, e devolve exatamente o que a conclusão
+  rendeu; o ouro nunca fica negativo.
+- "Hoje" sai sempre de `dayOf(instante, fuso, virada)` (ADR-009), no app e no servidor.
 - Sempre existe pelo menos um admin.
 - A sessão vale só enquanto o membro está ativo. Remover alguém apaga as sessões dele e fecha os
   WebSockets abertos (o comando devolve `disconnect`), então o acesso acaba na hora.
@@ -57,10 +62,35 @@ app (celular) ──POST /api/query|command──► Worker ──RPC──► G
 | `sessions` | `token_hash`, `member_id`, `expires_at` | Só o SHA-256 do token; o cron apaga as vencidas |
 | `invites` | `email`, `invited_by`, `state` (`pending`, `accepted`, `revoked`) | Um por e-mail |
 
+As tabelas abaixo são o desenho do LevelUp; cada uma entra numa migração junto com a feature que a
+usa. Todas têm `member_id` e toda consulta filtra por ele (ADR-008).
+
+| Tabela | Campos principais | Observação |
+| --- | --- | --- |
+| `member_settings` | `member_id`, `day_turnover` (minutos), `time_zone` (IANA), `last_closed_day` | O dia de cada membro (ADR-009) |
+| `progress` | `member_id`, `xp_total`, `gold` | Nível e XP do nível saem de `xp_total` pela curva; não se guarda o nível |
+| `habits` | `id`, `member_id`, `name`, `rule` (`daily`, `weekdays`, `free`), `difficulty`, `daily_goal`, `weekdays` (máscara), `minimum`, `stars`, `position`, `state` (`active`, `archived`), `tier_started_on` | O patamar atual são as colunas de tamanho; `tier_started_on` é onde a janela de domínio começa |
+| `habit_tiers` | `habit_id`, `difficulty`, `daily_goal`, `days_per_week`, `mastered_on` | Cada patamar que o hábito já teve: decide se uma subida rende estrela e se o Prêmio de Domínio já foi pago |
+| `completions` | `id`, `member_id`, `habit_id`, `day`, `count`, `done`, `minimum`, `xp`, `gold` | Uma linha por hábito e dia. `xp` e `gold` guardam o que a conclusão rendeu, para desmarcar devolver o mesmo |
+| `pauses` | `id`, `member_id`, `habit_id` (nulo = app inteiro), `from_day`, `until_day` (nulo = sem prazo), `ended_on` | |
+| `invitations` | `habit_id`, `kind` (`raise`, `adjust`), `dismissed_on`, `available_from` | Estado dos convites de régua |
+| `achievements` | `member_id`, `track` (`automated`, `courage`), `milestone`, `reached_on`, `gold` | Uma linha por marco atingido; nunca apagada |
+| `rewards` | `id`, `member_id`, `name`, `cost` | |
+| `redemptions` | `id`, `member_id`, `reward_id`, `name`, `cost`, `at` | Nome e custo copiados no resgate |
+| `milestones` | `member_id`, `habit_id`, `day`, `kind` (`mastered`, `raised`) | Os marcadores do heatmap |
+
+Streak, ritmo, última vez, domínio e o heatmap são calculados a partir de `completions`, `pauses` e
+`habit_tiers` por funções puras de `src/domain/`; nada disso é guardado.
+
 ## Fluxo de eventos
 
-<Se o app tem histórico de eventos (um feed, transições de estado): quais tipos existem, quem grava,
-quem lê. Todo evento é gravado na mesma transação do comando que o causa.>
+- `completions` é o histórico: marcar grava ou atualiza a linha do dia; desmarcar a apaga e devolve
+  `xp` e `gold` (o ouro para em 0). Na mesma transação, o comando recalcula domínio, estrelas e
+  conquistas e grava o que mudou (`habit_tiers`, `achievements`, `milestones`, `progress`).
+- O comando devolve os eventos de feedback (ganho, nível, Automatizado, conquista) para a tela
+  mostrar; eles não são guardados.
+- A virada do dia (ADR-009) roda no `tick` do cron, por membro: encerra pausas vencidas e reavalia
+  os convites. O streak não precisa de gravação: ele é calculado.
 
 ## Migrações
 
