@@ -70,6 +70,12 @@ export const strings = {
     minimumConfirm: (text: string) => `Fiz a versão mínima: ${text}`,
     minimumGain: (xp: number, gold: number) => `Conta como feito e mantém o streak: +${xp} XP · +${gold} ouro.`,
     notNow: 'Agora não',
+    reorderHint: 'Para mudar a ordem, segure o hábito e arraste. No teclado, use a tecla de menu e as setas.',
+    moving: (name: string, position: number, total: number) =>
+      `Movendo ${name}: ${position} de ${total}. Setas para mover, Enter para soltar, Esc para cancelar.`,
+    dropped: (name: string, position: number, total: number) => `${name} ficou em ${position} de ${total}.`,
+    reorderCanceled: 'A ordem ficou como estava.',
+    reorderFailed: 'Não deu para salvar a nova ordem. Ela voltou como estava; tenta de novo?',
   },
 
   yesterday: {

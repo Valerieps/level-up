@@ -216,6 +216,11 @@ export interface Commands {
   'habit.reactivate': { input: { habitId: string }; output: HabitView };
   /** Deletes the habit and its history; XP and gold already earned stay. */
   'habit.delete': { input: { habitId: string }; output: null };
+  /**
+   * The drag in Hoje: active habits in their new order. They swap among the places they already
+   * take; every other habit keeps its place.
+   */
+  'habit.reorder': { input: { habitIds: string[] }; output: null };
   /** One tap on the marker, on the member's today. */
   'habit.mark': { input: { habitId: string }; output: MarkResult };
   /** The long press: the versão mínima completes today at once. */

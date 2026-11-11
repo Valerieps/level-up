@@ -133,6 +133,47 @@ describe('régua', () => {
   });
 });
 
+describe('reordering Hoje', () => {
+  const names = () => today().habits.map((h) => h.habit.name);
+  const reorder = (habitIds: unknown, session = ana) => service.command(session, 'habit.reorder', { habitIds });
+
+  it('saves the dragged order, leaving hidden habits in their places', () => {
+    const a = create({ name: 'A' });
+    create({ name: 'Livre', rule: 'free' });
+    const b = create({ name: 'B' });
+    const c = create({ name: 'C' });
+    expect(reorder([c.id, a.id, b.id])).toMatchObject({ ok: true, changed: ['habits'] });
+    expect(names()).toEqual(['C', 'Livre', 'A', 'B']);
+    create({ name: 'D' });
+    expect(names()).toEqual(['C', 'Livre', 'A', 'B', 'D']);
+  });
+
+  it('keeps an archived habit’s place for when it comes back', () => {
+    const a = create({ name: 'A' });
+    const b = create({ name: 'B' });
+    const c = create({ name: 'C' });
+    service.command(ana, 'habit.archive', { habitId: b.id });
+    reorder([c.id, a.id]);
+    service.command(ana, 'habit.reactivate', { habitId: b.id });
+    expect(names()).toEqual(['C', 'B', 'A']);
+  });
+
+  it('refuses bad input, archived habits and someone else’s habits', () => {
+    const a = create({ name: 'A' });
+    const b = create({ name: 'B' });
+    expect(reorder('nope')).toEqual({ ok: false, error: 'invalid' });
+    expect(reorder([a.id, 3])).toEqual({ ok: false, error: 'invalid' });
+    expect(reorder([a.id, a.id])).toEqual({ ok: false, error: 'invalid' });
+    expect(reorder([a.id, 'x'])).toEqual({ ok: false, error: 'not_found' });
+    service.command(ana, 'habit.archive', { habitId: b.id });
+    expect(reorder([b.id, a.id])).toEqual({ ok: false, error: 'not_found' });
+
+    service.command(ana, 'invite.create', { email: 'bia@example.com' });
+    service.signIn({ sub: 's-bia', email: 'bia@example.com', name: 'Bia', picture: null }, 'h-bia', []);
+    expect(reorder([a.id], 'h-bia')).toEqual({ ok: false, error: 'not_found' });
+  });
+});
+
 describe('archiving and deleting', () => {
   it('archives out of Hoje and reactivates with the history kept', () => {
     const habit = create();

@@ -11,7 +11,6 @@ O que ainda não está pronto.
 
 | Feature | Fase | Spec | Observação |
 | --- | --- | --- | --- |
-| Arrastar para reordenar os hábitos da Hoje | 1a | `spec/telas-e-feedback.md` | Adiado pela dona: por enquanto a ordem é a de criação (`habits.position`). Toque longo no item, sem conflitar com o toque longo do marcador da versão mínima (1b) |
 | Telas do domínio: selo Automatizado, progresso até o domínio e a celebração com o Prêmio de Domínio | 1c | `spec/streak-e-dominio.md` | A base está pronta: `HabitView.automated`, `mastery`, `tierMastered` e `celebrations` em `habit.mark`, `habit.markMinimum` e `day.reviewYesterday` |
 | Telas da régua: estrela na folha "Subir a régua", convites de subir e de ajustar, folha "Ajustar a régua" | 1c | `spec/regua.md` | A base está pronta: `earnsStar`, `HabitView.invitation`, `habit.resize` devolve `star`, `habit.dismissInvitation` |
 | Telas das conquistas: trilhas no Perfil e celebração empilhada | 1c | `spec/conquistas.md`, `spec/telas-e-feedback.md` | A base está pronta: a consulta `achievements` e as `celebrations` dos comandos |
@@ -36,6 +35,9 @@ O que ainda não está pronto.
   qualquer jeito salva o que estiver marcado; hábitos criados hoje ficam de fora; o XP é o do
   tamanho atual do hábito (`spec/registrar-o-dia.md`).
 - [ ] A virada do dia se escolhe em horas cheias, de meia-noite às 23h (`spec/registrar-o-dia.md`).
+- [ ] Arrastar na Hoje: só os programados ainda não feitos e não pausados se arrastam; os livres,
+  pausados, concluídos e arquivados guardam o lugar entre os hábitos; no teclado, tecla de menu e
+  setas (`spec/telas-e-feedback.md`).
 - [ ] Subir e baixar a régua (sem estrelas) entram já na fase 1a, porque a edição não muda
   dificuldade, meta nem dias (`spec/regua.md`, `spec/habitos.md`).
 - [ ] Se a gravação de uma marcação não der certo, o app avisa e o item volta para a lista

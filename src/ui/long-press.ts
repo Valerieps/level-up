@@ -1,9 +1,9 @@
 import { useRef, type MouseEvent, type PointerEvent } from 'react';
 
 /** How long a press must last to count as a long press. */
-const LONG_PRESS_MS = 500;
+export const LONG_PRESS_MS = 500;
 /** A click this soon after a long press is the end of that press, not a tap. */
-const SWALLOW_CLICK_MS = 800;
+export const SWALLOW_CLICK_MS = 800;
 
 export interface LongPressHandlers {
   onPointerDown?: (event: PointerEvent) => void;

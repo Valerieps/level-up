@@ -33,6 +33,11 @@ Ordem, de cima para baixo:
 2. **Hoje:** os diários e os de dias específicos de hoje ainda não feitos, na ordem que eu arrasto.
    Os pausados ficam no fim, sem destaque, como "opcional". Um hábito com meta mostra o contador.
    *(1a; pausados 1b)*
+   - Para arrastar, eu seguro o item fora do marcador; o toque longo no marcador continua sendo a
+     versão mínima. Solto onde quero e a ordem fica salva. No teclado, a tecla de menu pega o item,
+     as setas movem, Enter solta e Esc desiste. *(1a)*
+   - Só os itens desta seção se arrastam. Os livres, os pausados e os concluídos ficam onde estão
+     entre os meus hábitos, e um hábito arquivado volta para o lugar que tinha. *(1a)*
 3. **Hábitos livres:** os livres disponíveis hoje, recolhível, com os "Faz tempo" no topo e a
    contagem quando recolhido. *(1a; "Faz tempo" 1b)*
 4. **Mostrar concluídos**, no fim da lista. *(1a)*

@@ -3,6 +3,7 @@ import type { HabitView, ReviewResult } from '../../application/api-contract';
 import { formatDayLong, type Day } from '../../domain/day';
 import { markMinimum, NOT_STARTED, planToday, tap, type DayEntry, type TodayHabit } from '../../domain/habits/day-log';
 import { describeRule } from '../../domain/habits/describe';
+import { sortByIds } from '../../domain/habits/order';
 import { strings } from '../../domain/strings';
 import { useServices } from '../backend-context';
 import { Button, ButtonLink } from '../components/Button';
@@ -10,6 +11,7 @@ import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { ProgressTop } from '../components/ProgressTop';
 import { Sheet } from '../components/Sheet';
+import { useDragReorder, type Announcement, type DragItemProps } from '../drag-reorder';
 import { useLongPress } from '../long-press';
 import { Link, navigate } from '../router';
 import { useQuery } from '../use-query';
@@ -87,11 +89,15 @@ export function Today() {
   const [pausing, setPausing] = useState(false);
   const [resuming, setResuming] = useState(false);
   const [welcome, setWelcome] = useState(false);
+  /** The order just dragged, shown until the server confirms it. */
+  const [order, setOrder] = useState<readonly string[] | null>(null);
+  const reordering = useRef(0);
   const gainIds = useRef(0);
 
   // Fresh data from the server replaces what it confirmed.
   useEffect(() => {
     setOverlays((current) => new Map([...current].filter(([, o]) => o.inFlight > 0)));
+    if (reordering.current === 0) setOrder(null);
   }, [today.data]);
   useEffect(() => {
     setGains((current) => current.filter((g) => !g.settled));
@@ -119,6 +125,7 @@ export function Today() {
     items.map((item) => (leaving.has(item.habit.id) ? { ...item, entry: { ...item.entry, done: false } } : item)),
     day,
   );
+  const scheduled = order ? sortByIds(plan.scheduled, (item) => item.habit.id, order) : plan.scheduled;
   const done = planToday(items, day).done;
   const xpTotal = (progress.data?.xpTotal ?? 0) + gains.reduce((sum, g) => sum + g.xp, 0);
   const gold = (progress.data?.gold ?? 0) + gains.reduce((sum, g) => sum + g.gold, 0);
@@ -170,6 +177,20 @@ export function Today() {
       copy.delete(habitId);
       return copy;
     });
+  }
+
+  /** The drag in Hoje: shown at once, saved behind; a failure puts the old order back. */
+  async function reorder(habitIds: string[]) {
+    setError(null);
+    setOrder(habitIds);
+    reordering.current++;
+    const result = await backend.command('habit.reorder', { habitIds });
+    reordering.current--;
+    if (!result.ok) {
+      setOrder(null);
+      setError(t.reorderFailed);
+    }
+    today.reload();
   }
 
   async function undo(habit: HabitView) {
@@ -284,7 +305,14 @@ export function Today() {
           <p className="muted">{t.allDoneSummary(done.length, doneXp, doneGold)}</p>
         </div>
       )}
-      <HabitList items={plan.scheduled} leaving={leaving} onMark={onMark} onMinimum={onMinimum} onLeft={finishLeaving} />
+      <HabitList
+        items={scheduled}
+        leaving={leaving}
+        onMark={onMark}
+        onMinimum={onMinimum}
+        onLeft={finishLeaving}
+        onReorder={(habitIds) => void reorder(habitIds)}
+      />
       {plan.paused.length > 0 && appPause && <p className="muted small">{t.pausedHint}</p>}
       <HabitList items={plan.paused} leaving={leaving} onMark={onMark} onMinimum={onMinimum} onLeft={finishLeaving} />
 
@@ -386,12 +414,24 @@ function MinimumSheet({
   );
 }
 
+const REORDER_HINT_ID = 'reorder-hint';
+const noDrop = () => undefined;
+
+function announce(announcement: Announcement | null, nameOf: (id: string) => string): string {
+  if (!announcement) return '';
+  if (announcement.kind === 'canceled') return t.reorderCanceled;
+  const say = announcement.kind === 'moving' ? t.moving : t.dropped;
+  return say(nameOf(announcement.id), announcement.position, announcement.total);
+}
+
+/** A list of habits to mark; with `onReorder`, the member drags them into their order. */
 function HabitList({
   items,
   leaving,
   onMark,
   onMinimum,
   onLeft,
+  onReorder,
   labelledBy,
 }: {
   items: readonly TodayHabit<HabitView>[];
@@ -399,22 +439,53 @@ function HabitList({
   onMark: (habit: HabitView) => void;
   onMinimum: (habit: HabitView) => void;
   onLeft: (habitId: string) => void;
+  onReorder?: (habitIds: string[]) => void;
   labelledBy?: string;
 }) {
+  const listRef = useRef<HTMLUListElement>(null);
+  const drag = useDragReorder(
+    items.map((item) => item.habit.id),
+    listRef,
+    onReorder ?? noDrop,
+  );
   if (items.length === 0) return null;
+  const byId = new Map(items.map((item) => [item.habit.id, item]));
+  const reorderable = onReorder !== undefined && items.length > 1;
+  const shown = reorderable ? drag.order.flatMap((id) => byId.get(id) ?? []) : items;
   return (
-    <ul className="list" aria-labelledby={labelledBy}>
-      {items.map(({ habit, entry }) => (
-        <HabitRow key={habit.id} habit={habit} entry={entry} leaving={leaving.has(habit.id)} onMark={onMark} onMinimum={onMinimum} onLeft={onLeft} />
-      ))}
-    </ul>
+    <>
+      <ul ref={listRef} className={reorderable ? 'list reorderable' : 'list'} aria-labelledby={labelledBy}>
+        {shown.map(({ habit, entry }) => (
+          <HabitRow
+            key={habit.id}
+            habit={habit}
+            entry={entry}
+            leaving={leaving.has(habit.id)}
+            onMark={onMark}
+            onMinimum={onMinimum}
+            onLeft={onLeft}
+            drag={reorderable ? drag.itemProps(habit.id, !leaving.has(habit.id)) : undefined}
+          />
+        ))}
+      </ul>
+      {reorderable && (
+        <>
+          <p id={REORDER_HINT_ID} className="visually-hidden">
+            {t.reorderHint}
+          </p>
+          <p className="visually-hidden" aria-live="assertive">
+            {announce(drag.announcement, (id) => byId.get(id)?.habit.name ?? '')}
+          </p>
+        </>
+      )}
+    </>
   );
 }
 
 /**
- * One habit to mark. A tap marks it whole; a long press offers the versão mínima, when the habit
- * has one. A paused habit sits without emphasis, as "opcional"; a free one stopped for long shows
- * "Faz tempo".
+ * One habit to mark. A tap marks it whole; a long press on the marker offers the versão mínima,
+ * when the habit has one, and a long press anywhere else picks the item up to drag (`drag`). A
+ * paused habit sits without emphasis, as "opcional"; a free one stopped for long shows "Faz tempo".
  */
 function HabitRow({
   habit,
@@ -423,6 +494,7 @@ function HabitRow({
   onMark,
   onMinimum,
   onLeft,
+  drag,
 }: {
   habit: HabitView;
   entry: DayEntry;
@@ -430,13 +502,14 @@ function HabitRow({
   onMark: (habit: HabitView) => void;
   onMinimum: (habit: HabitView) => void;
   onLeft: (habitId: string) => void;
+  drag?: DragItemProps;
 }) {
   const longPress = useLongPress(habit.minimum !== null && !leaving ? () => onMinimum(habit) : null);
   const counter = habit.dailyGoal > 1;
   const longAgo = habit.consistency.kind === 'rhythm' && habit.consistency.longAgo;
-  const classes = ['habit-item', leaving && 'leaving', habit.paused && 'optional'].filter(Boolean).join(' ');
+  const classes = ['habit-item', leaving && 'leaving', habit.paused && 'optional', drag?.className].filter(Boolean).join(' ');
   return (
-    <li className={classes} onAnimationEnd={(e) => e.target === e.currentTarget && onLeft(habit.id)}>
+    <li {...drag} className={classes} onAnimationEnd={(e) => e.target === e.currentTarget && onLeft(habit.id)}>
       <button
         type="button"
         className={leaving ? 'marker checked' : 'marker'}
@@ -447,7 +520,12 @@ function HabitRow({
       >
         {leaving ? <Icon name="check" /> : counter && <span className="mono marker-count">{entry.count}</span>}
       </button>
-      <Link to={`/habito/${habit.id}`} className="habit-name grow">
+      <Link
+        to={`/habito/${habit.id}`}
+        className="habit-name grow"
+        draggable={drag ? false : undefined}
+        aria-describedby={drag ? REORDER_HINT_ID : undefined}
+      >
         <span className="strong-name">{habit.name}</span>
         {habit.rule === 'weekdays' && <span className="muted small">{describeRule(habit)}</span>}
       </Link>
