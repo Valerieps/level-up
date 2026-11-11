@@ -202,7 +202,9 @@ a {
 }
 
 .tab[aria-current='page'] .tab-icon {
-  background: var(--color-brand-soft);
+  background: var(--color-tab-current);
+  color: var(--color-on-tab-current);
+  box-shadow: var(--shadow-tab-current);
 }
 
 .screen-header {
@@ -289,6 +291,7 @@ input[aria-invalid='true'] {
   text-align: center;
   text-decoration: none;
   cursor: pointer;
+  box-shadow: var(--shadow-control);
   transition: background-color var(--duration-fast) var(--easing);
 }
 
@@ -1230,9 +1233,11 @@ button.list-link:disabled {
   justify-content: center;
   width: var(--size-avatar);
   height: var(--size-avatar);
+  border: var(--border-width-medallion) solid var(--color-medallion-ring);
   border-radius: var(--radius-full);
   background: var(--color-success-soft);
   color: var(--color-success);
+  box-shadow: var(--shadow-medallion);
 }
 
 .track.courage .track-icon {
@@ -1463,6 +1468,15 @@ button.reward-open {
 
 .logo-mark {
   stroke: var(--color-on-brand);
+}
+
+/* A logo drawn light on the plate, its holes cut in the plate's color (the Ocarina). */
+.logo-light {
+  fill: var(--color-on-top);
+}
+
+.logo-cut {
+  stroke: var(--color-top);
 }
 
 /* A pixel-art logo's lit pixels, on the plate. */
