@@ -123,6 +123,25 @@ Um tema de jogo (ADR-012): uma paródia do RPG indie, nunca cópia. Os valores e
   "* ..." (Hoje), saco de itens (Loja), silhueta (Perfil); "+" grosso, o brilho de um ponto de
   salvar (estrela), coração com brilho (Automatizado), moeda com "G".
 
+## Identidade Arco Iro
+
+Um tema que não vem de jogo (`docs/spec/temas.md`): um unicórnio com personalidade demais. Os
+valores estão no bloco `[data-theme='arcoiro']` do `tokens.css`; os ícones e o logo, em
+`src/ui/theme/arcoiro.tsx`.
+
+- **Papel creme, tinta quase preta, violeta nas ações, rosa forte nos detalhes** (`--color-focus`,
+  a borda do marcador, a aba atual, os medalhões). O dourado continua do prêmio.
+- **O arco-íris é decoração, nunca fundo de texto.** O vivo fica nos `--image-*` (marcador, botão
+  principal, "+", barras, faixa do topo) e no heatmap; atrás de texto só a versão pastel (a aba atual).
+- **Fontes:** Fredoka nos títulos, Nunito no texto e nos números de progresso.
+- **Formas:** tudo arredondado, bordas finas cor de areia, sombras macias rosa e roxas, nunca duras.
+- **O marcador é uma cabeça de unicórnio** (`--clip-marker`): o contorno rosa com o olho quando vazio;
+  feito, a cabeça cheia, com o arco-íris subindo de baixo (`--image-marker-checked`) e uma explosão
+  de brilhos (`--image-marker-burst`). Por isso o "feito" não desenha nada por cima.
+- **Movimento:** com um pouco de quique (`--easing` passa do alvo e volta).
+- **Ícones:** contorno de traço 2, pontas redondas. Abas: arco-íris (Hoje), sorvete (Loja), cabeça
+  de unicórnio (Perfil); brilho de quatro pontas (estrela), chifre (Automatizado).
+
 ## Mudar a identidade visual
 
 Mude só os valores do bloco do tema no `tokens.css`, sem renomear os tokens. No tema padrão,
@@ -142,7 +161,9 @@ Quão perto do jogo um tema chega, e o que pode e o que não pode, está em `doc
    cada `--radius-*` (`--radius-marker` e `--radius-heat-cell` dizem se o marcador e o dia do heatmap
    são redondos ou quadrados), `--clip-marker*` (`none`, ou a forma do marcador recortada por
    `path()`), `--color-marker-fill` (o miolo do marcador vazio), `--border-width*` (com
-   `--border-width-tab`, a caixa em volta do ícone da aba), `--easing`, `--duration-*` e `--opacity-*`.
+   `--border-width-tab`, a caixa em volta do ícone da aba), os `--image-*` (`none`, ou uma imagem
+   por cima da cor: o enchimento do marcador, os brilhos, o botão principal, o "+", as barras, a aba
+   atual e o topo), `--easing`, `--duration-*` e `--opacity-*`.
    `--color-danger*` continua um vermelho reconhecível.
 3. Fontes em `public/fonts`, num `@font-face` no `tokens.css`, com a licença ao lado (ou, numa
    fonte de fã sem licença, um `-NOTICE.txt` dizendo de onde veio e o que mudou). Confira os acentos

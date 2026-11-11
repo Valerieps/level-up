@@ -6,6 +6,7 @@ import { CoinIcon, Icon } from '../components/Icon';
 import { Logo } from '../components/Logo';
 import { ThemePicker } from '../screens/theme-picker';
 import { AMEIXA } from './ameixa';
+import { ARCOIRO } from './arcoiro';
 import { OCARINA } from './ocarina';
 import { applyTheme, rememberedTheme, rememberTheme, THEME_KEY, type ThemeDocument } from './apply-theme';
 import { DEFAULT_VISUALS, THEME_LIST, THEMES, ThemeVisualsContext } from './themes';
@@ -106,6 +107,19 @@ describe('the Ocarina theme', () => {
 
   it('shows the Tema picker, now that the app ships two themes', () => {
     expect(renderToStaticMarkup(<ThemePicker themes={THEME_LIST} current="ocarina" onChoose={() => {}} />)).toContain('>Upcarina<');
+  });
+});
+
+describe('the Arco Iro theme', () => {
+  it('draws nothing for the check, since its unicorn marker fills with rainbow instead', () => {
+    expect(ARCOIRO.icons.check?.d).toBe('');
+    expect(inTheme(ARCOIRO, <Icon name="today" />)).toContain('stroke-linecap="round"');
+  });
+
+  it('draws its own logo and favicon, and is listed in the picker by name', () => {
+    expect(inTheme(ARCOIRO, <Logo />)).toContain('logo-band-1');
+    expect(ARCOIRO.favicon).toBe('/themes/arcoiro/favicon.svg');
+    expect(renderToStaticMarkup(<ThemePicker themes={THEME_LIST} current="arcoiro" onChoose={() => {}} />)).toContain('>Arco Iro<');
   });
 });
 
