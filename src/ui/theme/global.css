@@ -250,6 +250,7 @@ a {
 
 .tab[aria-current='page'] .tab-icon {
   background: var(--color-tab-current);
+  background-image: var(--image-tab-current);
   color: var(--color-on-tab-current);
   box-shadow: var(--shadow-tab-current);
 }
@@ -334,6 +335,8 @@ input[aria-invalid='true'] {
   border: var(--border-width) solid var(--color-brand);
   border-radius: var(--radius);
   background: var(--color-brand);
+  /* Only the primary button: the other variants set background, which drops the image. */
+  background-image: var(--image-button);
   color: var(--color-on-brand);
   text-align: center;
   text-decoration: none;
@@ -482,6 +485,7 @@ button.list-link:disabled {
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   background: var(--color-top);
+  background-image: var(--image-top);
   color: var(--color-on-top);
 }
 
@@ -546,6 +550,7 @@ button.list-link:disabled {
   height: 100%;
   border-radius: var(--radius-full);
   background: var(--color-gold);
+  background-image: var(--image-progress);
   transition: width var(--duration-base) var(--easing);
 }
 
@@ -659,9 +664,12 @@ button.list-link:disabled {
   height: var(--size-marker);
   border: var(--border-width-strong) solid var(--color-brand);
   border-radius: var(--radius-marker);
-  background: var(--color-marker-fill);
+  /* A theme's --image-marker-checked waits at zero height and rises when checked. */
+  background: var(--color-marker-fill) var(--image-marker-checked) no-repeat bottom / 100% 0;
   clip-path: var(--clip-marker);
-  transition: background-color var(--duration-fast) var(--easing);
+  transition:
+    background-color var(--duration-fast) var(--easing),
+    background-size var(--duration-celebration) var(--easing);
 }
 
 .marker > * {
@@ -669,8 +677,31 @@ button.list-link:disabled {
 }
 
 .marker.checked::before {
-  background: var(--color-brand);
+  background-color: var(--color-brand);
+  background-size: 100% 100%;
   clip-path: var(--clip-marker-checked);
+}
+
+/* A marker just tapped bursts with the theme's --image-marker-burst (none draws nothing). */
+button.marker.checked::after {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--space-2));
+  background: var(--image-marker-burst);
+  opacity: 0;
+  pointer-events: none;
+  animation: marker-burst var(--duration-celebration) var(--easing);
+}
+
+@keyframes marker-burst {
+  from {
+    opacity: 1;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.2) rotate(30deg);
+  }
 }
 
 .marker:disabled {
@@ -741,6 +772,7 @@ button.list-link:disabled {
   height: var(--size-fab);
   border-radius: var(--radius-lg);
   background: var(--color-brand);
+  background-image: var(--image-fab);
   color: var(--color-on-brand);
   box-shadow: var(--shadow-fab);
 }
@@ -1307,6 +1339,7 @@ button.list-link:disabled {
   height: 100%;
   border-radius: var(--radius-full);
   background: var(--color-brand);
+  background-image: var(--image-progress);
 }
 
 .track.courage .track-bar-fill {
@@ -1510,6 +1543,35 @@ button.reward-open {
 
 .logo-cut {
   stroke: var(--color-top);
+}
+
+/* Arco Iro's unicorn: the mane in the rainbow of its heatmap and focus, a gold horn, ink shades. */
+.logo-band-1 {
+  stroke: var(--color-focus);
+}
+
+.logo-band-2 {
+  stroke: var(--color-heat-1);
+}
+
+.logo-band-3 {
+  stroke: var(--color-heat-2);
+}
+
+.logo-band-4 {
+  stroke: var(--color-heat-3);
+}
+
+.logo-band-5 {
+  stroke: var(--color-heat-4);
+}
+
+.logo-horn {
+  fill: var(--color-gold);
+}
+
+.logo-ink {
+  fill: var(--color-top);
 }
 
 /* A pixel-art logo's lit pixels, on the plate. */

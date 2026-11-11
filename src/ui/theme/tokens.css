@@ -66,6 +66,15 @@
   src: url('/fonts/nunito-latin-wght-normal.woff2') format('woff2-variations');
 }
 
+/* Arco Iro's titles. Its text font is Nunito (above). */
+@font-face {
+  font-family: 'Fredoka';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url('/fonts/fredoka-latin-wght-normal.woff2') format('woff2-variations');
+}
+
 /* Press Start 2P has one weight; the range keeps a bold title from being faked by the browser. */
 @font-face {
   font-family: 'Press Start 2P';
@@ -275,6 +284,18 @@
   /* The marker's shape cut out of its box (clip-path): none keeps the box, rounded by --radius-marker. */
   --clip-marker: none;
   --clip-marker-checked: none;
+  /*
+   * Images a theme may lay over a color (background-image): none here, so the color alone shows.
+   * The checked marker's fill, rising from the bottom; a burst around a marker just tapped; the
+   * primary button; the "+"; the XP and conquista bars; the current tab's plate; the progress top.
+   */
+  --image-marker-checked: none;
+  --image-marker-burst: none;
+  --image-button: none;
+  --image-fab: none;
+  --image-progress: none;
+  --image-tab-current: none;
+  --image-top: none;
 
   /* Motion. global.css turns it off under prefers-reduced-motion. */
   --duration-fast: 150ms;
@@ -391,6 +412,15 @@
   --clip-marker: none;
   --clip-marker-checked: none;
 
+  /* Images over colors (see Ameixa): none. */
+  --image-marker-checked: none;
+  --image-marker-burst: none;
+  --image-button: none;
+  --image-fab: none;
+  --image-progress: none;
+  --image-tab-current: none;
+  --image-top: none;
+
   /* Motion: the same rhythm as Ameixa. */
   --duration-fast: 150ms;
   --duration-base: 200ms;
@@ -500,6 +530,15 @@
   --border-width-tab: 0px;
   --clip-marker: none;
   --clip-marker-checked: none;
+
+  /* Images over colors (see Ameixa): none. */
+  --image-marker-checked: none;
+  --image-marker-burst: none;
+  --image-button: none;
+  --image-fab: none;
+  --image-progress: none;
+  --image-tab-current: none;
+  --image-top: none;
 
   /* Motion: a little slower and heavier, as the game's menus. */
   --duration-fast: 180ms;
@@ -618,6 +657,15 @@
   --clip-marker: path('M4 2h8v4h-8zM16 2h8v4h-8zM0 6h4v4h-4zM12 6h4v4h-4zM24 6h4v4h-4zM0 10h4v4h-4zM24 10h4v4h-4zM4 14h4v4h-4zM20 14h4v4h-4zM8 18h4v4h-4zM16 18h4v4h-4zM12 22h4v4h-4z');
   --clip-marker-checked: path('M4 2h8v4h-8zM16 2h8v4h-8zM0 6h28v4h-28zM0 10h28v4h-28zM4 14h20v4h-20zM8 18h12v4h-12zM12 22h4v4h-4z');
 
+  /* Images over colors (see Ameixa): none. */
+  --image-marker-checked: none;
+  --image-marker-burst: none;
+  --image-button: none;
+  --image-fab: none;
+  --image-progress: none;
+  --image-tab-current: none;
+  --image-top: none;
+
   /* Motion: the same durations, in steps, like sprite frames. */
   --duration-fast: 150ms;
   --duration-base: 200ms;
@@ -627,4 +675,139 @@
   --easing: steps(4, end);
   --opacity-disabled: 0.55;
   --opacity-backdrop: 0.7;
+}
+
+/*
+ * Theme: Arco Iro, a unicorn with too much personality: a rainbow taken almost as a joke, never a
+ * game (docs/spec/temas.md). Cream paper and near-black ink, violet on actions, hot pink on the
+ * details (focus, the marker's edge, the current tab, the medallions), soft pink and violet shadows,
+ * everything round. The rainbow is decoration: the marker fills with it, the primary button and the
+ * "+" wear it, the XP bar and the heatmap are it. Text never sits on the vivid rainbow, only on its
+ * pastel (the current tab). The marker is a unicorn head: a pink outline that fills with rainbow
+ * bands from the bottom when done, with a burst of sparkles.
+ */
+[data-theme='arcoiro'] {
+  color-scheme: light;
+
+  /* Colors */
+  --color-bg: #f3eee3;
+  --color-surface: #fffcf5;
+  --color-surface-raised: #fffcf5;
+  --color-text: #231c1a;
+  --color-text-muted: #5e534c;
+  --color-border: #e0d6c4;
+  --color-border-strong: #8a7d70;
+  --color-track: #e9e1d1;
+  /* The empty marker is an outline (--clip-marker): this is its color, the hot pink. */
+  --color-marker-fill: #e8007f;
+  /* Violet: the primary button, the "+" center, links. */
+  --color-brand: #6c3bc9;
+  --color-brand-ink: #5a2fae;
+  --color-brand-soft: #ece3fb;
+  --color-on-brand: #ffffff;
+  /* The ink plate of the progress top, a rainbow stripe on its upper edge (--image-top). */
+  --color-top: #231c1a;
+  --color-on-top: #fff6df;
+  --color-top-muted: #d9cbb0;
+  --color-top-track: #4a3f38;
+  --color-top-line: #5a4e46;
+  --color-level: #d3b8ff;
+  --color-on-level: #231c1a;
+  --color-coin: #3e2f12;
+  --color-currency: #c27f00;
+  --color-gold: #ffd23f;
+  --color-gold-ink: #8a5800;
+  --color-gold-soft: #fff0c2;
+  --color-star: #a86a00;
+  --color-faz: #2d4f8a;
+  --color-faz-soft: #e2eaf7;
+  --color-danger: #b42318;
+  --color-danger-soft: #fbe0e0;
+  --color-on-danger: #ffffff;
+  --color-success: #1d7a45;
+  --color-success-soft: #dcf2e3;
+  --color-warning: #8a5a00;
+  --color-warning-soft: #fdf0d3;
+  --color-neutral: #4e4a57;
+  --color-neutral-soft: #eeedf1;
+  --color-toast: #231c1a;
+  --color-on-toast: #fff6df;
+  --color-focus: #e8007f;
+  /* Heatmap: the rainbow from yellow to violet, which also darkens step by step. */
+  --color-heat-0: #e9e1d1;
+  --color-heat-1: #ffd23f;
+  --color-heat-2: #2ec4b6;
+  --color-heat-3: #3a86ff;
+  --color-heat-4: #8338ec;
+  --color-browser-bar: #231c1a;
+
+  /* Shadows: soft, pink and violet, never hard. */
+  --shadow-fab: 0 8px 24px -4px rgba(232, 0, 127, 0.6);
+  --shadow-sheet: 0 -8px 32px rgba(131, 56, 236, 0.18);
+  --shadow-toast: 0 8px 24px -8px rgba(232, 0, 127, 0.45);
+
+  /* Menu details: the current tab on the pastel rainbow (--image-tab-current) with a pink ring. */
+  --color-tab-current: #ffeb8a;
+  --color-on-tab-current: #231c1a;
+  --shadow-tab-current: inset 0 0 0 2px #e8007f;
+  --shadow-control: 0 6px 18px -6px rgba(232, 0, 127, 0.6);
+  --border-width-medallion: 2px;
+  --color-medallion-ring: #e8007f;
+  --shadow-medallion: 0 4px 12px -4px rgba(131, 56, 236, 0.5);
+
+  /* Type: Fredoka for titles (round and chunky), Nunito for text and numbers. */
+  --font-sans: Nunito, 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --font-display: Fredoka, Nunito, 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --font-mono: Nunito, 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 600;
+  /* Fredoka stops at 700. */
+  --font-weight-strong: 700;
+  --line-height-tight: 1.25;
+  --line-height-body: 1.5;
+  --letter-spacing-display: 0em;
+
+  /* Shapes: round everywhere; the heatmap days are dots. */
+  --radius-sm: 8px;
+  --radius: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-full: 999px;
+  --radius-marker: 999px;
+  --radius-heat-cell: 999px;
+  --border-width: 1px;
+  --border-width-strong: 2px;
+  --border-width-tab: 0px;
+  /*
+   * A unicorn head in profile, horn up, in the 28px marker: when empty, its outline with the eye;
+   * when done, the solid head with the eye cut out (evenodd).
+   */
+  --clip-marker: path(evenodd, 'M7 26.3C4.4 21 4.4 13.1 7.9 9.6L9.6 3.5L12.3 7.9L14 7.4L21 0.9L16.6 9.6C20.1 12.3 23.6 15.8 25.4 19.3C26.3 21.9 24.5 24.5 21.9 23.6L16.6 22.8C14.9 23.6 14 25.4 13.1 26.3Z M8.6 23.9L8.4 23.4L7.9 21.4L7.6 19.4L7.5 17.4L7.7 15.5L8.2 13.8L8.8 12.4L10.1 10.7L10.3 8.7L11.1 10.6L15.2 9.6L17.8 5.1L13.6 10.3L16.4 12.5L17.6 13.5L18.8 14.6L19.9 15.7L20.9 16.9L21.8 18.1L22.6 19.2L23.1 20.1L23.2 20.5L23.2 20.8L23.1 21.1L22.9 21.4L22.3 21.3L16.2 20.2L14.7 21.1L13.9 21.7L13.2 22.4L12.7 23L12.3 23.5L11.9 24L11.6 24.3Z M17.9 14a1.3 1.3 0 1 0-2.6 0a1.3 1.3 0 1 0 2.6 0Z');
+  --clip-marker-checked: path(evenodd, 'M7 26.3C4.4 21 4.4 13.1 7.9 9.6L9.6 3.5L12.3 7.9L14 7.4L21 0.9L16.6 9.6C20.1 12.3 23.6 15.8 25.4 19.3C26.3 21.9 24.5 24.5 21.9 23.6L16.6 22.8C14.9 23.6 14 25.4 13.1 26.3Z M17.9 14a1.3 1.3 0 1 0-2.6 0a1.3 1.3 0 1 0 2.6 0Z');
+
+  /* The rainbow (vivid: never behind text) and its pastel (behind ink text, at least 9:1). */
+  --image-marker-checked: linear-gradient(180deg, #ff5e5b 0 16.6%, #ff9f1c 0 33.3%, #ffd23f 0 50%, #2ec4b6 0 66.6%, #3a86ff 0 83.3%, #8338ec 0);
+  --image-marker-burst: radial-gradient(circle at 12% 20%, #ff5e5b 0 3px, transparent 3.5px),
+    radial-gradient(circle at 50% 3%, #e8007f 0 2.5px, transparent 3px),
+    radial-gradient(circle at 88% 18%, #ffd23f 0 3px, transparent 3.5px),
+    radial-gradient(circle at 97% 58%, #2ec4b6 0 3px, transparent 3.5px),
+    radial-gradient(circle at 80% 92%, #3a86ff 0 3px, transparent 3.5px),
+    radial-gradient(circle at 48% 98%, #ff9f1c 0 2.5px, transparent 3px),
+    radial-gradient(circle at 18% 88%, #8338ec 0 3px, transparent 3.5px),
+    radial-gradient(circle at 3% 52%, #e8007f 0 2.5px, transparent 3px);
+  --image-button: linear-gradient(to top, transparent 4px, #6c3bc9 4px), linear-gradient(90deg, #ff5e5b 0 16.6%, #ff9f1c 0 33.3%, #ffd23f 0 50%, #2ec4b6 0 66.6%, #3a86ff 0 83.3%, #8338ec 0);
+  --image-fab: radial-gradient(closest-side, #6c3bc9 70%, transparent 72%), conic-gradient(#ff5e5b, #ff9f1c, #ffd23f, #2ec4b6, #3a86ff, #8338ec, #e8007f, #ff5e5b);
+  --image-progress: linear-gradient(90deg, #ff5e5b, #ff9f1c, #ffd23f, #2ec4b6, #3a86ff, #8338ec);
+  --image-tab-current: linear-gradient(90deg, #ffb3a7, #ffd29a, #ffeb8a, #a8ecd9, #b0cdff, #d3b8ff);
+  --image-top: linear-gradient(to bottom, transparent 6px, #231c1a 6px), linear-gradient(90deg, #ff5e5b 0 16.6%, #ff9f1c 0 33.3%, #ffd23f 0 50%, #2ec4b6 0 66.6%, #3a86ff 0 83.3%, #8338ec 0);
+
+  /* Motion: bouncy, with a little overshoot; the marker fills over the celebration's time. */
+  --duration-fast: 180ms;
+  --duration-base: 260ms;
+  --duration-celebration: 600ms;
+  --duration-gain: 1200ms;
+  --duration-toast: 3500ms;
+  --easing: cubic-bezier(0.3, 1.4, 0.5, 1);
+  --opacity-disabled: 0.5;
+  --opacity-backdrop: 0.5;
 }

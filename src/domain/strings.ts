@@ -306,6 +306,7 @@ export const strings = {
     stardew: 'StarDo Valley',
     ocarina: 'Upcarina',
     uppertale: 'Uppertale',
+    arcoiro: 'Arco Iro',
   },
 
   settings: {

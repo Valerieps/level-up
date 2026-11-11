@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState, type ReactNode } from 'react';
 import { DEFAULT_THEME, THEME_IDS, type ThemeId } from '../../domain/themes';
 import { AMEIXA } from './ameixa';
+import { ARCOIRO } from './arcoiro';
 import { OCARINA } from './ocarina';
 import { applyTheme, rememberTheme } from './apply-theme';
 import { STARDEW } from './stardew';
@@ -16,6 +17,7 @@ export const THEMES: Readonly<Record<ThemeId, ThemeVisuals>> = {
   stardew: STARDEW,
   ocarina: OCARINA,
   uppertale: UPPERTALE,
+  arcoiro: ARCOIRO,
 };
 
 /** The registered themes, in the order of THEME_IDS (the default first): the Tema picker's list. */

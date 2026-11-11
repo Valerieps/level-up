@@ -1,6 +1,6 @@
 # Temas
 
-Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones e logo mudam; o que o app faz não muda.
+Eu escolho o visual do app entre temas, quase todos com nome de jogo: cores, fontes, ícones e logo mudam; o que o app faz não muda.
 
 - **Entra aqui:** o que um tema muda e o que nunca muda, onde e como eu escolho, a quem a escolha pertence e o que acontece sem escolha.
 - **Não entra aqui:** os valores de cada tema (`src/ui/theme/` e `docs/UI.md`), como o tema é aplicado e guardado (ADR do tema, em `docs/adr/`) e a lista de telas (`spec/telas-e-feedback.md`).
@@ -11,7 +11,8 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 
 ## O que é um tema
 
-- Um tema é um visual completo, com nome de um jogo. Eu escolho um por vez. *(1e)*
+- Um tema é um visual completo, em geral com nome de um jogo. Eu escolho um por vez. *(1e)*
+  O Arco Iro é a exceção: não vem de jogo nenhum.
 - Cada tema tem um único modo. Não existe modo escuro nem troca automática pelo tema do celular. *(1e)*
   Por quê: com um modo só, cada tema é desenhado uma vez e conferido uma vez.
 - O tema padrão é o Ameixa, o visual de hoje. *(1e)*
@@ -44,6 +45,16 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
   - Hoje é uma caixa de diálogo com "* ...", a Loja um saco de itens, o Perfil uma silhueta, a
     estrela o brilho de um ponto de salvar, o Automatizado um coração cheio de determinação, a
     moeda uma moeda dourada com "G" e o logo um coração.
+- **Arco Iro**, o tema da minha irmã: um unicórnio com personalidade demais, fofo sem ser de
+  menininha, um arco-íris levado quase como piada. Papel creme, tinta quase preta, ações em violeta,
+  rosa forte nos detalhes (o foco, a borda do marcador, a aba atual), sombras macias rosa e roxas e
+  tudo arredondado. Títulos numa letra redonda e gordinha. *(1e)*
+  - O feito é uma cabeça de unicórnio de perfil: vazia, só o contorno rosa; quando eu marco o
+    hábito, o arco-íris sobe por dentro dela e solta uma explosão de brilhos.
+  - O arco-íris aparece em todo canto: na faixa do topo de progresso, na barra de XP, no botão
+    principal, no "+", na aba atual e no heatmap, que vai do amarelo ao roxo.
+  - Hoje é um arco-íris, a Loja um sorvete, o Perfil a cabeça de unicórnio, a estrela um brilho de
+    quatro pontas, o Automatizado um chifre e o logo o unicórnio de óculos escuros.
 
 ## Quão perto do jogo um tema chega
 
@@ -77,6 +88,9 @@ Eu escolho o visual do app entre temas com nome de jogo: cores, fontes, ícones 
 - **O dourado é do prêmio.** XP, ouro, estrelas e Prêmio de Domínio usam a família do dourado do tema, e nada mais usa. *(1e)*
   A exceção é o ícone da moeda: ele pode ter a cor da moeda do jogo (a Rupee verde no Ocarina). O
   número do ouro continua dourado.
+  Outra exceção é o arco-íris do Arco Iro: ele tem amarelo e vermelho, mas é só decoração (o marcador,
+  as barras, os botões, o heatmap). Nenhum texto fica em cima dele, e ele nunca avisa nem pune
+  nada. *(1e)*
 - **Tamanhos que garantem o toque:** alvos de toque, espaçamento e a estrutura das telas. *(1e)*
 - **Leitura:** em qualquer tema, o texto passa no contraste mínimo de acessibilidade (WCAG AA). *(1e)*
 
