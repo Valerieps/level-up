@@ -228,6 +228,18 @@
   --shadow-toast: 0 8px 24px -8px rgba(42, 26, 45, 0.4);
 
   /*
+   * Menu details: the current tab's plate, a button's inner line and the conquista medallions (the
+   * Perfil's track icons). Ameixa keeps them flat.
+   */
+  --color-tab-current: #fde2d6;
+  --color-on-tab-current: #a63a12;
+  --shadow-tab-current: none;
+  --shadow-control: none;
+  --border-width-medallion: 0px;
+  --color-medallion-ring: #8a7a8f;
+  --shadow-medallion: none;
+
+  /*
    * Type. Sora for titles, Inter for text, JetBrains Mono for every progress number. They are
    * bundled in public/fonts (@font-face at the top); the system fonts are the fallback while they load.
    */
@@ -344,6 +356,15 @@
   --shadow-sheet: 0 -4px 0 rgba(58, 36, 18, 0.18);
   --shadow-toast: 0 4px 0 rgba(42, 24, 10, 0.5);
 
+  /* Menu details (see Ameixa): flat, the pixel look comes from the shapes. */
+  --color-tab-current: #dbeac0;
+  --color-on-tab-current: #2c5c1b;
+  --shadow-tab-current: none;
+  --shadow-control: none;
+  --border-width-medallion: 0px;
+  --color-medallion-ring: #8a6640;
+  --shadow-medallion: none;
+
   /* Type. Pixelify Sans for titles and every progress number, Nunito for text. */
   --font-sans: Nunito, 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
   --font-display: 'Pixelify Sans', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
@@ -382,66 +403,79 @@
 }
 
 /*
- * Theme: Ocarina, after The Legend of Zelda: Ocarina of Time (spec/temas.md). The game's dialog
- * boxes: navy panels with off-white text over the night of the Kokiri forest. Actions in the blue
- * of the A button, the level in the green of the magic bar, the Rupee green, the focus in a fairy's
- * cyan. Hylia Serif for titles, the rounded Nunito for text, as the game's text boxes. One dark mode.
+ * Theme: Ocarina, after The Legend of Zelda: Ocarina of Time (spec/temas.md). Daylight in the Kokiri
+ * forest: a light sage page, cream panels and dark forest-green bars, as the game's green tunic and
+ * trees. Actions and the level in forest green, the Rupee green, the focus in a fairy's blue. The
+ * pause menu lends its details: the current tab's plate, the buttons' inner line and the medallions.
+ * Hylia Serif for titles, the rounded Nunito for text, as the game's text boxes. One light mode.
  */
 [data-theme='ocarina'] {
-  color-scheme: dark;
+  color-scheme: light;
 
   /* Colors */
-  --color-bg: #0d1f14;
-  --color-surface: #101a33;
-  --color-surface-raised: #16234a;
-  --color-text: #f5f1e3;
-  --color-text-muted: #b4bdd6;
-  --color-border: #26355f;
-  --color-border-strong: #7f8fbf;
-  --color-track: #1d2a4d;
-  --color-marker-fill: #101a33;
-  --color-brand: #6f9bff;
-  --color-brand-ink: #a9c2ff;
-  --color-brand-soft: #1c2e63;
-  --color-on-brand: #0a1430;
-  --color-top: #070d1c;
+  --color-bg: #e4ecd6;
+  --color-surface: #fbfaf2;
+  --color-surface-raised: #fffdf6;
+  --color-text: #1d2a1a;
+  --color-text-muted: #4a5a40;
+  --color-border: #c3cfae;
+  --color-border-strong: #6b7d5a;
+  --color-track: #d3dfc0;
+  --color-marker-fill: #fbfaf2;
+  --color-brand: #2e6b35;
+  --color-brand-ink: #24572a;
+  --color-brand-soft: #d2e6c4;
+  --color-on-brand: #ffffff;
+  --color-top: #1f4d2b;
   --color-on-top: #ffffff;
-  --color-top-muted: #aab6d8;
-  --color-top-track: #1c2847;
-  --color-top-line: #34446f;
-  --color-level: #62d35d;
+  --color-top-muted: #c4dcc0;
+  --color-top-track: #2f6a3c;
+  --color-top-line: #3f7a4c;
+  --color-level: #8fe58a;
   --color-on-level: #0b2410;
   --color-coin: #241d07;
   /* The Rupee: green, whatever the amount. */
-  --color-currency: #3ddc61;
+  --color-currency: #1f9e3f;
   --color-gold: #ffd23f;
-  --color-gold-ink: #ffd966;
-  --color-gold-soft: #3a2f0a;
-  --color-star: #ffd23f;
-  --color-faz: #cbb8ff;
-  --color-faz-soft: #2a2352;
-  --color-danger: #ff7b6e;
-  --color-danger-soft: #3d1714;
-  --color-on-danger: #2a0602;
-  --color-success: #74e08f;
-  --color-success-soft: #12331d;
-  --color-warning: #ffc552;
-  --color-warning-soft: #3a2a08;
-  --color-neutral: #c6c9d6;
-  --color-neutral-soft: #252a3a;
-  --color-toast: #1c2b5a;
+  --color-gold-ink: #7a5200;
+  --color-gold-soft: #f7e6a8;
+  --color-star: #a86d00;
+  --color-faz: #2d5d8a;
+  --color-faz-soft: #dce9f2;
+  --color-danger: #a8291a;
+  --color-danger-soft: #f7d9cf;
+  --color-on-danger: #ffffff;
+  --color-success: #1e6a3a;
+  --color-success-soft: #d6ecd9;
+  --color-warning: #7a5300;
+  --color-warning-soft: #f7e5b8;
+  --color-neutral: #4f5446;
+  --color-neutral-soft: #e3e8d9;
+  --color-toast: #1f4d2b;
   --color-on-toast: #ffffff;
-  --color-focus: #8fd8ff;
-  --color-heat-0: #1a2b46;
-  --color-heat-1: #1e5a32;
-  --color-heat-2: #2d8a45;
-  --color-heat-3: #47b85a;
-  --color-heat-4: #8fe58a;
-  --color-browser-bar: #0d1f14;
+  --color-focus: #1d6fa8;
+  --color-heat-0: #d3dfc0;
+  --color-heat-1: #b5d99a;
+  --color-heat-2: #7fbf63;
+  --color-heat-3: #4a9a3e;
+  --color-heat-4: #2a6a2a;
+  --color-browser-bar: #1f4d2b;
 
-  --shadow-fab: 0 10px 20px -8px rgba(111, 155, 255, 0.5);
-  --shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-toast: 0 8px 24px -8px rgba(0, 0, 0, 0.6);
+  --shadow-fab: 0 10px 20px -8px rgba(31, 77, 43, 0.5);
+  --shadow-sheet: 0 -8px 32px rgba(29, 42, 26, 0.18);
+  --shadow-toast: 0 8px 24px -8px rgba(29, 42, 26, 0.45);
+
+  /*
+   * Menu details, after the game's pause menu: the current tab is a dark plate with a light edge, as the
+   * side tabs; buttons carry a light inner line, as its buttons; the conquistas are medallions.
+   */
+  --color-tab-current: #1f4d2b;
+  --color-on-tab-current: #ffffff;
+  --shadow-tab-current: inset 0 0 0 2px #8cc98a;
+  --shadow-control: inset 0 0 0 2px rgba(255, 255, 255, 0.35);
+  --border-width-medallion: 3px;
+  --color-medallion-ring: #1f4d2b;
+  --shadow-medallion: inset 0 0 0 2px rgba(255, 255, 255, 0.7);
 
   --font-sans: Nunito, 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
   --font-display: 'Hylia Serif', Georgia, 'Times New Roman', serif;
@@ -546,6 +580,15 @@
   --shadow-fab: none;
   --shadow-sheet: 0 -3px 0 #ffffff;
   --shadow-toast: none;
+
+  /* Menu details (see Ameixa): flat; its battle-menu tabs come from --border-width-tab. */
+  --color-tab-current: #333333;
+  --color-on-tab-current: #ffffff;
+  --shadow-tab-current: none;
+  --shadow-control: none;
+  --border-width-medallion: 0px;
+  --color-medallion-ring: #b3b3b3;
+  --shadow-medallion: none;
 
   /* Type. Press Start 2P for titles only (wide, it would overflow a list), Space Mono for the rest. */
   --font-sans: 'Space Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;

@@ -251,6 +251,7 @@ const TEXT_PAIRS = [
 ] as const;
 
 const NON_TEXT_PAIRS = [
+  ['--color-on-tab-current', '--color-tab-current'],
   ['--color-border-strong', '--color-bg'],
   ['--color-border-strong', '--color-surface'],
   ['--color-focus', '--color-bg'],
