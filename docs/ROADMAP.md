@@ -11,7 +11,6 @@ O que ainda não está pronto.
 
 | Feature | Fase | Spec | Observação |
 | --- | --- | --- | --- |
-| Arrastar para reordenar os hábitos da Hoje | 1a | `spec/telas-e-feedback.md` | Adiado pela dona: por enquanto a ordem é a de criação (`habits.position`). Toque longo no item, sem conflitar com o toque longo do marcador da versão mínima (1b) |
 | Domínio, selo Automatizado e Prêmio de Domínio | 1c | `spec/streak-e-dominio.md` | |
 | Estrelas de Coragem e convites de subir e de ajustar a régua | 1c | `spec/regua.md` | |
 | Conquistas e celebrações | 1c | `spec/conquistas.md` | |
@@ -36,6 +35,9 @@ O que ainda não está pronto.
   qualquer jeito salva o que estiver marcado; hábitos criados hoje ficam de fora; o XP é o do
   tamanho atual do hábito (`spec/registrar-o-dia.md`).
 - [ ] A virada do dia se escolhe em horas cheias, de meia-noite às 23h (`spec/registrar-o-dia.md`).
+- [ ] Arrastar na Hoje: só os programados ainda não feitos e não pausados se arrastam; os livres,
+  pausados, concluídos e arquivados guardam o lugar entre os hábitos; no teclado, tecla de menu e
+  setas (`spec/telas-e-feedback.md`).
 - [ ] Subir e baixar a régua (sem estrelas) entram já na fase 1a, porque a edição não muda
   dificuldade, meta nem dias (`spec/regua.md`, `spec/habitos.md`).
 - [ ] Se a gravação de uma marcação não der certo, o app avisa e o item volta para a lista
