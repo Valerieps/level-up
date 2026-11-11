@@ -826,9 +826,37 @@ button.list-link:disabled {
   line-height: var(--line-height-tight);
 }
 
-.action-list .list-link {
+.action-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+  margin: 0 0 var(--space-6);
+  padding: 0;
+  list-style: none;
+}
+
+.action-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  width: 100%;
+  min-height: var(--size-touch);
+  padding: var(--space-3) var(--space-1);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
   color: var(--color-brand-ink);
+  font: inherit;
+  font-size: var(--font-size-caption);
   font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+.action-tile:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
 }
 
 .disclosure {
@@ -934,9 +962,13 @@ button.list-link:disabled {
 /* Habit detail: the consistency numbers side by side. */
 
 .stat-row {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--size-choice), 1fr));
   gap: var(--space-2);
+}
+
+.stat-row .stat {
+  margin-bottom: 0;
 }
 
 .stat-value.plain {

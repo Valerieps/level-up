@@ -10,7 +10,7 @@ import { strings } from '../../domain/strings';
 import { useServices } from '../backend-context';
 import { Button } from '../components/Button';
 import { useCelebration } from '../components/Celebration';
-import { Icon } from '../components/Icon';
+import { Icon, type IconName } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { Link, navigate } from '../router';
@@ -188,8 +188,8 @@ function ActiveDetail({ habit, onChanged }: { habit: HabitView; onChanged: () =>
         title={habit.name}
         back="/"
         actions={
-          <Link to={`/habito/${habit.id}/editar`} className="text-button">
-            {t.edit}
+          <Link to={`/habito/${habit.id}/editar`} className="icon-button" aria-label={t.edit}>
+            <Icon name="edit" />
           </Link>
         }
       />
@@ -208,38 +208,15 @@ function ActiveDetail({ habit, onChanged }: { habit: HabitView; onChanged: () =>
       )}
       <HabitHeatmapSection habitId={habit.id} />
       <h2 className="visually-hidden">{t.actions}</h2>
-      <ul className="list action-list">
-        <li>
-          <button type="button" className="card list-link" onClick={() => setSheet('raise')}>
-            {r.raise}
-          </button>
-        </li>
-        <li>
-          <button type="button" className="card list-link" onClick={() => setSheet('lower')}>
-            {r.lower}
-          </button>
-        </li>
-        <li>
-          {ownPause ? (
-            <button type="button" className="card list-link" disabled={busy} onClick={() => void resume(ownPause.id)}>
-              {p.backLabel}
-            </button>
-          ) : (
-            <button type="button" className="card list-link" disabled={!pauses.data} onClick={() => setPausing(true)}>
-              {t.pauseHabit}
-            </button>
-          )}
-        </li>
-        <li>
-          <Link to={`/habito/${habit.id}/editar`} className="card list-link">
-            {t.edit}
-          </Link>
-        </li>
-        <li>
-          <button type="button" className="card list-link" disabled={busy} onClick={() => void archive()}>
-            {t.archive}
-          </button>
-        </li>
+      <ul className="action-bar">
+        <ActionTile icon="arrowUp" label={t.actionRaise} aria={r.raise} onClick={() => setSheet('raise')} />
+        <ActionTile icon="arrowDown" label={t.actionLower} aria={r.lower} onClick={() => setSheet('lower')} />
+        {ownPause ? (
+          <ActionTile icon="play" label={t.actionResume} aria={p.backLabel} disabled={busy} onClick={() => void resume(ownPause.id)} />
+        ) : (
+          <ActionTile icon="pause" label={t.actionPause} aria={t.pauseHabit} disabled={!pauses.data} onClick={() => setPausing(true)} />
+        )}
+        <ActionTile icon="archive" label={t.actionArchive} aria={t.archive} disabled={busy} onClick={() => void archive()} />
       </ul>
       <ReguaSheet
         habit={habit}
@@ -289,6 +266,30 @@ function ActiveDetail({ habit, onChanged }: { habit: HabitView; onChanged: () =>
       />
       {celebration.element}
     </section>
+  );
+}
+
+/** One of the habit's actions: an icon over a short label, the full name for screen readers. */
+function ActionTile({
+  icon,
+  label,
+  aria,
+  disabled = false,
+  onClick,
+}: {
+  icon: IconName;
+  label: string;
+  aria: string;
+  disabled?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <li>
+      <button type="button" className="action-tile" aria-label={aria} title={aria} disabled={disabled} onClick={onClick}>
+        <Icon name={icon} />
+        <span aria-hidden="true">{label}</span>
+      </button>
+    </li>
   );
 }
 
