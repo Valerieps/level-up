@@ -14,17 +14,16 @@ import { Invites } from './screens/Invites';
 import { Members } from './screens/Members';
 import { Profile } from './screens/Profile';
 import { Settings } from './screens/Settings';
+import { Shop } from './screens/Shop';
 import { SignIn } from './screens/SignIn';
 import { Today } from './screens/Today';
 import { useQuery } from './use-query';
 import { useTimeZoneSync } from './use-today';
 
-/**
- * The bottom tabs (docs/spec/telas-e-feedback.md "Navegação"). The Loja tab joins in phase 1d,
- * between Hoje and Perfil.
- */
+/** The bottom tabs (docs/spec/telas-e-feedback.md "Navegação"): Hoje · Loja · Perfil. */
 const TABS: readonly Tab[] = [
   { path: '/', label: strings.nav.today, icon: 'today' },
+  { path: '/loja', label: strings.nav.shop, icon: 'shop' },
   { path: '/perfil', label: strings.nav.profile, icon: 'profile' },
 ];
 
@@ -82,6 +81,7 @@ function OfflineNotice() {
 
 /** Tab → screen → sheet at most (two levels from a tab). Unknown paths fall back to Hoje. */
 function Screen({ me, path, onSignOut }: { me: MeView; path: string; onSignOut: () => void }) {
+  if (path === '/loja') return <Shop />;
   if (path === '/perfil') return <Profile me={me} />;
   if (path === '/perfil/configuracoes') return <Settings me={me} onSignOut={onSignOut} />;
   if (path === '/perfil/configuracoes/membros' && canManageGroup(me)) return <Members me={me} />;

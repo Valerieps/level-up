@@ -144,6 +144,8 @@
   --size-celebration-badge: 88px;
   /* The narrowest a choice card gets before the grid wraps. */
   --size-choice: 128px;
+  /* One day of a heatmap; the legend swatches too. */
+  --size-heat-cell: 14px;
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
 

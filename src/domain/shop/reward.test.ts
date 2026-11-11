@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { goldMissing, isValidRewardCost, normalizeRewardName } from './reward';
+import { DAILY_GOLD_REFERENCE, daysOfGold, goldMissing, isValidRewardCost, normalizeRewardName } from './reward';
 
 describe('rewards (spec/loja.md)', () => {
   it('cleans the name and limits it to 80 characters', () => {
@@ -17,5 +17,11 @@ describe('rewards (spec/loja.md)', () => {
   it('says how much gold is missing, never below 0', () => {
     expect(goldMissing(28, 40)).toBe(12);
     expect(goldMissing(50, 40)).toBe(0);
+  });
+
+  it('gives the pace reference: 25 gold a day, 100 is about 4 days', () => {
+    expect(DAILY_GOLD_REFERENCE).toBe(25);
+    expect(daysOfGold(100)).toBe(4);
+    expect(daysOfGold(5)).toBe(1);
   });
 });
