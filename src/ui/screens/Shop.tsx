@@ -55,11 +55,18 @@ export function Shop() {
     <ScreenHeader
       title={s.title}
       actions={
-        <button type="button" className="icon-button" aria-label={s.create} onClick={() => setEditing({ reward: null })}>
-          <Icon name="plus" />
-        </button>
+        <span className="balance mono">
+          <CoinIcon />
+          <span aria-hidden="true">{gold ?? '–'}</span>
+          {gold !== undefined && <span className="visually-hidden">{strings.progress.gold(gold)}</span>}
+        </span>
       }
     />
+  );
+  const fab = (
+    <button type="button" className="fab" aria-label={s.create} onClick={() => setEditing({ reward: null })}>
+      <Icon name="plus" />
+    </button>
   );
 
   if (!shop.data) {
@@ -83,14 +90,6 @@ export function Shop() {
   return (
     <section>
       {header}
-      <div className="card balance-card row">
-        <span className="grow">{s.balance}</span>
-        <span className="balance mono">
-          <CoinIcon />
-          <span aria-hidden="true">{gold ?? '–'}</span>
-          {gold !== undefined && <span className="visually-hidden">{strings.progress.gold(gold)}</span>}
-        </span>
-      </div>
       {message && <Notice tone={message.tone}>{message.text}</Notice>}
 
       {rewards.length === 0 ? (
@@ -171,6 +170,7 @@ export function Shop() {
           {strings.close}
         </Button>
       </Sheet>
+      {fab}
     </section>
   );
 }
