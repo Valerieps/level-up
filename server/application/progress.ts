@@ -19,6 +19,11 @@ function toView(progress: ProgressRow): ProgressView {
   return { xpTotal: progress.xp_total, gold: progress.gold, ...levelOf(progress.xp_total) };
 }
 
+/** The member's gold balance now. */
+export function goldOf(ctx: Context, memberId: string): number {
+  return row(ctx, memberId).gold;
+}
+
 export function getProgress(ctx: Context, actor: Member): ProgressView {
   return toView(row(ctx, actor.id));
 }

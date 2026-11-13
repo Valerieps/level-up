@@ -97,6 +97,21 @@ export type Celebration =
   /** A milestone of a conquista track, with its prize. */
   | { readonly kind: 'achievement'; readonly track: Track; readonly milestone: number; readonly gold: number };
 
+/**
+ * A short moment of the feedback layer (docs/spec/telas-e-feedback.md "Momentos novos"). Not a
+ * celebration: a line in the notice at the top, or inside the celebration when one opens. Each
+ * happens once by its rule; commands list them in this order.
+ */
+export type Moment =
+  /** The member's first completion ever. */
+  | { readonly kind: 'firstStep' }
+  /** A habit's streak passed its best ever, at 7 or more. */
+  | { readonly kind: 'streakRecord'; readonly habitId: string; readonly habitName: string; readonly streak: number }
+  /** The gold earned brought a reward of the Loja into reach: the most expensive one. */
+  | { readonly kind: 'rewardInReach'; readonly rewardId: string; readonly rewardName: string }
+  /** The last habit scheduled today was done (only from Hoje, never from the review). */
+  | { readonly kind: 'dayClosed' };
+
 /** One conquista track on the Perfil. */
 export interface TrackView {
   readonly track: Track;
@@ -145,6 +160,8 @@ export interface ReviewResult {
   /** The new level when the review passed one. */
   readonly levelUp: number | null;
   readonly celebrations: readonly Celebration[];
+  /** Primeiro passo, recordes de streak and recompensa ao alcance; never dia fechado. */
+  readonly moments: readonly Moment[];
 }
 
 /** XP, gold and level (docs/spec/progressao.md). */
@@ -163,6 +180,8 @@ export interface MarkResult {
   readonly levelUp: number | null;
   /** Mastery and conquistas this completion reached, smallest first. */
   readonly celebrations: readonly Celebration[];
+  /** The short moments this completion reached. */
+  readonly moments: readonly Moment[];
 }
 
 /** What a régua change did: the habit, whether it earned a star and the conquistas it reached. */

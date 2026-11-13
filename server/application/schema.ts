@@ -176,6 +176,19 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
     `ALTER TABLE member_settings ADD COLUMN vibration INTEGER NOT NULL DEFAULT 1`,
     `ALTER TABLE member_settings ADD COLUMN sound INTEGER NOT NULL DEFAULT 0`,
   ],
+  // 11: what the short moments need to happen once (docs/spec/telas-e-feedback.md "Momentos
+  // novos"): the member's primeiro passo (members who already completed something had theirs) and
+  // last dia fechado; each habit's best streak, the day it was raised and the last recorde shown.
+  // A null best is measured from the history on the next completion, silently.
+  [
+    `ALTER TABLE member_settings ADD COLUMN first_step_on TEXT`,
+    `ALTER TABLE member_settings ADD COLUMN day_closed_on TEXT`,
+    `UPDATE member_settings SET first_step_on =
+       (SELECT MIN(day) FROM completions WHERE completions.member_id = member_settings.member_id AND completions.done = 1)`,
+    `ALTER TABLE habits ADD COLUMN best_streak INTEGER`,
+    `ALTER TABLE habits ADD COLUMN best_streak_on TEXT`,
+    `ALTER TABLE habits ADD COLUMN record_on TEXT`,
+  ],
 ];
 
 export function migrate(sql: Sql): void {
