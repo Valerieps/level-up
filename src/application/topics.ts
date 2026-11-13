@@ -3,7 +3,7 @@
 import type { Topic } from './api-contract';
 
 /** Every topic, for the refetch after a reconnect. */
-export const ALL_TOPICS: readonly Topic[] = ['me', 'members', 'invites', 'settings', 'theme', 'day', 'habits', 'progress', 'pauses', 'achievements', 'shop'];
+export const ALL_TOPICS: readonly Topic[] = ['me', 'members', 'invites', 'settings', 'theme', 'feedback', 'day', 'habits', 'progress', 'pauses', 'achievements', 'shop'];
 
 /** Topics about the group as a whole; every other topic is one member's own data. */
 export const GROUP_TOPICS: readonly Topic[] = ['members', 'invites'];

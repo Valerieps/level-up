@@ -171,6 +171,11 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
   [`ALTER TABLE member_settings ADD COLUMN theme TEXT NOT NULL DEFAULT 'ameixa'`],
   // 9: the theme an invitee starts with, picked by the admin who invites (docs/spec/temas.md).
   [`ALTER TABLE invites ADD COLUMN theme TEXT NOT NULL DEFAULT 'ameixa'`],
+  // 10: the feedback switches (docs/spec/telas-e-feedback.md): vibration on, sound off.
+  [
+    `ALTER TABLE member_settings ADD COLUMN vibration INTEGER NOT NULL DEFAULT 1`,
+    `ALTER TABLE member_settings ADD COLUMN sound INTEGER NOT NULL DEFAULT 0`,
+  ],
 ];
 
 export function migrate(sql: Sql): void {

@@ -4,9 +4,11 @@ import { MINUTES_PER_DAY } from '../../domain/day';
 import { canManageGroup } from '../../domain/group/roles';
 import { strings } from '../../domain/strings';
 import { useServices } from '../backend-context';
+import { canVibrate, feedback, setFeedbackSwitches, type FeedbackSwitches } from '../feedback/feedback';
 import { Button } from '../components/Button';
 import { Notice } from '../components/Notice';
 import { ScreenHeader } from '../components/ScreenHeader';
+import { Switch } from '../components/Switch';
 import { Link } from '../router';
 import { useQuery } from '../use-query';
 import { PauseSheet, pauseWhen } from './pause';
@@ -14,12 +16,13 @@ import { PauseSheet, pauseWhen } from './pause';
 const HOURS = Array.from({ length: MINUTES_PER_DAY / 60 }, (_, hour) => hour);
 const p = strings.pause;
 
-// Configurações (docs/spec/telas-e-feedback.md): the day turnover, Modo Pausa, the account and,
-// for admins, the group.
+// Configurações (docs/spec/telas-e-feedback.md): the day turnover, vibration and sound, Modo Pausa,
+// the account and, for admins, the group.
 export function Settings({ me, onSignOut }: { me: MeView; onSignOut: () => void }) {
   const { backend } = useServices();
   const settings = useQuery('settings', {}, ['settings']);
   const pauses = useQuery('pauses', {}, ['pauses', 'day']);
+  const switches = useQuery('feedback', {}, ['feedback']);
   const [pausing, setPausing] = useState(false);
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -32,6 +35,19 @@ export function Settings({ me, onSignOut }: { me: MeView; onSignOut: () => void 
     setBusy(false);
     setError(!result.ok);
     if (result.ok) settings.reload();
+  }
+
+  /** Stores a switch; turning one on gives a light sample of it, so the member feels what they chose. */
+  async function setSwitch(change: Partial<FeedbackSwitches>) {
+    if (!switches.data) return;
+    setBusy(true);
+    const result = await backend.command('feedback.set', change);
+    setBusy(false);
+    setError(!result.ok);
+    if (!result.ok) return;
+    setFeedbackSwitches(result.value);
+    if (change.vibration || change.sound) feedback('light');
+    switches.reload();
   }
 
   async function resume(pauseId: string) {
@@ -71,6 +87,24 @@ export function Settings({ me, onSignOut }: { me: MeView; onSignOut: () => void 
           {strings.settings.dayTurnoverHint}
         </span>
       </div>
+
+      <h2 className="section-title">{strings.settings.feedback}</h2>
+      {canVibrate() && (
+        <Switch
+          label={strings.settings.vibration}
+          hint={strings.settings.vibrationHint}
+          checked={switches.data?.vibration ?? true}
+          disabled={busy || !switches.data}
+          onChange={(vibration) => void setSwitch({ vibration })}
+        />
+      )}
+      <Switch
+        label={strings.settings.sound}
+        hint={strings.settings.soundHint}
+        checked={switches.data?.sound ?? false}
+        disabled={busy || !switches.data}
+        onChange={(sound) => void setSwitch({ sound })}
+      />
 
       <h2 className="section-title">{p.settingsTitle}</h2>
       {pauses.data &&
