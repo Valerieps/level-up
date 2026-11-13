@@ -34,6 +34,8 @@ Um termo, um sentido. Estes nomes valem para os textos da interface e para as do
 - **Feito / Concluídos:** a ação de marcar / a lista do que foi feito hoje. Não usar: completar,
   check. (`spec/registrar-o-dia.md`)
 - **Virada do dia:** o horário em que o meu dia termina. Não usar: reset. (`spec/registrar-o-dia.md`)
+- **Dia fechado:** o momento em que o último hábito programado de hoje é feito. Não usar: dia
+  completo, missão cumprida. (`spec/telas-e-feedback.md`)
 
 ## Consistência e domínio
 

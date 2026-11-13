@@ -37,6 +37,7 @@ Cada fase precisa ser usável sozinha. Cada regra em `spec/` diz de que fase val
 | 1c | Domínio e selo Automatizado, Prêmio de Domínio, Estrelas de Coragem, convites de subir e de ajustar a régua, conquistas, celebrações |
 | 1d | Heatmaps (por hábito e geral), Loja de recompensas |
 | 1e | Temas com nome de jogo: cores, fontes, ícones e logo, escolhidos no Perfil |
+| 1f | Camada de feedback: animações, vibração e sons; primeiro passo, dia fechado, recompensa ao alcance, recorde de streak e o caminho até o Automatizado |
 | 2 | Interação entre as pessoas do grupo |
 
 ## Arquivos

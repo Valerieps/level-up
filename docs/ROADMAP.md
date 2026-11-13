@@ -14,6 +14,107 @@ Nada do MVP (fases 1a a 1d) falta construir.
 - Os próximos temas com nome de jogo, um por vez (`spec/temas.md`; quais e em que ordem está em "Em
   aberto" lá). Ameixa, Stardew Valley, Ocarina e Uppertale existem; como criar um tema está em `docs/UI.md`
   "Adicionar um tema".
+- A camada de feedback, fase 1f (`spec/telas-e-feedback.md`, "Feedback"; `spec/temas.md`). Ordem
+  abaixo.
+
+### Camada de feedback (1f): ordem e prompts
+
+O que já existe e serve de base: os tokens de movimento por tema (`--duration-*`, `--easing`) em
+`src/ui/theme/tokens.css`; o `prefers-reduced-motion` que zera as durações em `global.css`; a
+celebração empilhada (`useCelebration` e `mergeMoments` em `src/ui/components/Celebration.tsx`); o
+ganho otimista da Hoje (`gains` em `src/ui/screens/Today.tsx`); o resultado da conclusão, que já
+traz `levelUp` e `celebrations`; e a tabela `member_settings`, que guarda o tema.
+
+A ordem economiza tokens assim: a onda 0 monta a base uma vez (tokens, um único ponto que dispara
+animação, vibração e som, e as chaves), e as outras ondas só chamam essa base, sem reler a
+arquitetura. Só a onda 2 mexe no servidor e no contrato da API, então ela vem inteira numa sessão.
+As ondas 1 e 3 mexem em arquivos diferentes e podem rodar em paralelo depois da 0. A onda 4 só muda
+valores de tokens, então fica por último e roda barata. Cada prompt é completo: abra uma sessão nova
+por onda e cole o prompt.
+
+1. **Onda 0, base** (Opus: arquitetura).
+
+   ```text
+   Build the base of the feedback layer of phase 1f. Read docs/spec/telas-e-feedback.md sections
+   "Feedback" and "Movimento, vibração e som", docs/spec/temas.md "O que um tema muda", and the
+   "Movimento" rule and "Adicionar um tema" in docs/UI.md. Then:
+   1. Tokens, in src/ui/theme/tokens.css, for every theme block: the durations and easings the new
+      moments need (coin flight, counter ring, level roll, XP-bar glow, day close, cascade), an
+      overshoot easing, three vibration patterns (light, medium, strong) and the sound timbre
+      (wave type, base pitch, volume), plus an --image-burst for theme sparkles (none by default).
+      Tune values per theme only roughly; wave 4 tunes them. Update docs/UI.md "Adicionar um tema"
+      with the new tokens. Keep tokens.test.ts passing without loosening it.
+   2. One module, src/ui/feedback/, with feedback(intensity) that vibrates (navigator.vibrate,
+      skipped where missing) and plays a short sound synthesized with Web Audio (no audio files,
+      no dependency), both reading their numbers from the tokens of the current theme and obeying
+      the member's switches. Unit tests with fakes.
+   3. Settings: the next MIGRATIONS entry adds vibration (default on) and sound (default off) to
+      member_settings; a query and a command like theme.set; the two switches in Configurações,
+      the vibration one hidden where navigator.vibrate is missing. Texts in strings.ts. Tests on
+      node:sqlite.
+   Do not build the moments themselves (waves 1 to 3). Verify with npm run build.
+   ```
+
+2. **Onda 1, o ciclo da Hoje** (Sonnet: só cliente, depois da 0).
+
+   ```text
+   Build wave 1 of the feedback layer (phase 1f), client only, on the base in src/ui/feedback/
+   and the motion tokens in src/ui/theme/tokens.css. Read docs/spec/telas-e-feedback.md, the rows
+   "Conclusão", "Avanço do contador", "Versão mínima", "Perto do próximo nível" and "Subiu de
+   nível" of the Feedback table, and "Movimento, vibração e som". Build in src/ui/screens/Today.tsx,
+   src/ui/components/ProgressTop.tsx and global.css: the gold flying from the item to the balance,
+   which then counts up; the marker as a ring filling by parts for daily goals; the softer
+   half-fill animation of the minimal version; the slow glow of the XP bar under 10% left; the
+   level number rolling to the new one before the existing toast. Call feedback('light') or
+   feedback('medium') as the table's intensities say. No literal durations or colors: tokens only.
+   Everything must vanish under prefers-reduced-motion. Verify with npm run build.
+   ```
+
+3. **Onda 2, os momentos novos** (Opus: regra de domínio, servidor e contrato, depois da 0).
+
+   ```text
+   Build wave 2 of the feedback layer (phase 1f): the new moments. Read docs/spec/telas-e-feedback.md
+   "Momentos novos" and the Feedback table rows "Primeiro passo", "Dia fechado", "Recompensa ao
+   alcance" and "Recorde de streak", plus docs/spec/streak-e-dominio.md "Streak". Follow "Adding a
+   feature" in CLAUDE.md:
+   1. Rules in src/domain/ with tests: first step (once per member, ever), day closed (last
+      scheduled non-paused habit of today, once per day, not from the review of yesterday),
+      reward in reach (balance crosses a reward's cost; the most expensive one; also on Prêmio de
+      Domínio and conquista gold), streak record (passes the habit's best streak and is at least
+      7, only on the day it passes). Persist whatever "once" needs with a new migration.
+   2. Return these moments in the completion result of api-contract.ts, next to levelUp and
+      celebrations, and in the review-of-yesterday result where the spec allows.
+   3. UI: the short notice at the top (one line per moment, varied phrases from strings.ts drawn
+      without repeating the last one), lines inside the stacked celebration when one opens, the
+      day-closed collapse of Hoje, and feedback('medium') for each. The reward notice opens the
+      Loja on tap.
+   Tests on node:sqlite for the server. Verify with npm run build.
+   ```
+
+4. **Onda 3, detalhe, régua, Loja e pausa** (Sonnet: depois da 0; pode rodar junto com a 1).
+
+   ```text
+   Build wave 3 of the feedback layer (phase 1f), on src/ui/feedback/ and the motion tokens. Read
+   docs/spec/telas-e-feedback.md: "Detalhe do hábito" item 3 and the Feedback rows "Automatizado +
+   Prêmio de Domínio", "Estrela de Coragem", "Ajuste feito", "Resgate" and "Volta da pausa".
+   Build: "10 de 12 rumo ao Automatizado" in the habit detail while the current patamar is not
+   mastered (reuse the mastery count in src/domain; extend the detail query if needed, with tests);
+   the Automatizado seal stamping on the habit; the dim star in "Subir a régua" that lights up
+   and flies to the habit; the warm, slow, gold-free animation of an adjustment; the coins leaving
+   the balance into the reward card with "Merecido."; the cascade of Hoje on the return from a
+   pause. feedback() with the table's intensities. Tokens only, nothing under reduced motion.
+   Verify with npm run build.
+   ```
+
+5. **Onda 4, o jeito de cada tema** (Sonnet: só tokens, depois de todas).
+
+   ```text
+   Tune the feedback layer (phase 1f) per theme, changing only values in src/ui/theme/tokens.css.
+   Read docs/spec/temas.md "O que um tema muda" and each theme's section in docs/UI.md. Ameixa:
+   calm and smooth. Stardew Valley: warm, soft. Ocarina: light chimes. Uppertale: steps like
+   sprite frames, square-wave 8-bit sounds. Arco Iro: overshoot bounce, rainbow sparkles in
+   --image-burst, bright sounds. Keep every theme inside the same intensities. Run npm test.
+   ```
 
 ## O código ainda não segue o spec
 
@@ -86,3 +187,11 @@ Nada.
 - [ ] Temas: a fase se chama 1e; a seção "Tema" fica escondida enquanto só existe o Ameixa; a
   troca é na hora, sem confirmação; a tela de entrada usa o último tema daquele aparelho; o ícone
   instalado fica sempre o do Ameixa (`spec/temas.md`).
+- [ ] Camada de feedback: a vibração começa ligada e o som desligado; as duas chaves valem para a
+  conta, como o tema, e a de vibração some onde o aparelho não vibra; o primeiro passo não
+  interrompe; o dia fechado conta só os programados não pausados, uma vez por dia, e não vem da
+  revisão de ontem; a recompensa ao alcance mostra a mais cara e vale também para o ouro de
+  domínio e de conquista; o recorde de streak começa em 7 e aparece só no dia em que passa o
+  recorde; os momentos curtos que chegam juntos viram um aviso só; o caminho até o Automatizado
+  fica só no detalhe; o tema muda também o timbre dos sons (`spec/telas-e-feedback.md`,
+  `spec/temas.md`).
