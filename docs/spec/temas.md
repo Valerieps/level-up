@@ -75,6 +75,8 @@ Eu escolho o visual do app entre temas, quase todos com nome de jogo: cores, fon
 - **Ícones temáticos:** as abas (Hoje, Loja, Perfil), o marcador de feito, o "+", a estrela, o selo Automatizado e a moeda de ouro. *(1e)*
 - **Logo:** a que aparece dentro do app e o ícone da aba do navegador. *(1e)*
 - **Formas e movimento:** cantos mais quadrados ou mais redondos, espessura das bordas, o estilo das sombras, a forma do marcador e das células do heatmap, e o ritmo das animações. *(1e)*
+  Também o estilo das animações (suave, com quique, em passos como quadros de sprite), os brilhos
+  das celebrações e o timbre dos sons. *(1f)*
 - **Detalhes de menu:** a placa da aba atual, o filete dos botões e os medalhões das conquistas no Perfil. *(1e)*
 
 ## O que um tema nunca muda
@@ -85,6 +87,8 @@ Eu escolho o visual do app entre temas, quase todos com nome de jogo: cores, fon
   Por quê: quem usa o app vários dias por semana reconhece a ação sem ler.
 - **O vermelho de excluir e de erro de ação.** Cada tema ajusta o tom para ficar legível, mas ele continua sendo só isso. *(1e)*
 - **A regra de zero punição.** Nenhum tema usa vermelho, alerta ou animação de perda por hábito não feito. *(1e)*
+- **Quando o app anima, vibra ou soa.** Os momentos e as intensidades (`spec/telas-e-feedback.md`,
+  "Movimento, vibração e som") são os mesmos em todo tema; o tema muda só o jeito. *(1f)*
 - **O dourado é do prêmio.** XP, ouro, estrelas e Prêmio de Domínio usam a família do dourado do tema, e nada mais usa. *(1e)*
   A exceção é o ícone da moeda: ele pode ter a cor da moeda do jogo (a Rupee verde no Ocarina). O
   número do ouro continua dourado.
