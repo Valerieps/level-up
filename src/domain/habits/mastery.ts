@@ -69,3 +69,13 @@ export function masteryOn(history: MasteryHistory, today: Day): MasteryProgress 
 export function masteryPrize(difficulty: Difficulty, stars: number): number {
   return MASTERY_PRIZE_FACTOR * xpFor(difficulty, stars);
 }
+
+/**
+ * "10 of 12 on the way to Automatizado" while the current patamar is not mastered; null once it is
+ * (docs/spec/telas-e-feedback.md "Detalhe do hábito"). The count is the domain's own, so it never
+ * passes the total.
+ */
+export function masteryPath(mastery: { readonly done: number; readonly needed: number }, tierMastered: boolean): { done: number; needed: number } | null {
+  if (tierMastered) return null;
+  return { done: Math.max(0, Math.min(mastery.done, mastery.needed)), needed: mastery.needed };
+}

@@ -5,6 +5,7 @@ import { DAILY_GOLD_REFERENCE, daysOfGold, goldMissing, isValidRewardCost, MAX_R
 import { strings } from '../../domain/strings';
 import { useServices } from '../backend-context';
 import { Button } from '../components/Button';
+import { feedback } from '../feedback/feedback';
 import { Field } from '../components/Field';
 import { CoinIcon, Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
@@ -31,13 +32,18 @@ export function Shop() {
   const [showAll, setShowAll] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState<{ tone: 'info' | 'error'; text: string } | null>(null);
+  const [redeemedId, setRedeemedId] = useState<string | null>(null);
   const gold = progress.data?.gold;
 
   async function redeem(reward: RewardView) {
     setBusy(reward.id);
     const result = await backend.command('reward.redeem', { rewardId: reward.id });
     setBusy(null);
-    if (result.ok) setMessage({ tone: 'info', text: s.redeemed(reward.name) });
+    if (result.ok) {
+      setMessage({ tone: 'info', text: s.redeemed(reward.name) });
+      setRedeemedId(reward.id);
+      feedback('medium');
+    }
     else setMessage({ tone: 'error', text: result.error === 'conflict' ? s.notEnough : strings.genericError });
     shop.reload();
     progress.reload();
@@ -101,7 +107,17 @@ export function Shop() {
             {rewards.map((reward) => {
               const missing = gold === undefined ? 0 : goldMissing(gold, reward.cost);
               return (
-                <li key={reward.id} className="card reward">
+                <li key={reward.id} className={redeemedId === reward.id ? 'card reward redeeming' : 'card reward'}>
+                  {redeemedId === reward.id && (
+                    <span className="reward-earned" onAnimationEnd={() => setRedeemedId(null)}>
+                      <span className="reward-coins" aria-hidden="true">
+                        <CoinIcon />
+                        <CoinIcon />
+                        <CoinIcon />
+                      </span>
+                      {s.earned}
+                    </span>
+                  )}
                   <button type="button" className="reward-open" aria-label={`${s.edit}: ${reward.name}`} onClick={() => setEditing({ reward })}>
                     <span className="reward-name">{reward.name}</span>
                     <span className="reward-cost mono">

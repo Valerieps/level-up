@@ -197,6 +197,7 @@ export const strings = {
     starText: (name: string, stars: number, percent: number) =>
       `“${name}” agora tem ${stars} de 5 estrelas: +${percent}% de XP para sempre, em cada conclusão.`,
     starContinue: 'Continuar',
+    starXp: (xp: number) => `${xp} XP por conclusão`,
   },
 
   mastery: {
@@ -205,6 +206,7 @@ export const strings = {
     statUnitScheduled: (window: number) => `das últimas ${window}`,
     statUnitFree: 'conclusões',
     statMastered: 'tamanho dominado',
+    path: (done: number, needed: number) => `${done} de ${needed} rumo ao Automatizado`,
     stars: (stars: number, max: number) => `${stars} de ${max} Estrelas de Coragem`,
     starsBonus: (percent: number) => `+${percent}% XP`,
     inviteIcon: 'Virou automático: dá para subir a régua',
@@ -395,6 +397,7 @@ export const strings = {
     redeemOf: (name: string) => `Resgatar ${name}`,
     missing: (missing: number) => `Faltam ${missing} de ouro`,
     redeemed: (name: string) => `Resgatado: ${name}. Aproveite.`,
+    earned: 'Merecido.',
     notEnough: 'O saldo não cobre essa recompensa agora.',
     cost: (cost: number) => `${cost} de ouro`,
     emptyTitle: 'Transforme ouro em prêmio de verdade',
