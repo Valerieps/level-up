@@ -280,7 +280,7 @@ export function Today() {
   const doneGold = done.reduce((sum, i) => sum + i.entry.gold, 0);
 
   return (
-    <section>
+    <section className={welcome ? 'cascading' : undefined}>
       {top}
       {error && <Notice tone="error">{error}</Notice>}
 

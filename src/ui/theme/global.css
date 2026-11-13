@@ -1678,3 +1678,218 @@ button.reward-open {
 .switch:disabled {
   opacity: var(--opacity-disabled);
 }
+
+/* Wave 3 moments (docs/spec/telas-e-feedback.md "Feedback"). Reduced motion zeroes every duration. */
+
+.mastery-path {
+  margin-bottom: var(--space-3);
+}
+
+/* The selo Automatizado stamped on the habit: it lands with an overshoot. */
+.badge-auto.stamping {
+  animation: seal-stamp var(--duration-stamp) var(--easing-overshoot) both;
+}
+
+@keyframes seal-stamp {
+  from {
+    opacity: 0;
+    transform: scale(2) rotate(-12deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Estrela de Coragem: the dim star lights beside the new XP, then flies up to the habit's stars. */
+.star-lighting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.star-light {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  animation: star-fly var(--duration-coin-flight) var(--easing-coin-flight) var(--duration-star-light) both;
+}
+
+.star-light .star {
+  animation: star-lit var(--duration-star-light) var(--easing-overshoot) both;
+}
+
+.star-light .icon {
+  width: var(--size-icon-small);
+  height: var(--size-icon-small);
+}
+
+@keyframes star-lit {
+  from {
+    color: var(--color-border-strong);
+    transform: scale(1);
+  }
+  60% {
+    color: var(--color-star);
+    transform: scale(1.6);
+  }
+  to {
+    color: var(--color-star);
+    transform: scale(1);
+  }
+}
+
+@keyframes star-fly {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--space-12)));
+  }
+}
+
+/* The star that just arrived appears only once the flying one lands. */
+.star.filled.arriving {
+  animation: star-arrive var(--duration-star-light) var(--easing-overshoot) calc(var(--duration-star-light) + var(--duration-coin-flight)) both;
+}
+
+@keyframes star-arrive {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Ajuste feito: warm, slow, with no gold. */
+.adjust-done {
+  animation: adjust-in var(--duration-adjust) var(--easing-adjust) both;
+}
+
+@keyframes adjust-in {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--space-2));
+    background: var(--color-brand-soft);
+  }
+  60% {
+    opacity: 1;
+    transform: none;
+    background: var(--color-brand-soft);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    background: none;
+  }
+}
+
+/* Resgate: the coins leave the balance above and enter the reward card, with "Merecido.". */
+.reward.redeeming {
+  position: relative;
+  overflow: hidden;
+}
+
+.reward-earned {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  background: var(--color-surface);
+  color: var(--color-gold-ink);
+  font-weight: var(--font-weight-strong);
+  animation: reward-earned var(--duration-toast) var(--easing) both;
+}
+
+.reward-coins {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.reward-coins > * {
+  animation: coin-in var(--duration-redeem) var(--easing-coin-flight) both;
+}
+
+.reward-coins > :nth-child(2) {
+  animation-delay: var(--duration-cascade-step);
+}
+
+.reward-coins > :nth-child(3) {
+  animation-delay: calc(2 * var(--duration-cascade-step));
+}
+
+@keyframes coin-in {
+  from {
+    opacity: 1;
+    transform: translateY(calc(-3 * var(--space-12)));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reward-earned {
+  0% {
+    opacity: 0;
+  }
+  10%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Volta da pausa: the list comes back in a cascade, each item a step after the one before. */
+.cascading .list > li {
+  animation: cascade-in var(--duration-cascade) var(--easing) both;
+}
+
+.cascading .list > li:nth-child(2) {
+  animation-delay: calc(1 * var(--duration-cascade-step));
+}
+
+.cascading .list > li:nth-child(3) {
+  animation-delay: calc(2 * var(--duration-cascade-step));
+}
+
+.cascading .list > li:nth-child(4) {
+  animation-delay: calc(3 * var(--duration-cascade-step));
+}
+
+.cascading .list > li:nth-child(5) {
+  animation-delay: calc(4 * var(--duration-cascade-step));
+}
+
+.cascading .list > li:nth-child(6) {
+  animation-delay: calc(5 * var(--duration-cascade-step));
+}
+
+.cascading .list > li:nth-child(7) {
+  animation-delay: calc(6 * var(--duration-cascade-step));
+}
+
+.cascading .list > li:nth-child(n + 8) {
+  animation-delay: calc(7 * var(--duration-cascade-step));
+}
+
+@keyframes cascade-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-3));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

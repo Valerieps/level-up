@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { HabitView } from '../../application/api-contract';
 import { RHYTHM_DAYS } from '../../domain/habits/consistency';
 import { describeHabit, formatDayShort } from '../../domain/habits/describe';
 import type { InvitationKind } from '../../domain/habits/invitations';
-import { MASTERY_WINDOW } from '../../domain/habits/mastery';
+import { MASTERY_WINDOW, masteryPath } from '../../domain/habits/mastery';
 import { MAX_STARS, starBonusPercent, xpFor } from '../../domain/habits/progression';
 import type { ReguaDirection } from '../../domain/habits/regua';
 import { strings } from '../../domain/strings';
 import { useServices } from '../backend-context';
+import { feedback } from '../feedback/feedback';
 import { Button } from '../components/Button';
 import { useCelebration } from '../components/Celebration';
 import { Icon, type IconName } from '../components/Icon';
@@ -61,15 +62,16 @@ export function HabitDetail({ habitId }: { habitId: string }) {
  * Size, consistency and XP: the streak for scheduled habits, Ritmo and Última vez for free ones
  * (docs/spec/streak-e-dominio.md), then the versão mínima when there is one.
  */
-function HabitHeader({ habit }: { habit: HabitView }) {
+function HabitHeader({ habit, stamp = false }: { habit: HabitView; stamp?: boolean }) {
   const consistency = habit.consistency;
+  const path = habit.state === 'active' ? masteryPath(habit.mastery, habit.tierMastered) : null;
   return (
     <div className="habit-header">
       <p className="muted">{describeHabit(habit)}</p>
       {(habit.automated || habit.stars > 0) && (
         <div className="badge-row">
           {habit.automated && (
-            <span className="badge-auto">
+            <span className={stamp ? 'badge-auto stamping' : 'badge-auto'}>
               <Icon name="automated" />
               {m.automated}
             </span>
@@ -101,6 +103,7 @@ function HabitHeader({ habit }: { habit: HabitView }) {
         />
         <Stat label={t.statXp} value={String(xpFor(habit.difficulty, habit.stars))} unit={t.statPerCompletion} gold />
       </div>
+      {path && <p className="muted small mastery-path">{m.path(path.done, path.needed)}</p>}
       {habit.minimum !== null && (
         <div className="card column-card">
           <span className="muted small">{t.minimum}</span>
@@ -139,6 +142,15 @@ function ActiveDetail({ habit, onChanged }: { habit: HabitView; onChanged: () =>
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
   const celebration = useCelebration();
+
+  // The selo is stamped when the member arrives from the celebration ("Ver opções de régua") or
+  // watches the habit become Automatizado here; it never stamps again on a plain visit.
+  const [stamp, setStamp] = useState(() => raiseRequested() && habit.automated);
+  const wasAutomated = useRef(habit.automated);
+  useEffect(() => {
+    if (!wasAutomated.current && habit.automated) setStamp(true);
+    wasAutomated.current = habit.automated;
+  }, [habit.automated]);
 
   useEffect(() => {
     if (raiseRequested()) window.history.replaceState(null, '', window.location.pathname);
@@ -179,6 +191,7 @@ function ActiveDetail({ habit, onChanged }: { habit: HabitView; onChanged: () =>
   function finishAdjust() {
     setFromAdjust(false);
     setAdjusted(true);
+    feedback('light');
     void dismiss('adjust');
   }
 
@@ -194,9 +207,13 @@ function ActiveDetail({ habit, onChanged }: { habit: HabitView; onChanged: () =>
         }
       />
       {error && <Notice tone="error">{strings.genericError}</Notice>}
-      {adjusted && <Notice>{strings.adjust.done}</Notice>}
+      {adjusted && (
+        <div className="adjust-done">
+          <Notice>{strings.adjust.done}</Notice>
+        </div>
+      )}
       {pausedText && <p className="tag">{pausedText}</p>}
-      <HabitHeader habit={habit} />
+      <HabitHeader habit={habit} stamp={stamp} />
       {habit.invitation && (
         <Invitation
           habit={habit}
