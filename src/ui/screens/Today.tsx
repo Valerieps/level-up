@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import type { HabitView, ReviewResult } from '../../application/api-contract';
 import { formatDayLong, type Day } from '../../domain/day';
 import { markMinimum, NOT_STARTED, planToday, tap, type DayEntry, type TodayHabit } from '../../domain/habits/day-log';
@@ -7,9 +7,11 @@ import { sortByIds } from '../../domain/habits/order';
 import { reguaOptions } from '../../domain/habits/regua';
 import { strings } from '../../domain/strings';
 import { useServices } from '../backend-context';
+import { feedback } from '../feedback/feedback';
+import { prefersReducedMotion, ringFraction } from '../feedback/motion';
 import { Button, ButtonLink } from '../components/Button';
 import { useCelebration } from '../components/Celebration';
-import { Icon } from '../components/Icon';
+import { CoinIcon, Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { ProgressTop } from '../components/ProgressTop';
 import { Sheet } from '../components/Sheet';
@@ -33,6 +35,21 @@ interface Overlay {
   readonly entry: DayEntry;
   readonly inFlight: number;
 }
+
+/** A coin in the air, from the item just completed to the balance at the top. */
+interface CoinFlight {
+  readonly id: number;
+  readonly x: number;
+  readonly y: number;
+  readonly dx: number;
+  readonly dy: number;
+}
+
+function flightStyle(flight: CoinFlight): CSSProperties {
+  return { left: flight.x, top: flight.y, '--fly-x': `${flight.dx}px`, '--fly-y': `${flight.dy}px` } as CSSProperties;
+}
+
+const center = (rect: DOMRect) => ({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
 
 interface PendingGain {
   readonly id: number;
@@ -81,6 +98,7 @@ export function Today() {
   const yesterday = useQuery('yesterday', {}, ['habits', 'day']);
   const [overlays, setOverlays] = useState<ReadonlyMap<string, Overlay>>(new Map());
   const [gains, setGains] = useState<readonly PendingGain[]>([]);
+  const [flights, setFlights] = useState<readonly CoinFlight[]>([]);
   const [leaving, setLeaving] = useState<ReadonlySet<string>>(new Set());
   const [celebration, setCelebration] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -140,16 +158,19 @@ export function Today() {
   const gold = (progress.data?.gold ?? 0) + gains.reduce((sum, g) => sum + g.gold, 0);
   const entryOf = (habitId: string) => items.find((i) => i.habit.id === habitId)?.entry ?? NOT_STARTED;
 
-  async function mark(habit: HabitView, how: Mark = 'full') {
+  async function mark(habit: HabitView, how: Mark = 'full', origin?: DOMRect) {
     const before = entryOf(habit.id);
     const next = how === 'full' ? tap(habit, day, before) : markMinimum(habit, day, before);
     if (!next) return;
     setError(null);
+    // A tap that counts, completes or marks the minimum is light; an undo is not (it never reaches here).
+    feedback('light');
     setOverlays((current) => new Map(current).set(habit.id, { entry: next, inFlight: (current.get(habit.id)?.inFlight ?? 0) + 1 }));
     const gainId = ++gainIds.current;
     if (next.done) {
       setLeaving((current) => new Set(current).add(habit.id));
       setGains((current) => [...current, { id: gainId, xp: next.xp, gold: next.gold, settled: false }]);
+      launchCoin(gainId, next.gold, origin);
     }
 
     const result = await backend.command(how === 'full' ? 'habit.mark' : 'habit.markMinimum', { habitId: habit.id });
@@ -175,9 +196,19 @@ export function Today() {
       return overlay ? new Map(current).set(habit.id, { ...overlay, inFlight: overlay.inFlight - 1 }) : current;
     });
     setGains((current) => current.map((g) => (g.id === gainId ? { ...g, settled: true } : g)));
+    if (result.value.levelUp !== null) feedback('medium');
     celebrate.show({ levelUp: result.value.levelUp, celebrations: result.value.celebrations });
     today.reload();
     progress.reload();
+  }
+
+  /** The gold flies from the item to the balance (nothing flies with reduced motion). */
+  function launchCoin(id: number, gold: number, origin?: DOMRect) {
+    const balance = document.querySelector('[data-gold-balance]');
+    if (!origin || !balance || gold <= 0 || prefersReducedMotion()) return;
+    const from = center(origin);
+    const to = center(balance.getBoundingClientRect());
+    setFlights((current) => [...current, { id, x: from.x, y: from.y, dx: to.x - from.x, dy: to.y - from.y }]);
   }
 
   function finishLeaving(habitId: string) {
@@ -240,7 +271,18 @@ export function Today() {
   );
   const top = (
     <>
-      <ProgressTop xpTotal={xpTotal} gold={gold} celebration={celebration} onCelebrationEnd={() => setCelebration(null)} />
+      <ProgressTop xpTotal={xpTotal} gold={gold} celebration={celebration} onCelebrationEnd={() => setCelebration(null)} earning={gains.length > 0} />
+      {flights.map((flight) => (
+        <span
+          key={flight.id}
+          className="coin-flight"
+          aria-hidden="true"
+          style={flightStyle(flight)}
+          onAnimationEnd={() => setFlights((current) => current.filter((item) => item.id !== flight.id))}
+        >
+          <CoinIcon />
+        </span>
+      ))}
       {review}
       {celebrate.element}
       {welcome && <Notice>{p.welcomeBack}</Notice>}
@@ -255,7 +297,7 @@ export function Today() {
       )}
     </>
   );
-  const onMark = (habit: HabitView) => void mark(habit);
+  const onMark = (habit: HabitView, origin: DOMRect) => void mark(habit, 'full', origin);
   const onMinimum = (habit: HabitView) => setMinimumFor(habit);
   const fab = (
     <Link to="/habito/novo" className="fab" aria-label={t.create}>
@@ -426,7 +468,7 @@ function HabitList({
 }: {
   items: readonly TodayHabit<HabitView>[];
   leaving: ReadonlySet<string>;
-  onMark: (habit: HabitView) => void;
+  onMark: (habit: HabitView, origin: DOMRect) => void;
   onMinimum: (habit: HabitView) => void;
   onLeft: (habitId: string) => void;
   onReorder?: (habitIds: string[]) => void;
@@ -489,7 +531,7 @@ function HabitRow({
   habit: HabitView;
   entry: DayEntry;
   leaving: boolean;
-  onMark: (habit: HabitView) => void;
+  onMark: (habit: HabitView, origin: DOMRect) => void;
   onMinimum: (habit: HabitView) => void;
   onLeft: (habitId: string) => void;
   drag?: DragItemProps;
@@ -497,18 +539,23 @@ function HabitRow({
   const longPress = useLongPress(habit.minimum !== null && !leaving ? () => onMinimum(habit) : null);
   const counter = habit.dailyGoal > 1;
   const longAgo = habit.consistency.kind === 'rhythm' && habit.consistency.longAgo;
+  // The marker of a daily goal is a ring that closes by parts; a minimum fills it halfway, softly.
+  const ring = counter && !leaving;
+  const minimumDone = leaving && entry.minimum;
+  const markerClass = ['marker', leaving && 'checked', minimumDone && 'minimum', ring && 'ring'].filter(Boolean).join(' ');
   const classes = ['habit-item', leaving && 'leaving', habit.paused && 'optional', drag?.className].filter(Boolean).join(' ');
   return (
     <li {...drag} className={classes} onAnimationEnd={(e) => e.target === e.currentTarget && onLeft(habit.id)}>
       <button
         type="button"
-        className={leaving ? 'marker checked' : 'marker'}
+        className={markerClass}
+        style={ring ? ({ '--ring': ringFraction(entry.count, habit.dailyGoal) } as CSSProperties) : undefined}
         aria-label={t.markOf(habit.name)}
         disabled={leaving}
-        onClick={() => onMark(habit)}
+        onClick={(event) => onMark(habit, event.currentTarget.getBoundingClientRect())}
         {...longPress}
       >
-        {leaving ? <Icon name="check" /> : counter && <span className="mono marker-count">{entry.count}</span>}
+        {leaving ? !minimumDone && <Icon name="check" /> : counter && <span className="mono marker-count">{entry.count}</span>}
       </button>
       <Link
         to={`/habito/${habit.id}`}
