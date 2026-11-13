@@ -72,21 +72,6 @@ por onda e cole o prompt.
    Tests on node:sqlite for the server. Verify with npm run build.
    ```
 
-3. **Onda 3, detalhe, régua, Loja e pausa** (Sonnet: depois da 0; pode rodar junto com a 1).
-
-   ```text
-   Build wave 3 of the feedback layer (phase 1f), on src/ui/feedback/ and the motion tokens. Read
-   docs/spec/telas-e-feedback.md: "Detalhe do hábito" item 3 and the Feedback rows "Automatizado +
-   Prêmio de Domínio", "Estrela de Coragem", "Ajuste feito", "Resgate" and "Volta da pausa".
-   Build: "10 de 12 rumo ao Automatizado" in the habit detail while the current patamar is not
-   mastered (reuse the mastery count in src/domain; extend the detail query if needed, with tests);
-   the Automatizado seal stamping on the habit; the dim star in "Subir a régua" that lights up
-   and flies to the habit; the warm, slow, gold-free animation of an adjustment; the coins leaving
-   the balance into the reward card with "Merecido."; the cascade of Hoje on the return from a
-   pause. feedback() with the table's intensities. Tokens only, nothing under reduced motion.
-   Verify with npm run build.
-   ```
-
 4. **Onda 4, o jeito de cada tema** (Sonnet: só tokens, depois de todas).
 
    ```text
