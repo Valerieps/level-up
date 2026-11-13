@@ -27,29 +27,15 @@ traz `levelUp` e `celebrations`. A onda 0 já montou a base: os tokens dos momen
 do som em cada tema (`--duration-coin-flight` e os outros, `--easing-overshoot`, `--vibrate-*`,
 `--sound-*`, `--image-burst`); `feedback(intensidade)` em `src/ui/feedback/`, que vibra e soa
 lendo o tema e obedecendo às chaves; e as chaves Vibração e Sons em Configurações, guardadas em
-`member_settings` (query `feedback`, comando `feedback.set`). As animações dos momentos ainda não
-existem.
+`member_settings` (query `feedback`, comando `feedback.set`). A onda 1 fez o ciclo da Hoje (o ouro
+que voa e conta, o anel do contador, a versão mínima, o brilho da barra de XP, o giro do nível, com
+`feedback('light')` e `feedback('medium')`); as animações dos outros momentos ainda não existem.
 
 A ordem economiza tokens assim: as ondas só chamam essa base, sem reler a
 arquitetura. Só a onda 2 mexe no servidor e no contrato da API, então ela vem inteira numa sessão.
-As ondas 1 e 3 mexem em arquivos diferentes e podem rodar em paralelo depois da 0. A onda 4 só muda
+ A onda 4 só muda
 valores de tokens, então fica por último e roda barata. Cada prompt é completo: abra uma sessão nova
 por onda e cole o prompt.
-
-1. **Onda 1, o ciclo da Hoje** (Sonnet: só cliente, depois da 0).
-
-   ```text
-   Build wave 1 of the feedback layer (phase 1f), client only, on the base in src/ui/feedback/
-   and the motion tokens in src/ui/theme/tokens.css. Read docs/spec/telas-e-feedback.md, the rows
-   "Conclusão", "Avanço do contador", "Versão mínima", "Perto do próximo nível" and "Subiu de
-   nível" of the Feedback table, and "Movimento, vibração e som". Build in src/ui/screens/Today.tsx,
-   src/ui/components/ProgressTop.tsx and global.css: the gold flying from the item to the balance,
-   which then counts up; the marker as a ring filling by parts for daily goals; the softer
-   half-fill animation of the minimal version; the slow glow of the XP bar under 10% left; the
-   level number rolling to the new one before the existing toast. Call feedback('light') or
-   feedback('medium') as the table's intensities say. No literal durations or colors: tokens only.
-   Everything must vanish under prefers-reduced-motion. Verify with npm run build.
-   ```
 
 2. **Onda 2, os momentos novos** (Opus: regra de domínio, servidor e contrato, depois da 0).
 

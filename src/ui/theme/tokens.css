@@ -326,6 +326,10 @@
   --duration-day-close: 700ms;
   --duration-cascade: 240ms;
   --duration-cascade-step: 40ms;
+  /* The versão mínima: softer and slower than the conclusão, the marker filling halfway with a glow. */
+  --duration-minimum: 600ms;
+  /* How much brighter the XP bar gets at the top of its slow glow (a multiplier). */
+  --glow-strength: 1.35;
   /*
    * Vibration and sound, read by src/ui/feedback. Vibration: navigator.vibrate patterns, in
    * milliseconds (on, off, on...), one per intensity. Sound, synthesized: the oscillator's wave
@@ -471,8 +475,10 @@
   --duration-glow: 2000ms;
   --easing-glow: ease-in-out;
   --duration-day-close: 700ms;
+  --duration-minimum: 600ms;
   --duration-cascade: 240ms;
   --duration-cascade-step: 40ms;
+  --glow-strength: 1.35;
   --vibrate-light: 10;
   --vibrate-medium: 20 50 30;
   --vibrate-strong: 30 60 30 60 80;
@@ -608,8 +614,10 @@
   --duration-glow: 2400ms;
   --easing-glow: ease-in-out;
   --duration-day-close: 840ms;
+  --duration-minimum: 720ms;
   --duration-cascade: 280ms;
   --duration-cascade-step: 50ms;
+  --glow-strength: 1.35;
   --vibrate-light: 10;
   --vibrate-medium: 20 50 30;
   --vibrate-strong: 30 60 30 60 80;
@@ -752,8 +760,10 @@
   --duration-glow: 2000ms;
   --easing-glow: steps(3, end);
   --duration-day-close: 700ms;
+  --duration-minimum: 600ms;
   --duration-cascade: 240ms;
   --duration-cascade-step: 40ms;
+  --glow-strength: 1.35;
   --vibrate-light: 15;
   --vibrate-medium: 15 40 15;
   --vibrate-strong: 15 40 15 40 15 40;
@@ -905,8 +915,10 @@
   --duration-glow: 1800ms;
   --easing-glow: ease-in-out;
   --duration-day-close: 800ms;
+  --duration-minimum: 680ms;
   --duration-cascade: 300ms;
   --duration-cascade-step: 50ms;
+  --glow-strength: 1.35;
   --vibrate-light: 10;
   --vibrate-medium: 20 50 30;
   --vibrate-strong: 30 60 30 60 80;
