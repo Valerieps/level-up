@@ -62,7 +62,6 @@ export const strings = {
     counterOf: (count: number, goal: number) => `${count} de ${goal}`,
     create: 'Criar hábito',
     nothingScheduled: 'Nada programado para hoje.',
-    allDone: 'Tudo feito por hoje',
     allDoneSummary: (count: number, xp: number, gold: number) =>
       `${count === 1 ? 'Um hábito' : `${count} hábitos`}, +${xp} XP e +${gold} ouro. Aproveite o resto do dia.`,
     saveFailed: 'Não deu para salvar essa marcação. Ela voltou para a lista; tenta de novo?',
@@ -255,6 +254,26 @@ export const strings = {
       'O hábito vira livre: sem dias marcados, até uma vez por dia. O streak dá lugar ao Ritmo, a contagem para Automatizado recomeça e a versão mínima sai.',
     confirmFree: 'Transformar em livre',
     back: 'Voltar às opções',
+  },
+
+  // The short moments (docs/spec/telas-e-feedback.md "Momentos novos"). Each list is drawn from
+  // without repeating the last phrase shown.
+  moments: {
+    label: 'Novidades',
+    firstStep: ['Primeiro passo!', 'Primeiro passo dado!', 'Começou! Primeiro passo.'],
+    streakRecord: [
+      (name: string, streak: number) => `Seu maior streak: ${streak}! (${name})`,
+      (name: string, streak: number) => `Recorde em “${name}”: ${streak} seguidos!`,
+      (name: string, streak: number) => `${streak} seguidos em “${name}”, seu maior até hoje!`,
+    ],
+    rewardInReach: [
+      (reward: string) => `Agora dá: ${reward}`,
+      (reward: string) => `Já dá para resgatar: ${reward}`,
+      (reward: string) => `${reward} está ao alcance`,
+    ],
+    openShop: ' (abrir a Loja)',
+    dayClosed: ['Tudo feito por hoje', 'Dia fechado!', 'Fechou o dia!', 'Hoje está completo'],
+    daySeal: 'Selo do dia',
   },
 
   celebration: {

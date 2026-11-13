@@ -16,6 +16,9 @@ Nada do MVP (fases 1a a 1d) falta construir.
   "Adicionar um tema".
 - A camada de feedback, fase 1f (`spec/telas-e-feedback.md`, "Feedback"; `spec/temas.md`). Ordem
   abaixo.
+- Recompensa ao alcance e dia fechado também por uma mudança de régua: o ouro de uma conquista de
+  Coragem e o dia que a régua menor completa ainda não avisam (só a conclusão e a revisão de ontem
+  avisam hoje; `spec/telas-e-feedback.md` "Momentos novos").
 
 ### Camada de feedback (1f): ordem e prompts
 
@@ -23,40 +26,15 @@ O que já existe e serve de base: os tokens de movimento por tema (`--duration-*
 `src/ui/theme/tokens.css`; o `prefers-reduced-motion` que zera as durações em `global.css`; a
 celebração empilhada (`useCelebration` e `mergeMoments` em `src/ui/components/Celebration.tsx`); o
 ganho otimista da Hoje (`gains` em `src/ui/screens/Today.tsx`); o resultado da conclusão, que já
-traz `levelUp` e `celebrations`. A onda 0 já montou a base: os tokens dos momentos, da vibração e
+traz `levelUp`, `celebrations` e `moments` (os momentos curtos e o dia fechado). A onda 0 já montou a base: os tokens dos momentos, da vibração e
 do som em cada tema (`--duration-coin-flight` e os outros, `--easing-overshoot`, `--vibrate-*`,
 `--sound-*`, `--image-burst`); `feedback(intensidade)` em `src/ui/feedback/`, que vibra e soa
 lendo o tema e obedecendo às chaves; e as chaves Vibração e Sons em Configurações, guardadas em
 `member_settings` (query `feedback`, comando `feedback.set`). A onda 1 fez o ciclo da Hoje (o ouro
 que voa e conta, o anel do contador, a versão mínima, o brilho da barra de XP, o giro do nível, com
-`feedback('light')` e `feedback('medium')`); as animações dos outros momentos ainda não existem.
-
-A ordem economiza tokens assim: as ondas só chamam essa base, sem reler a
-arquitetura. Só a onda 2 mexe no servidor e no contrato da API, então ela vem inteira numa sessão.
- A onda 4 só muda
-valores de tokens, então fica por último e roda barata. Cada prompt é completo: abra uma sessão nova
-por onda e cole o prompt.
-
-2. **Onda 2, os momentos novos** (Opus: regra de domínio, servidor e contrato, depois da 0).
-
-   ```text
-   Build wave 2 of the feedback layer (phase 1f): the new moments. Read docs/spec/telas-e-feedback.md
-   "Momentos novos" and the Feedback table rows "Primeiro passo", "Dia fechado", "Recompensa ao
-   alcance" and "Recorde de streak", plus docs/spec/streak-e-dominio.md "Streak". Follow "Adding a
-   feature" in CLAUDE.md:
-   1. Rules in src/domain/ with tests: first step (once per member, ever), day closed (last
-      scheduled non-paused habit of today, once per day, not from the review of yesterday),
-      reward in reach (balance crosses a reward's cost; the most expensive one; also on Prêmio de
-      Domínio and conquista gold), streak record (passes the habit's best streak and is at least
-      7, only on the day it passes). Persist whatever "once" needs with a new migration.
-   2. Return these moments in the completion result of api-contract.ts, next to levelUp and
-      celebrations, and in the review-of-yesterday result where the spec allows.
-   3. UI: the short notice at the top (one line per moment, varied phrases from strings.ts drawn
-      without repeating the last one), lines inside the stacked celebration when one opens, the
-      day-closed collapse of Hoje, and feedback('medium') for each. The reward notice opens the
-      Loja on tap.
-   Tests on node:sqlite for the server. Verify with npm run build.
-   ```
+`feedback('light')` e `feedback('medium')`); as ondas 2 e 3 fizeram os momentos novos, o detalhe, a
+régua, a Loja e a pausa. Falta só a onda 4, que muda apenas valores de tokens: abra uma sessão nova
+e cole o prompt.
 
 4. **Onda 4, o jeito de cada tema** (Sonnet: só tokens, depois de todas).
 
@@ -81,6 +59,12 @@ Nada.
 
 ## Revisar as lacunas que o agente decidiu
 
+- [ ] Recorde de streak: na primeira sequência de um hábito, o recorde aparece no dia em que ela
+  chega a 7; uma conclusão pela revisão de ontem também pode dar recorde; o aviso diz o nome do
+  hábito; quem já tinha hábitos antes da regra não vê recorde da sequência que está em curso
+  (`spec/telas-e-feedback.md` "Momentos novos").
+- [ ] Os momentos curtos somem junto com o aviso de nível; o de recompensa vira um link para a Loja
+  (`spec/telas-e-feedback.md` "Feedback").
 - [ ] Revisar ontem: um hábito com contador conta inteiro ao ser marcado; fechar a revisão de
   qualquer jeito salva o que estiver marcado; hábitos criados hoje ficam de fora; o XP é o do
   tamanho atual do hábito (`spec/registrar-o-dia.md`).

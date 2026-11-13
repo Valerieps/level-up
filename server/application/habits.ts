@@ -1,7 +1,7 @@
 // Habits and the member's day (docs/spec/habitos.md, registrar-o-dia.md, regua.md). Every query
 // and command reads and writes only the actor's own rows (ADR-008): an id of someone else's habit
 // is simply not found.
-import type { Celebration, HabitView, MarkResult, ResizeResult, ReviewResult, TodayView, YesterdayView } from '../../src/application/api-contract';
+import type { Celebration, HabitView, MarkResult, Moment, ResizeResult, ReviewResult, TodayView, YesterdayView } from '../../src/application/api-contract';
 import { addDays, dayOf, type Day } from '../../src/domain/day';
 import { consistencyOn, streakOn, type HabitHistory } from '../../src/domain/habits/consistency';
 import { complete, completeInReview, markMinimum, NOT_STARTED, planReview, tap, type DayEntry } from '../../src/domain/habits/day-log';
@@ -27,7 +27,8 @@ import { failure, nowIso, QueryError, type CommandResult, type Context } from '.
 import { checkMastery, dismissalsOf, dismissInvitation, giveStar, recordTier, tiersOf } from './mastery';
 import type { Member } from './members';
 import { deletePausesOf, endArchivedStretch, periodsOf, startArchivedStretch } from './pauses';
-import { addProgress } from './progress';
+import { dayClosedAfter, firstStepAfter, rewardAfter, streakRecordOf } from './moments';
+import { addProgress, goldOf } from './progress';
 import { memberDay, recordReview, today } from './settings';
 
 interface HabitRow {
@@ -48,6 +49,9 @@ interface HabitRow {
   created_at: string;
   automated_on: Day | null;
   tier_mastered_on: Day | null;
+  best_streak: number | null;
+  best_streak_on: Day | null;
+  record_on: Day | null;
 }
 
 interface CompletionRow {
@@ -187,6 +191,19 @@ function masteryAfter(ctx: Context, actor: Member, habitId: string): Celebration
     automated: row.automated_on !== null,
   };
   return checkMastery(ctx, actor, habit, historyOf(row, lens), lens.today);
+}
+
+/** The recorde de streak after a completion of the habit, with its history as it is now. */
+function recordAfter(ctx: Context, actor: Member, habitId: string, today: Day): Moment[] {
+  const row = reload(ctx, habitId);
+  return streakRecordOf(ctx, row, historyOf(row, lensFor(ctx, actor, habitId)), today);
+}
+
+/** Dia fechado after a completion in Hoje: every habit scheduled today, as Hoje shows them. */
+function dayClosedNow(ctx: Context, actor: Member): Moment[] {
+  const view = todayView(ctx, actor);
+  const items = view.habits.map(({ habit, entry }) => ({ shape: habit, paused: habit.paused, done: entry.done }));
+  return dayClosedAfter(ctx, actor.id, items, view.day);
 }
 
 function toEntry(row: CompletionRow | undefined): DayEntry {
@@ -480,12 +497,19 @@ function record(ctx: Context, actor: Member, input: Input, step: Step): CommandR
   const entry = step(habit, day, toEntry(completionOn(ctx, habit.id, day)));
   if (!entry) return failure('conflict');
   saveEntry(ctx, actor, habit.id, day, entry);
-  if (!entry.done) return { ok: true, value: { entry, levelUp: null, celebrations: [] }, changed: CHANGED };
+  if (!entry.done) return { ok: true, value: { entry, levelUp: null, celebrations: [], moments: [] }, changed: CHANGED };
+  const goldBefore = goldOf(ctx, actor.id);
   const levels = addProgress(ctx, actor.id, entry.xp, entry.gold);
   const celebrations = masteryAfter(ctx, actor, habit.id);
+  const moments = [
+    ...firstStepAfter(ctx, actor.id, day),
+    ...recordAfter(ctx, actor, habit.id, day),
+    ...rewardAfter(ctx, actor.id, goldBefore),
+    ...dayClosedNow(ctx, actor),
+  ];
   return {
     ok: true,
-    value: { entry, levelUp: levels.after > levels.before ? levels.after : null, celebrations },
+    value: { entry, levelUp: levels.after > levels.before ? levels.after : null, celebrations, moments },
     changed: celebrations.length > 0 ? CHANGED_WITH_ACHIEVEMENTS : CHANGED_WITH_PROGRESS,
   };
 }
@@ -528,14 +552,21 @@ export function reviewYesterday(ctx: Context, actor: Member, input: Input): Comm
     gold += done.gold;
   }
   recordReview(ctx, actor.id, todayDay);
-  if (ids.length === 0) return { ok: true, value: { xp, gold, levelUp: null, celebrations: [] }, changed: CHANGED };
+  if (ids.length === 0) return { ok: true, value: { xp, gold, levelUp: null, celebrations: [], moments: [] }, changed: CHANGED };
+  const goldBefore = goldOf(ctx, actor.id);
   const levels = addProgress(ctx, actor.id, xp, gold);
   const celebrations = (ids as string[]).flatMap((id) => masteryAfter(ctx, actor, id));
   // Smallest first: every selo before the conquistas they reached.
   celebrations.sort((a, b) => Number(a.kind === 'achievement') - Number(b.kind === 'achievement'));
+  // Yesterday's completions count toward today's streak; they never close a day.
+  const moments = [
+    ...firstStepAfter(ctx, actor.id, todayDay),
+    ...(ids as string[]).flatMap((id) => recordAfter(ctx, actor, id, todayDay)),
+    ...rewardAfter(ctx, actor.id, goldBefore),
+  ];
   return {
     ok: true,
-    value: { xp, gold, levelUp: levels.after > levels.before ? levels.after : null, celebrations },
+    value: { xp, gold, levelUp: levels.after > levels.before ? levels.after : null, celebrations, moments },
     changed: celebrations.length > 0 ? CHANGED_WITH_ACHIEVEMENTS : CHANGED_WITH_PROGRESS,
   };
 }

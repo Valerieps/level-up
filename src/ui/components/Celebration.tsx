@@ -5,6 +5,7 @@ import { strings } from '../../domain/strings';
 import { navigate } from '../router';
 import { Button } from './Button';
 import { Icon } from './Icon';
+import type { ShortLine } from './MomentNotice';
 import { Sheet } from './Sheet';
 
 const c = strings.celebration;
@@ -13,6 +14,8 @@ const c = strings.celebration;
 export interface Moments {
   readonly levelUp: number | null;
   readonly celebrations: readonly Celebration[];
+  /** The short moments, already phrased: the notice, or lines in the celebration when one opens. */
+  readonly short?: readonly ShortLine[];
 }
 
 export interface CelebrationSummary {
@@ -21,7 +24,7 @@ export interface CelebrationSummary {
   readonly kicker: string | null;
   readonly title: string;
   readonly text: string;
-  /** Smallest first: the level, each patamar mastered, each conquista. */
+  /** Smallest first: the short moments, the level, each patamar mastered, each conquista. */
   readonly lines: readonly { readonly key: string; readonly text: string; readonly gold: number | null; readonly strong: boolean }[];
   readonly gold: number;
   /** The action besides "Continuar": the habit to raise, or the conquistas. */
@@ -32,7 +35,7 @@ export interface CelebrationSummary {
 export function mergeMoments(a: Moments | null, b: Moments): Moments {
   if (!a) return b;
   const levelUp = a.levelUp === null ? b.levelUp : b.levelUp === null ? a.levelUp : Math.max(a.levelUp, b.levelUp);
-  return { levelUp, celebrations: [...a.celebrations, ...b.celebrations] };
+  return { levelUp, celebrations: [...a.celebrations, ...b.celebrations], short: [...(a.short ?? []), ...(b.short ?? [])] };
 }
 
 /**
@@ -43,7 +46,12 @@ export function mergeMoments(a: Moments | null, b: Moments): Moments {
 export function summarize(moments: Moments, canRaise: (habitId: string) => boolean = () => true): CelebrationSummary | null {
   const { levelUp, celebrations } = moments;
   if (celebrations.length === 0) return null;
-  const lines: CelebrationSummary['lines'][number][] = [];
+  const lines: CelebrationSummary['lines'][number][] = (moments.short ?? []).map((line, i) => ({
+    key: `s${i}`,
+    text: line.text,
+    gold: null,
+    strong: false,
+  }));
   if (levelUp !== null) lines.push({ key: 'level', text: c.levelLine(levelUp), gold: null, strong: false });
   celebrations.forEach((item, i) => {
     if (item.kind === 'mastered') lines.push({ key: `m${i}`, text: c.masteredLine(item.habitName), gold: item.gold, strong: false });
@@ -85,13 +93,17 @@ function targetOf(item: Extract<Celebration, { kind: 'achievement' }>): number {
 
 /**
  * The celebration a screen shows: `show` queues what a command returned; a level alone goes to
- * `onLevelOnly` (the short toast under the top), anything bigger to the stacked dialog.
+ * `onLevelOnly` (the short toast under the top) and the short moments alone to `onShort` (the
+ * notice at the top); anything bigger opens the stacked dialog, with the short moments as lines.
  */
-export function useCelebration(options: { onLevelOnly?: (level: number) => void; canRaise?: (habitId: string) => boolean } = {}) {
+export function useCelebration(
+  options: { onLevelOnly?: (level: number) => void; onShort?: (lines: readonly ShortLine[]) => void; canRaise?: (habitId: string) => boolean } = {},
+) {
   const [moments, setMoments] = useState<Moments | null>(null);
   function show(next: Moments) {
     if (next.celebrations.length === 0) {
       if (next.levelUp !== null) options.onLevelOnly?.(next.levelUp);
+      if (next.short && next.short.length > 0) options.onShort?.(next.short);
       return;
     }
     setMoments((current) => mergeMoments(current, next));
