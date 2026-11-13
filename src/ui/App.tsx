@@ -16,6 +16,7 @@ import { Profile } from './screens/Profile';
 import { Settings } from './screens/Settings';
 import { Shop } from './screens/Shop';
 import { SignIn } from './screens/SignIn';
+import { useFeedbackSync } from './feedback/use-feedback-sync';
 import { useThemeSync } from './screens/theme-picker';
 import { Today } from './screens/Today';
 import { useQuery } from './use-query';
@@ -57,6 +58,7 @@ function SignedIn({ me, onSignedOut }: { me: MeView; onSignedOut: () => void }) 
   const path = usePath();
   useTimeZoneSync();
   useThemeSync();
+  useFeedbackSync();
 
   async function signOut() {
     await backend.signOut();

@@ -152,6 +152,9 @@
   --size-heat-cell: 14px;
   /* The in-app logo on the sign-in screen. */
   --size-logo: 64px;
+  /* An on/off switch (Vibração, Sons): its track; the knob fits inside with --space-1 around it. */
+  --size-switch-width: 48px;
+  --size-switch-height: 28px;
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
 }
@@ -306,6 +309,38 @@
   /* How long the level-up celebration stays before it goes away by itself. */
   --duration-toast: 3500ms;
   --easing: cubic-bezier(0.2, 0, 0, 1);
+  /* Overshoots the target and settles back: the level number's roll, a badge landing. */
+  --easing-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /*
+   * The moments of the feedback layer (docs/spec/telas-e-feedback.md "Feedback"): the gold flying
+   * to the balance, a counter's ring closing one part, the level number rolling, the XP bar's slow
+   * glow near the next level (one breath), the day closing into its seal, and the list coming back
+   * in a cascade (each item --duration-cascade-step after the one before).
+   */
+  --duration-coin-flight: 600ms;
+  --easing-coin-flight: cubic-bezier(0.4, 0, 0.6, 1);
+  --duration-counter-ring: 240ms;
+  --duration-level-roll: 400ms;
+  --duration-glow: 2000ms;
+  --easing-glow: ease-in-out;
+  --duration-day-close: 700ms;
+  --duration-cascade: 240ms;
+  --duration-cascade-step: 40ms;
+  /*
+   * Vibration and sound, read by src/ui/feedback. Vibration: navigator.vibrate patterns, in
+   * milliseconds (on, off, on...), one per intensity. Sound, synthesized: the oscillator's wave
+   * (sine, triangle, square, sawtooth), the base pitch in Hz, the volume (0 to 1) and each note's
+   * length; a stronger intensity plays more notes, rising from the base pitch.
+   */
+  --vibrate-light: 10;
+  --vibrate-medium: 20 50 30;
+  --vibrate-strong: 30 60 30 60 80;
+  --sound-wave: sine;
+  --sound-pitch: 660;
+  --sound-volume: 0.12;
+  --sound-note: 80ms;
+  /* Sparkles around a celebration or a moment: none here. */
+  --image-burst: none;
   --opacity-disabled: 0.55;
   --opacity-backdrop: 0.5;
 }
@@ -428,6 +463,24 @@
   --duration-gain: 1000ms;
   --duration-toast: 3500ms;
   --easing: cubic-bezier(0.2, 0, 0, 1);
+  --easing-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-coin-flight: 600ms;
+  --easing-coin-flight: cubic-bezier(0.4, 0, 0.6, 1);
+  --duration-counter-ring: 240ms;
+  --duration-level-roll: 400ms;
+  --duration-glow: 2000ms;
+  --easing-glow: ease-in-out;
+  --duration-day-close: 700ms;
+  --duration-cascade: 240ms;
+  --duration-cascade-step: 40ms;
+  --vibrate-light: 10;
+  --vibrate-medium: 20 50 30;
+  --vibrate-strong: 30 60 30 60 80;
+  --sound-wave: triangle;
+  --sound-pitch: 523;
+  --sound-volume: 0.12;
+  --sound-note: 80ms;
+  --image-burst: none;
   --opacity-disabled: 0.55;
   --opacity-backdrop: 0.5;
 }
@@ -547,6 +600,24 @@
   --duration-gain: 1200ms;
   --duration-toast: 3500ms;
   --easing: cubic-bezier(0.3, 0, 0.2, 1);
+  --easing-overshoot: cubic-bezier(0.3, 1.3, 0.5, 1);
+  --duration-coin-flight: 720ms;
+  --easing-coin-flight: cubic-bezier(0.4, 0, 0.6, 1);
+  --duration-counter-ring: 280ms;
+  --duration-level-roll: 480ms;
+  --duration-glow: 2400ms;
+  --easing-glow: ease-in-out;
+  --duration-day-close: 840ms;
+  --duration-cascade: 280ms;
+  --duration-cascade-step: 50ms;
+  --vibrate-light: 10;
+  --vibrate-medium: 20 50 30;
+  --vibrate-strong: 30 60 30 60 80;
+  --sound-wave: sine;
+  --sound-pitch: 440;
+  --sound-volume: 0.12;
+  --sound-note: 120ms;
+  --image-burst: none;
   --opacity-disabled: 0.5;
   --opacity-backdrop: 0.6;
 }
@@ -673,6 +744,24 @@
   --duration-gain: 1000ms;
   --duration-toast: 3500ms;
   --easing: steps(4, end);
+  --easing-overshoot: steps(4, end);
+  --duration-coin-flight: 600ms;
+  --easing-coin-flight: steps(6, end);
+  --duration-counter-ring: 240ms;
+  --duration-level-roll: 400ms;
+  --duration-glow: 2000ms;
+  --easing-glow: steps(3, end);
+  --duration-day-close: 700ms;
+  --duration-cascade: 240ms;
+  --duration-cascade-step: 40ms;
+  --vibrate-light: 15;
+  --vibrate-medium: 15 40 15;
+  --vibrate-strong: 15 40 15 40 15 40;
+  --sound-wave: square;
+  --sound-pitch: 587;
+  --sound-volume: 0.06;
+  --sound-note: 60ms;
+  --image-burst: none;
   --opacity-disabled: 0.55;
   --opacity-backdrop: 0.7;
 }
@@ -808,6 +897,24 @@
   --duration-gain: 1200ms;
   --duration-toast: 3500ms;
   --easing: cubic-bezier(0.3, 1.4, 0.5, 1);
+  --easing-overshoot: cubic-bezier(0.3, 1.8, 0.5, 1);
+  --duration-coin-flight: 700ms;
+  --easing-coin-flight: cubic-bezier(0.4, 0, 0.6, 1);
+  --duration-counter-ring: 280ms;
+  --duration-level-roll: 500ms;
+  --duration-glow: 1800ms;
+  --easing-glow: ease-in-out;
+  --duration-day-close: 800ms;
+  --duration-cascade: 300ms;
+  --duration-cascade-step: 50ms;
+  --vibrate-light: 10;
+  --vibrate-medium: 20 50 30;
+  --vibrate-strong: 30 60 30 60 80;
+  --sound-wave: triangle;
+  --sound-pitch: 784;
+  --sound-volume: 0.1;
+  --sound-note: 80ms;
+  --image-burst: var(--image-marker-burst);
   --opacity-disabled: 0.5;
   --opacity-backdrop: 0.5;
 }

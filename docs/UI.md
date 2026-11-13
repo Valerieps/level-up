@@ -86,7 +86,9 @@ A identidade do LevelUp (ADR-010) e o tema padrão (ADR-012). Um modo só, claro
   proibidas em qualquer tela: falhou, perdeu, atrasado, quebrou, penalidade, dias perdidos.
 - **Movimento:** o marcador preenche em `--duration-fast`, o ganho sobe e some em `--duration-gain`,
   o item sai em `--duration-base`; celebrações entram em `--duration-celebration`, sem confete
-  contínuo.
+  contínuo. Os momentos do feedback (`docs/spec/telas-e-feedback.md`) usam os seus tokens
+  (`--duration-coin-flight`, `--duration-level-roll` e os outros); a vibração e o som saem só de
+  `feedback(intensidade)`, em `src/ui/feedback/`, que lê os números do tema e obedece às chaves.
 
 ## Identidade Stardew Valley
 
@@ -162,8 +164,14 @@ Quão perto do jogo um tema chega, e o que pode e o que não pode, está em `doc
    são redondos ou quadrados), `--clip-marker*` (`none`, ou a forma do marcador recortada por
    `path()`), `--color-marker-fill` (o miolo do marcador vazio), `--border-width*` (com
    `--border-width-tab`, a caixa em volta do ícone da aba), os `--image-*` (`none`, ou uma imagem
-   por cima da cor: o enchimento do marcador, os brilhos, o botão principal, o "+", as barras, a aba
-   atual e o topo), `--easing`, `--duration-*` e `--opacity-*`.
+   por cima da cor: o enchimento do marcador, os brilhos do marcador e das comemorações
+   (`--image-burst`), o botão principal, o "+", as barras, a aba atual e o topo), `--easing`,
+   `--easing-overshoot` (passa do alvo e volta; num tema em passos, `steps()`), cada `--duration-*`
+   e `--easing-*` dos momentos (voo da moeda, anel do contador, giro do nível, brilho da barra de
+   XP, dia fechado, cascata e o intervalo entre itens dela), as três `--vibrate-*` (leve, média,
+   forte: padrões do `navigator.vibrate`, em milissegundos), o timbre dos sons (`--sound-wave`,
+   `--sound-pitch` em Hz, `--sound-volume` de 0 a 1, `--sound-note`, a duração de cada nota) e
+   `--opacity-*`.
    `--color-danger*` continua um vermelho reconhecível.
 3. Fontes em `public/fonts`, num `@font-face` no `tokens.css`, com a licença ao lado (ou, numa
    fonte de fã sem licença, um `-NOTICE.txt` dizendo de onde veio e o que mudou). Confira os acentos

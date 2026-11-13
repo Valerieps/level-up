@@ -51,6 +51,12 @@ export interface ThemeView {
   readonly theme: ThemeId;
 }
 
+/** The member's feedback switches (docs/spec/telas-e-feedback.md): per account, like the theme. */
+export interface FeedbackView {
+  readonly vibration: boolean;
+  readonly sound: boolean;
+}
+
 export interface HabitView {
   readonly id: string;
   readonly name: string;
@@ -259,6 +265,7 @@ export interface Queries {
   invites: { input: Record<string, never>; output: InviteView[] };
   settings: { input: Record<string, never>; output: SettingsView };
   theme: { input: Record<string, never>; output: ThemeView };
+  feedback: { input: Record<string, never>; output: FeedbackView };
   today: { input: Record<string, never>; output: TodayView };
   progress: { input: Record<string, never>; output: ProgressView };
   yesterday: { input: Record<string, never>; output: YesterdayView };
@@ -295,6 +302,8 @@ export interface Commands {
   'settings.update': { input: { dayTurnover?: number }; output: SettingsView };
   /** The member picks a theme; an id the app does not ship is `invalid`. */
   'theme.set': { input: { theme: ThemeId }; output: ThemeView };
+  /** Either switch, or both; anything but a boolean is `invalid`. */
+  'feedback.set': { input: { vibration?: boolean; sound?: boolean }; output: FeedbackView };
   'habit.create': { input: NewHabitInput; output: HabitView };
   /**
    * Name, versão mínima and time rule. Changing to weekdays needs the days; size changes go through
@@ -348,7 +357,7 @@ export type CommandName = keyof Commands;
  * What a live message says changed; the screens that show it refetch. A change to a member's own
  * data reaches only that member's apps (ADR-008). `day` means the member's day turned over.
  */
-export type Topic = 'me' | 'members' | 'invites' | 'settings' | 'theme' | 'day' | 'habits' | 'progress' | 'pauses' | 'achievements' | 'shop';
+export type Topic = 'me' | 'members' | 'invites' | 'settings' | 'theme' | 'feedback' | 'day' | 'habits' | 'progress' | 'pauses' | 'achievements' | 'shop';
 
 export interface LiveMessage {
   readonly type: 'changed';

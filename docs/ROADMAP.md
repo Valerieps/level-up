@@ -23,39 +23,20 @@ O que já existe e serve de base: os tokens de movimento por tema (`--duration-*
 `src/ui/theme/tokens.css`; o `prefers-reduced-motion` que zera as durações em `global.css`; a
 celebração empilhada (`useCelebration` e `mergeMoments` em `src/ui/components/Celebration.tsx`); o
 ganho otimista da Hoje (`gains` em `src/ui/screens/Today.tsx`); o resultado da conclusão, que já
-traz `levelUp` e `celebrations`; e a tabela `member_settings`, que guarda o tema.
+traz `levelUp` e `celebrations`. A onda 0 já montou a base: os tokens dos momentos, da vibração e
+do som em cada tema (`--duration-coin-flight` e os outros, `--easing-overshoot`, `--vibrate-*`,
+`--sound-*`, `--image-burst`); `feedback(intensidade)` em `src/ui/feedback/`, que vibra e soa
+lendo o tema e obedecendo às chaves; e as chaves Vibração e Sons em Configurações, guardadas em
+`member_settings` (query `feedback`, comando `feedback.set`). As animações dos momentos ainda não
+existem.
 
-A ordem economiza tokens assim: a onda 0 monta a base uma vez (tokens, um único ponto que dispara
-animação, vibração e som, e as chaves), e as outras ondas só chamam essa base, sem reler a
+A ordem economiza tokens assim: as ondas só chamam essa base, sem reler a
 arquitetura. Só a onda 2 mexe no servidor e no contrato da API, então ela vem inteira numa sessão.
 As ondas 1 e 3 mexem em arquivos diferentes e podem rodar em paralelo depois da 0. A onda 4 só muda
 valores de tokens, então fica por último e roda barata. Cada prompt é completo: abra uma sessão nova
 por onda e cole o prompt.
 
-1. **Onda 0, base** (Opus: arquitetura).
-
-   ```text
-   Build the base of the feedback layer of phase 1f. Read docs/spec/telas-e-feedback.md sections
-   "Feedback" and "Movimento, vibração e som", docs/spec/temas.md "O que um tema muda", and the
-   "Movimento" rule and "Adicionar um tema" in docs/UI.md. Then:
-   1. Tokens, in src/ui/theme/tokens.css, for every theme block: the durations and easings the new
-      moments need (coin flight, counter ring, level roll, XP-bar glow, day close, cascade), an
-      overshoot easing, three vibration patterns (light, medium, strong) and the sound timbre
-      (wave type, base pitch, volume), plus an --image-burst for theme sparkles (none by default).
-      Tune values per theme only roughly; wave 4 tunes them. Update docs/UI.md "Adicionar um tema"
-      with the new tokens. Keep tokens.test.ts passing without loosening it.
-   2. One module, src/ui/feedback/, with feedback(intensity) that vibrates (navigator.vibrate,
-      skipped where missing) and plays a short sound synthesized with Web Audio (no audio files,
-      no dependency), both reading their numbers from the tokens of the current theme and obeying
-      the member's switches. Unit tests with fakes.
-   3. Settings: the next MIGRATIONS entry adds vibration (default on) and sound (default off) to
-      member_settings; a query and a command like theme.set; the two switches in Configurações,
-      the vibration one hidden where navigator.vibrate is missing. Texts in strings.ts. Tests on
-      node:sqlite.
-   Do not build the moments themselves (waves 1 to 3). Verify with npm run build.
-   ```
-
-2. **Onda 1, o ciclo da Hoje** (Sonnet: só cliente, depois da 0).
+1. **Onda 1, o ciclo da Hoje** (Sonnet: só cliente, depois da 0).
 
    ```text
    Build wave 1 of the feedback layer (phase 1f), client only, on the base in src/ui/feedback/
@@ -70,7 +51,7 @@ por onda e cole o prompt.
    Everything must vanish under prefers-reduced-motion. Verify with npm run build.
    ```
 
-3. **Onda 2, os momentos novos** (Opus: regra de domínio, servidor e contrato, depois da 0).
+2. **Onda 2, os momentos novos** (Opus: regra de domínio, servidor e contrato, depois da 0).
 
    ```text
    Build wave 2 of the feedback layer (phase 1f): the new moments. Read docs/spec/telas-e-feedback.md
@@ -91,7 +72,7 @@ por onda e cole o prompt.
    Tests on node:sqlite for the server. Verify with npm run build.
    ```
 
-4. **Onda 3, detalhe, régua, Loja e pausa** (Sonnet: depois da 0; pode rodar junto com a 1).
+3. **Onda 3, detalhe, régua, Loja e pausa** (Sonnet: depois da 0; pode rodar junto com a 1).
 
    ```text
    Build wave 3 of the feedback layer (phase 1f), on src/ui/feedback/ and the motion tokens. Read
@@ -106,7 +87,7 @@ por onda e cole o prompt.
    Verify with npm run build.
    ```
 
-5. **Onda 4, o jeito de cada tema** (Sonnet: só tokens, depois de todas).
+4. **Onda 4, o jeito de cada tema** (Sonnet: só tokens, depois de todas).
 
    ```text
    Tune the feedback layer (phase 1f) per theme, changing only values in src/ui/theme/tokens.css.
