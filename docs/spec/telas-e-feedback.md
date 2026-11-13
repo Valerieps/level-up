@@ -137,7 +137,8 @@ Ordem, de cima para baixo:
   Por quê: liga o esforço de hoje ao prêmio real.
 - **Recorde de streak:** no dia em que o streak de um hábito passa o maior streak que ele já teve,
   desde que o novo seja de pelo menos 7. Nos dias seguintes da mesma sequência, não repete. Quando
-  o streak zera, nada aparece. *(1f)*
+  o streak zera, nada aparece. Na primeira sequência de um hábito, o recorde aparece no dia em que
+  ela chega a 7. Uma conclusão pela revisão de ontem também conta. *(1f)*
   Por quê: celebra o que eu construí, sem me fazer temer perdê-lo.
 - A mensagem de tudo feito e as dos momentos curtos variam: o app sorteia entre várias, sem repetir
   a última. *(1f)*

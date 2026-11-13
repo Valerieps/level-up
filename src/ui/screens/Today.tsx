@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { HabitView, ReviewResult } from '../../application/api-contract';
+import type { HabitView, Moment, ReviewResult } from '../../application/api-contract';
 import { formatDayLong, type Day } from '../../domain/day';
 import { markMinimum, NOT_STARTED, planToday, tap, type DayEntry, type TodayHabit } from '../../domain/habits/day-log';
 import { describeRule } from '../../domain/habits/describe';
@@ -10,9 +10,12 @@ import { useServices } from '../backend-context';
 import { Button, ButtonLink } from '../components/Button';
 import { useCelebration } from '../components/Celebration';
 import { Icon } from '../components/Icon';
+import { MomentNotice, shortLines, type ShortLine } from '../components/MomentNotice';
 import { Notice } from '../components/Notice';
 import { ProgressTop } from '../components/ProgressTop';
 import { Sheet } from '../components/Sheet';
+import { feedback } from '../feedback/feedback';
+import { drawPhrase } from '../feedback/phrases';
 import { useDragReorder, type Announcement, type DragItemProps } from '../drag-reorder';
 import { useLongPress } from '../long-press';
 import { Link, navigate } from '../router';
@@ -22,6 +25,7 @@ import { YesterdaySheet } from './YesterdaySheet';
 
 const t = strings.today;
 const p = strings.pause;
+const NO_LINES: readonly ShortLine[] = [];
 const FREE_COLLAPSED_KEY = 'levelup.freeCollapsed';
 /** The app pause this device last saw running: when it is gone, the member is back. */
 const APP_PAUSE_KEY = 'levelup.appPause';
@@ -90,6 +94,10 @@ export function Today() {
   const [minimumFor, setMinimumFor] = useState<HabitView | null>(null);
   const [resuming, setResuming] = useState(false);
   const [welcome, setWelcome] = useState(false);
+  const [notice, setNotice] = useState<readonly ShortLine[]>(NO_LINES);
+  /** The dia fechado just happened here: the done card stamps its selo in. */
+  const [closing, setClosing] = useState(false);
+  const [dayPhrase, setDayPhrase] = useState(() => drawPhrase('dayClosed', strings.moments.dayClosed));
   /** The order just dragged, shown until the server confirms it. */
   const [order, setOrder] = useState<readonly string[] | null>(null);
   const reordering = useRef(0);
@@ -97,6 +105,7 @@ export function Today() {
   // Mastery and conquistas stack into one celebration; a level alone keeps the short toast.
   const celebrate = useCelebration({
     onLevelOnly: setCelebration,
+    onShort: setNotice,
     canRaise: (habitId) => {
       const habit = today.data?.habits.find((item) => item.habit.id === habitId)?.habit;
       return habit ? reguaOptions(habit, 'raise').length > 0 : true;
@@ -175,9 +184,19 @@ export function Today() {
       return overlay ? new Map(current).set(habit.id, { ...overlay, inFlight: overlay.inFlight - 1 }) : current;
     });
     setGains((current) => current.map((g) => (g.id === gainId ? { ...g, settled: true } : g)));
-    celebrate.show({ levelUp: result.value.levelUp, celebrations: result.value.celebrations });
+    showMoments(result.value);
     today.reload();
     progress.reload();
+  }
+
+  /** What a completion or the review reached: the celebration, the short notice, the dia fechado. */
+  function showMoments(result: { levelUp: number | null; celebrations: ReviewResult['celebrations']; moments: readonly Moment[] }) {
+    celebrate.show({ levelUp: result.levelUp, celebrations: result.celebrations, short: shortLines(result.moments) });
+    if (result.moments.some((moment) => moment.kind === 'dayClosed')) {
+      setDayPhrase(drawPhrase('dayClosed', strings.moments.dayClosed));
+      setClosing(true);
+    }
+    if (result.moments.length > 0) feedback('medium');
   }
 
   function finishLeaving(habitId: string) {
@@ -221,7 +240,7 @@ export function Today() {
   }
 
   function reviewed(result: ReviewResult | null) {
-    if (result) celebrate.show({ levelUp: result.levelUp, celebrations: result.celebrations });
+    if (result) showMoments(result);
     yesterday.reload();
     today.reload();
     progress.reload();
@@ -234,6 +253,10 @@ export function Today() {
     });
   }
 
+  function clearNotice() {
+    setNotice(NO_LINES);
+  }
+
   const appPause = pauses.data?.app ?? null;
   const review = yesterday.data && yesterday.data.habits.length > 0 && (
     <YesterdaySheet key={yesterday.data.day} review={yesterday.data} onDone={reviewed} />
@@ -243,6 +266,7 @@ export function Today() {
       <ProgressTop xpTotal={xpTotal} gold={gold} celebration={celebration} onCelebrationEnd={() => setCelebration(null)} />
       {review}
       {celebrate.element}
+      <MomentNotice lines={notice} onDone={clearNotice} />
       {welcome && <Notice>{p.welcomeBack}</Notice>}
       {appPause && (
         <div className="card row pause-banner">
@@ -290,9 +314,14 @@ export function Today() {
       </div>
       {nothingScheduled && <p className="muted">{t.nothingScheduled}</p>}
       {allDone && (
-        <div className="card done-card" role="status">
-          <h2>{t.allDone}</h2>
-          <p className="muted">{t.allDoneSummary(done.length, doneXp, doneGold)}</p>
+        <div className={closing ? 'card done-card closing' : 'card done-card'} role="status">
+          <span className="day-seal" role="img" aria-label={strings.moments.daySeal}>
+            <Icon name="check" />
+          </span>
+          <div className="grow">
+            <h2>{dayPhrase}</h2>
+            <p className="muted">{t.allDoneSummary(done.length, doneXp, doneGold)}</p>
+          </div>
         </div>
       )}
       <HabitList
