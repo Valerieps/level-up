@@ -331,6 +331,15 @@
   /* How much brighter the XP bar gets at the top of its slow glow (a multiplier). */
   --glow-strength: 1.35;
   /*
+   * Wave 3 moments: the selo stamped on a habit, the dim star lighting up and flying to it, the
+   * warm and slow ajuste (no gold), the coins of a resgate entering the reward card.
+   */
+  --duration-stamp: 400ms;
+  --duration-star-light: 400ms;
+  --duration-adjust: 1600ms;
+  --easing-adjust: ease-in-out;
+  --duration-redeem: 700ms;
+  /*
    * Vibration and sound, read by src/ui/feedback. Vibration: navigator.vibrate patterns, in
    * milliseconds (on, off, on...), one per intensity. Sound, synthesized: the oscillator's wave
    * (sine, triangle, square, sawtooth), the base pitch in Hz, the volume (0 to 1) and each note's
@@ -479,6 +488,15 @@
   --duration-cascade: 240ms;
   --duration-cascade-step: 40ms;
   --glow-strength: 1.35;
+  /*
+   * Wave 3 moments: the selo stamped on a habit, the dim star lighting up and flying to it, the
+   * warm and slow ajuste (no gold), the coins of a resgate entering the reward card.
+   */
+  --duration-stamp: 400ms;
+  --duration-star-light: 400ms;
+  --duration-adjust: 1600ms;
+  --easing-adjust: ease-in-out;
+  --duration-redeem: 700ms;
   --vibrate-light: 10;
   --vibrate-medium: 20 50 30;
   --vibrate-strong: 30 60 30 60 80;
@@ -618,6 +636,15 @@
   --duration-cascade: 280ms;
   --duration-cascade-step: 50ms;
   --glow-strength: 1.35;
+  /*
+   * Wave 3 moments: the selo stamped on a habit, the dim star lighting up and flying to it, the
+   * warm and slow ajuste (no gold), the coins of a resgate entering the reward card.
+   */
+  --duration-stamp: 400ms;
+  --duration-star-light: 400ms;
+  --duration-adjust: 1600ms;
+  --easing-adjust: ease-in-out;
+  --duration-redeem: 700ms;
   --vibrate-light: 10;
   --vibrate-medium: 20 50 30;
   --vibrate-strong: 30 60 30 60 80;
@@ -764,6 +791,15 @@
   --duration-cascade: 240ms;
   --duration-cascade-step: 40ms;
   --glow-strength: 1.35;
+  /*
+   * Wave 3 moments: the selo stamped on a habit, the dim star lighting up and flying to it, the
+   * warm and slow ajuste (no gold), the coins of a resgate entering the reward card.
+   */
+  --duration-stamp: 400ms;
+  --duration-star-light: 400ms;
+  --duration-adjust: 1600ms;
+  --easing-adjust: ease-in-out;
+  --duration-redeem: 700ms;
   --vibrate-light: 15;
   --vibrate-medium: 15 40 15;
   --vibrate-strong: 15 40 15 40 15 40;
@@ -919,6 +955,15 @@
   --duration-cascade: 300ms;
   --duration-cascade-step: 50ms;
   --glow-strength: 1.35;
+  /*
+   * Wave 3 moments: the selo stamped on a habit, the dim star lighting up and flying to it, the
+   * warm and slow ajuste (no gold), the coins of a resgate entering the reward card.
+   */
+  --duration-stamp: 400ms;
+  --duration-star-light: 400ms;
+  --duration-adjust: 1600ms;
+  --easing-adjust: ease-in-out;
+  --duration-redeem: 700ms;
   --vibrate-light: 10;
   --vibrate-medium: 20 50 30;
   --vibrate-strong: 30 60 30 60 80;

@@ -3,7 +3,7 @@ import { addDays } from '../day';
 import { MILESTONES, nextMilestone, reachedMilestones } from './achievements';
 import type { HabitShape } from './habit';
 import { invitationOn, type InvitationInput } from './invitations';
-import { masteryOn, masteryPrize, type MasteryHistory } from './mastery';
+import { masteryOn, masteryPath, masteryPrize, type MasteryHistory } from './mastery';
 import { earnsStar, tierKey, type StarState } from './regua';
 
 // 2026-11-09 is a Monday.
@@ -147,5 +147,20 @@ describe('convites de régua', () => {
   it('waits for 8 occurrences of the current patamar', () => {
     const fresh = { ...history(daily, []), windowStart: day(-6) };
     expect(invitationOn(input({ history: fresh }), day(0))).toBeNull();
+  });
+});
+
+describe('masteryPath', () => {
+  it('counts towards the selo while the patamar is not mastered', () => {
+    expect(masteryPath({ done: 10, needed: 12 }, false)).toEqual({ done: 10, needed: 12 });
+    expect(masteryPath({ done: 0, needed: 14 }, false)).toEqual({ done: 0, needed: 14 });
+  });
+
+  it('never passes the total', () => {
+    expect(masteryPath({ done: 15, needed: 14 }, false)).toEqual({ done: 14, needed: 14 });
+  });
+
+  it('is gone once the patamar is mastered', () => {
+    expect(masteryPath({ done: 12, needed: 12 }, true)).toBeNull();
   });
 });

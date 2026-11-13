@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Celebration, HabitView, ResizeResult } from '../../application/api-contract';
 import { countWeekdays } from '../../domain/habits/habit';
 import { MAX_STARS, starBonusPercent, xpFor } from '../../domain/habits/progression';
@@ -10,6 +10,7 @@ import { ChoiceGroup } from '../components/Choices';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { Sheet } from '../components/Sheet';
+import { feedback } from '../feedback/feedback';
 import { navigate } from '../router';
 
 const r = strings.regua;
@@ -83,7 +84,7 @@ export function ReguaSheet({
     const count = starred.habit.stars;
     return (
       <Sheet open={direction !== null} title={r.starTitle} onClose={close}>
-        <Stars count={count} />
+        <StarLighting count={count} xp={xpFor(starred.habit.difficulty, count)} />
         <p role="status">{r.starText(habit.name, count, starBonusPercent(count))}</p>
         <Button className="wide" onClick={close}>
           {r.starContinue}
@@ -144,12 +145,31 @@ export function ReguaSheet({
   );
 }
 
+/**
+ * The new star on the confirmation: the dim star beside the new XP lights up and flies to the
+ * habit's row of stars, where it stays lit (docs/spec/telas-e-feedback.md "Estrela de Coragem").
+ */
+function StarLighting({ count, xp }: { count: number; xp: number }) {
+  useEffect(() => feedback('medium'), []);
+  return (
+    <div className="star-lighting">
+      <Stars count={count} arriving />
+      <span className="star-light" aria-hidden="true">
+        <span className="star">
+          <Icon name="star" />
+        </span>
+        <span className="mono">{r.starXp(xp)}</span>
+      </span>
+    </div>
+  );
+}
+
 /** The habit's Estrelas de Coragem out of 5, filled ones first; the text next to them names them. */
-export function Stars({ count }: { count: number }) {
+export function Stars({ count, arriving = false }: { count: number; arriving?: boolean }) {
   return (
     <span className="stars" aria-hidden="true">
       {Array.from({ length: MAX_STARS }, (_, i) => (
-        <span key={i} className={i < count ? 'star filled' : 'star'}>
+        <span key={i} className={i < count ? (arriving && i === count - 1 ? 'star filled arriving' : 'star filled') : 'star'}>
           <Icon name="star" />
         </span>
       ))}
