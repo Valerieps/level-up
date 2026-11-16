@@ -1,4 +1,4 @@
-// Cloudflare Worker: the app's files, the API, the live connection and the cron (ADR-004).
+// Cloudflare Worker: the app's files, the API, the live connection and the `Cron` entrypoint (ADR-004, ADR-013).
 // Secrets are not here: set GOOGLE_CLIENT_SECRET and BOOTSTRAP_ADMIN_EMAILS with
 // `npx wrangler secret put <NAME>`, and locally in .dev.vars (see .dev.vars.example).
 {
@@ -17,14 +17,14 @@
   },
   // Never edit a shipped migration; add the next tag.
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Group"] }],
-  // One cron for every time-based job; each job decides whether it is due (GroupService.tick).
-  "triggers": { "crons": ["*/5 * * * *"] },
+  // No cron here: the central Worker `cron-central` calls `Cron.tick()` (server/entry/worker.ts) every
+  // 15 minutes through a service binding (ADR-013).
   "vars": {
     // Public: the OAuth client ID from Google Cloud. The secret is a secret.
     "GOOGLE_CLIENT_ID": "625557632408-vov9tvva83fbrrei36qrkrddkl0hk5h0.apps.googleusercontent.com"
   },
   // Branch previews (`wrangler preview`, ADR-004) refuse to deploy without this block. Each preview
-  // gets its own empty Group namespace, never production's data; it has no secrets and no cron, and
+  // gets its own empty Group namespace, never production's data; it has no secrets, and
   // Google sign-in does not work there (ADR-005), so the public client ID is enough.
   "previews": {
     "vars": {

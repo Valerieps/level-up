@@ -12,8 +12,7 @@ vi.mock('cloudflare:workers', () => ({
 
 // Loaded by a computed path: the test project has no Workers types, so TypeScript must not follow it.
 const workerPath = './worker';
-const { default: worker, runCron, Cron } = (await import(workerPath)) as {
-  default: { scheduled(controller: unknown, env: unknown, ctx: unknown): Promise<void> };
+const { runCron, Cron } = (await import(workerPath)) as {
   runCron(env: unknown, ctx: unknown): Promise<void>;
   Cron: new (ctx: unknown, env: unknown) => { tick(): Promise<void> };
 };
@@ -28,12 +27,6 @@ describe('cron', () => {
   it('runCron ticks the group', async () => {
     const { env, tick } = fakeEnv();
     await runCron(env, {});
-    expect(tick).toHaveBeenCalledOnce();
-  });
-
-  it('scheduled() does the same as runCron', async () => {
-    const { env, tick } = fakeEnv();
-    await worker.scheduled({}, env, {});
     expect(tick).toHaveBeenCalledOnce();
   });
 

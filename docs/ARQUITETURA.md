@@ -11,14 +11,14 @@ O desenho técnico que o código não mostra sozinho.
 
 - **App:** web app (Vite + React + TypeScript), instalável (PWA). Fala só com a própria origem.
 - **Servidor:** um Cloudflare Worker serve os arquivos do app, a API em `/api`, a conexão ao vivo e
-  o cron. Todos os dados do grupo ficam num único Durable Object, `Group`, com SQLite. Ver ADR-004.
+  o ponto de entrada `Cron`, chamado pelo Worker `cron-central` (ADR-013). Todos os dados do grupo ficam num único Durable Object, `Group`, com SQLite. Ver ADR-004.
 - **Login:** Google, pelo fluxo de código OAuth no Worker, com cookie de sessão. Ver ADR-005.
 
 ```
 app (celular) ──POST /api/query|command──► Worker ──RPC──► Group (Durable Object, SQLite)
      ▲                                       ▲                    │
      └──────── WebSocket /api/live ──────────┘                    │ "mudou: members, invites…"
-                                             cron 5 min ──► tick  ▼
+                                             cron-central 15 min ► tick ▼
                                                      todos os apps abertos refazem a consulta
 ```
 
@@ -96,7 +96,7 @@ nada disso é guardado. Só o momento do domínio é gravado, porque o selo e os
   Coragem. Desmarcar não desfaz nada disso.
 - O comando devolve os eventos de feedback (nível em `levelUp`; Automatizado e conquista em
   `celebrations`, do menor para o maior) para a tela mostrar; eles não são guardados.
-- A virada do dia (ADR-009) roda no `tick` do cron, por membro, e avisa os apps (`day`) para
+- A virada do dia (ADR-009) roda no `tick` (chamado a cada 15 minutos pelo `cron-central`), por membro, e avisa os apps (`day`) para
   refazerem as consultas. Streak, "Faz tempo", os convites de régua e o fim de uma pausa na data de
   volta não precisam de gravação: são calculados.
 
