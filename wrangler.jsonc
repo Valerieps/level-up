@@ -19,6 +19,9 @@
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Group"] }],
   // No cron here: the central Worker `cron-central` calls `Cron.tick()` (server/entry/worker.ts) every
   // 15 minutes through a service binding (ADR-013).
+  // The empty list is deliberate: Wrangler only removes a deployed schedule when told to, so dropping
+  // the key would leave the old cron registered.
+  "triggers": { "crons": [] },
   "vars": {
     // Public: the OAuth client ID from Google Cloud. The secret is a secret.
     "GOOGLE_CLIENT_ID": "625557632408-vov9tvva83fbrrei36qrkrddkl0hk5h0.apps.googleusercontent.com"
